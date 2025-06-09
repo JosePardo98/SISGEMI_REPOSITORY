@@ -17,17 +17,24 @@ export const MaintenanceHistoryTable: React.FC<MaintenanceHistoryTableProps> = (
     try {
       return format(parseISO(dateString), 'dd MMM yyyy', { locale: es });
     } catch (error) {
+      console.error(`Invalid date string: ${dateString}`, error);
       return 'Fecha inválida';
     }
   };
   
+  // Sort records by date, most recent first, directly in the component
+  // as the data source might not always provide it sorted or could be re-sorted elsewhere.
+  const sortedRecords = React.useMemo(() => {
+    return [...records].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [records]);
+
   return (
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle className="text-xl font-headline text-primary">Historial de Mantenimientos Preventivos</CardTitle>
       </CardHeader>
       <CardContent>
-        {records.length > 0 ? (
+        {sortedRecords.length > 0 ? (
           <div className="rounded-md border">
             <Table>
               <TableHeader>
@@ -38,7 +45,7 @@ export const MaintenanceHistoryTable: React.FC<MaintenanceHistoryTableProps> = (
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {records.map((record) => (
+                {sortedRecords.map((record) => (
                   <TableRow key={record.id}>
                     <TableCell>{formatDate(record.date)}</TableCell>
                     <TableCell>{record.technician}</TableCell>

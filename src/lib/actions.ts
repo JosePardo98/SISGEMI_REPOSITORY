@@ -20,7 +20,11 @@ export async function getEquipmentById(id: string): Promise<Equipment | undefine
 
 export async function getMaintenanceRecordsForEquipment(equipmentId: string): Promise<MaintenanceRecord[]> {
   await delay(250);
-  return mockMaintenanceRecords.filter(record => record.equipmentId === equipmentId);
+  // Return a copy to avoid direct mutation issues if any component tries to sort/modify the received array directly.
+  // And ensure records are sorted by date, most recent first, for consistency.
+  return mockMaintenanceRecords
+    .filter(record => record.equipmentId === equipmentId)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export async function addMaintenanceRecord(
@@ -29,12 +33,15 @@ export async function addMaintenanceRecord(
   await delay(500);
   const newRecord: MaintenanceRecord = {
     ...recordData,
-    id: `MAINT${String(mockMaintenanceRecords.length + 1).padStart(3, '0')}`,
+    // Ensure new IDs are unique even if length changes due to other reasons (though not an issue here)
+    // A slightly more robust way for mock data could be to use a timestamp or a larger random number
+    // But for this simple mock, current length based ID is acceptable.
+    id: `MAINT${String(mockMaintenanceRecords.length + 1 + Math.floor(Math.random()*1000)).padStart(3, '0')}`,
   };
-  // In a real app, you would save this to a database.
-  // For now, we can log it or push to mock array (won't persist across requests without more setup)
-  console.log('New maintenance record (mock add):', newRecord);
-  // mockMaintenanceRecords.push(newRecord); // This would modify server-side state, not ideal for simple mock.
+  // Add the new record to the mock data array
+  mockMaintenanceRecords.push(newRecord);
+  console.log('New maintenance record added (mock):', newRecord);
+  console.log('Current maintenance records count:', mockMaintenanceRecords.length);
   return newRecord;
 }
 
