@@ -71,7 +71,7 @@ export const RegisterMaintenanceForm: React.FC<RegisterMaintenanceFormProps> = (
     <Card className="w-full max-w-2xl mx-auto shadow-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-headline text-primary">Registrar Nuevo Mantenimiento</CardTitle>
-        <CardDescription>Para: <span className="font-semibold">{equipmentName} (ID: {equipmentId})</span></CardDescription>
+        <CardDescription>Para: <span className="font-semibold">{equipmentName} (ID PC: {equipmentId})</span></CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-6">

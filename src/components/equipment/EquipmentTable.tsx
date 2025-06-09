@@ -97,10 +97,10 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
           <TableHeader>
             <TableRow>
               <TableHead onClick={() => handleSort('id')} className="cursor-pointer hover:bg-accent/50">
-                <div className="flex items-center">ID CPU {renderSortIcon('id')}</div>
+                <div className="flex items-center">ID PC {renderSortIcon('id')}</div>
               </TableHead>
               <TableHead onClick={() => handleSort('name')} className="cursor-pointer hover:bg-accent/50">
-                <div className="flex items-center">Nombre CPU {renderSortIcon('name')}</div>
+                <div className="flex items-center">Nombre PC {renderSortIcon('name')}</div>
               </TableHead>
               <TableHead onClick={() => handleSort('os')} className="cursor-pointer hover:bg-accent/50">
                 <div className="flex items-center">Sistema Operativo {renderSortIcon('os')}</div>

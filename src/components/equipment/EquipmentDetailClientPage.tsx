@@ -6,7 +6,7 @@ import { getEquipmentById, getMaintenanceRecordsForEquipment } from '@/lib/actio
 import { MaintenanceHistoryTable } from './MaintenanceHistoryTable';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, PlusCircle, Wrench, CalendarDays, Info, Cpu, ListChecks } from 'lucide-react';
+import { ArrowLeft, PlusCircle, Wrench, CalendarDays, Info, Computer, ListChecks } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -110,9 +110,9 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
       <Card className="shadow-xl overflow-hidden">
         <CardHeader className="bg-secondary/50 p-6">
           <CardTitle className="text-3xl font-headline font-bold text-primary flex items-center">
-            <Cpu size={32} className="mr-3 text-accent" /> {equipment.name}
+            <Computer size={32} className="mr-3 text-accent" /> {equipment.name}
           </CardTitle>
-          <CardDescription className="text-md text-muted-foreground">ID CPU: {equipment.id}</CardDescription>
+          <CardDescription className="text-md text-muted-foreground">ID PC: {equipment.id}</CardDescription>
         </CardHeader>
         <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">

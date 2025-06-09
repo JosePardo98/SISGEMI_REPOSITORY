@@ -1,6 +1,6 @@
 export type Equipment = {
-  id: string; // Corresponds to ID CPU
-  name: string; // Nombre CPU
+  id: string; // Corresponds to ID PC
+  name: string; // Nombre PC
   os: string; // Sistema Operativo
   lastMaintenanceDate?: string; // ISO date string, e.g., "2023-10-26"
   nextMaintenanceDate?: string; // ISO date string, e.g., "2024-04-26"
