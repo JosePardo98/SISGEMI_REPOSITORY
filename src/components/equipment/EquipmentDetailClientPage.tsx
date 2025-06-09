@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -6,7 +7,7 @@ import { getEquipmentById, getMaintenanceRecordsForEquipment } from '@/lib/actio
 import { MaintenanceHistoryTable } from './MaintenanceHistoryTable';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, PlusCircle, Wrench, CalendarDays, Info, Computer, ListChecks } from 'lucide-react';
+import { ArrowLeft, Edit3, CalendarDays, Info, Computer } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -130,8 +131,8 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
         </CardContent>
          <CardFooter className="bg-secondary/50 p-6 flex justify-end">
           <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow bg-accent hover:bg-accent/90 text-accent-foreground">
-            <Link href={`/equipment/${equipment.id}/register`}>
-              <Wrench size={20} className="mr-2" /> Registrar Nuevo Mantenimiento
+            <Link href={`/equipment/${equipment.id}/edit`}>
+              <Edit3 size={20} className="mr-2" /> Modificar datos de Equipo
             </Link>
           </Button>
         </CardFooter>

@@ -11,12 +11,13 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function getEquipments(): Promise<Equipment[]> {
   await delay(300);
-  return [...mockEquipments]; // Return a copy
+  return [...mockEquipments].sort((a, b) => a.id.localeCompare(b.id)); // Return a copy, sorted by ID
 }
 
 export async function getEquipmentById(id: string): Promise<Equipment | undefined> {
   await delay(200);
-  return mockEquipments.find(eq => eq.id === id);
+  const equipment = mockEquipments.find(eq => eq.id === id);
+  return equipment ? {...equipment} : undefined; // Return a copy
 }
 
 export async function getMaintenanceRecordsForEquipment(equipmentId: string): Promise<MaintenanceRecord[]> {
@@ -35,8 +36,19 @@ export async function addMaintenanceRecord(
     id: `MAINT${String(mockMaintenanceRecords.length + 1 + Math.floor(Math.random()*1000)).padStart(3, '0')}`,
   };
   mockMaintenanceRecords.push(newRecord);
+  
+  // Update equipment's lastMaintenanceDate and suggest next one
+  const equipmentIndex = mockEquipments.findIndex(eq => eq.id === recordData.equipmentId);
+  if (equipmentIndex !== -1) {
+    mockEquipments[equipmentIndex].lastMaintenanceDate = recordData.date;
+    // Suggest next maintenance in 6 months
+    const nextDate = new Date(recordData.date);
+    nextDate.setMonth(nextDate.getMonth() + 6);
+    mockEquipments[equipmentIndex].nextMaintenanceDate = nextDate.toISOString().split('T')[0];
+  }
+
   console.log('New maintenance record added (mock):', newRecord);
-  return newRecord;
+  return {...newRecord}; // Return a copy
 }
 
 export async function addEquipment(
@@ -44,7 +56,6 @@ export async function addEquipment(
 ): Promise<Equipment> {
   await delay(400);
   
-  // Basic check for duplicate ID in mock data
   if (mockEquipments.some(eq => eq.id === equipmentData.id)) {
     throw new Error(`El equipo con ID ${equipmentData.id} ya existe.`);
   }
@@ -52,10 +63,40 @@ export async function addEquipment(
   const newEquipment: Equipment = {
     ...equipmentData,
     // lastMaintenanceDate and nextMaintenanceDate will be undefined for new equipment
+    // or set them based on some default logic if needed
   };
   mockEquipments.push(newEquipment);
   console.log('New equipment added (mock):', newEquipment);
-  return newEquipment;
+  return {...newEquipment}; // Return a copy
+}
+
+export async function updateEquipment(
+  equipmentId: string,
+  dataToUpdate: Partial<Omit<Equipment, 'id'>>
+): Promise<Equipment> {
+  await delay(400);
+  const equipmentIndex = mockEquipments.findIndex(eq => eq.id === equipmentId);
+
+  if (equipmentIndex === -1) {
+    throw new Error(`Equipo con ID ${equipmentId} no encontrado.`);
+  }
+
+  // Ensure dates are either valid ISO date strings or undefined
+  const processedData = { ...dataToUpdate };
+  if (processedData.lastMaintenanceDate === '') {
+    processedData.lastMaintenanceDate = undefined;
+  }
+  if (processedData.nextMaintenanceDate === '') {
+    processedData.nextMaintenanceDate = undefined;
+  }
+  
+  mockEquipments[equipmentIndex] = {
+    ...mockEquipments[equipmentIndex],
+    ...processedData,
+  };
+  
+  console.log('Equipment updated (mock):', mockEquipments[equipmentIndex]);
+  return {...mockEquipments[equipmentIndex]}; // Return a copy
 }
 
 
@@ -63,10 +104,13 @@ export async function getAiMaintenanceSuggestions(
   input: SuggestMaintenanceProceduresInput
 ): Promise<SuggestMaintenanceProceduresOutput> {
   try {
+    // Simulate delay for AI processing
+    await delay(1500); 
     const suggestions = await suggestMaintenanceProcedures(input);
     return suggestions;
   } catch (error) {
     console.error("Error fetching AI maintenance suggestions:", error);
-    return { suggestedProcedures: "Error al obtener sugerencias. Intente más tarde." };
+    // Consider providing a more user-friendly error or specific suggestions based on common cases
+    return { suggestedProcedures: "Error al obtener sugerencias de IA. Verifique la conexión o inténtelo más tarde." };
   }
 }
