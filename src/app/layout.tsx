@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'PreventiTrack',
+  title: 'SISGEMI',
   description: 'Sistema de Gestión de Mantenimiento Preventivo',
 };
 

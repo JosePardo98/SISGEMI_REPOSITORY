@@ -22,6 +22,6 @@ export default function EquipmentDetailPage({ params }: EquipmentDetailPageProps
 export async function generateMetadata({ params }: EquipmentDetailPageProps) {
   // In a real app, fetch equipment name for a dynamic title
   return {
-    title: `Detalles del Equipo ${params.id} - PreventiTrack`,
+    title: `Detalles del Equipo ${params.id} - SISGEMI`,
   };
 }
