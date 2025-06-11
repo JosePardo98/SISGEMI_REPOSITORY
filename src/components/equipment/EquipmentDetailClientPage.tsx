@@ -7,7 +7,7 @@ import { getEquipmentById, getMaintenanceRecordsForEquipment } from '@/lib/actio
 import { MaintenanceHistoryTable } from './MaintenanceHistoryTable';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Edit3, CalendarDays, Info, Computer } from 'lucide-react';
+import { ArrowLeft, Edit3, CalendarDays, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -18,6 +18,14 @@ import { es } from 'date-fns/locale';
 interface EquipmentDetailClientPageProps {
   equipmentId: string;
 }
+
+const DetailItem: React.FC<{ label: string; value?: string; icon?: React.ElementType }> = ({ label, value, icon: Icon }) => (
+  <div className="flex items-start">
+    {Icon && <Icon size={18} className="mr-2 mt-1 text-accent flex-shrink-0" />}
+    <p className="text-sm"><strong className="font-medium">{label}:</strong> {value || 'N/A'}</p>
+  </div>
+);
+
 
 const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ equipmentId }) => {
   const [equipment, setEquipment] = useState<Equipment | null>(null);
@@ -51,7 +59,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
      try {
-      return format(parseISO(dateString), 'PPP', { locale: es }); // PPP for 'Aug 23, 2020' format
+      return format(parseISO(dateString), 'PPP', { locale: es }); 
     } catch (error) {
       return 'Fecha inválida';
     }
@@ -60,11 +68,11 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-1/4" /> {/* Back button */}
+        <Skeleton className="h-8 w-1/4" />
         <Card className="shadow-lg">
           <CardHeader>
-            <Skeleton className="h-8 w-3/4" /> {/* Title */}
-            <Skeleton className="h-4 w-1/2" /> {/* Subtitle/ID */}
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
           </CardHeader>
           <CardContent className="space-y-4">
             <Skeleton className="h-6 w-full" />
@@ -72,8 +80,8 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
             <Skeleton className="h-6 w-2/3" />
           </CardContent>
         </Card>
-        <Skeleton className="h-64 w-full" /> {/* Maintenance history table skeleton */}
-        <Skeleton className="h-10 w-1/3" /> {/* Register button */}
+        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-10 w-1/3" />
       </div>
     );
   }
@@ -94,7 +102,6 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
   }
 
   if (!equipment) {
-    // This case should be covered by error state, but as a fallback.
     return <p>Equipo no encontrado.</p>;
   }
 
@@ -111,24 +118,64 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
       <Card className="shadow-xl overflow-hidden">
         <CardHeader className="bg-secondary/50 p-6">
           <CardTitle className="text-3xl font-headline font-bold text-primary flex items-center">
-            <Computer size={32} className="mr-3 text-accent" /> {equipment.name}
+            {equipment.type?.toLowerCase().includes('laptop') ? <Laptop size={32} className="mr-3 text-accent" /> : <Computer size={32} className="mr-3 text-accent" />}
+             {equipment.name}
           </CardTitle>
           <CardDescription className="text-md text-muted-foreground">ID PC: {equipment.id}</CardDescription>
         </CardHeader>
-        <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-foreground flex items-center"><Info size={20} className="mr-2 text-accent" />Especificaciones</h3>
-            <p><strong className="font-medium">Sistema Operativo:</strong> {equipment.os}</p>
-            <p><strong className="font-medium">Tipo de Equipo:</strong> {equipment.type}</p>
-            <p><strong className="font-medium">Especificaciones Detalladas:</strong> {equipment.specifications}</p>
-            <p><strong className="font-medium">Puntos Comunes de Falla:</strong> {equipment.commonFailurePoints}</p>
+        
+        <CardContent className="p-6 space-y-6">
+          {/* Información de PC */}
+          <div>
+            <h3 className="text-xl font-semibold text-primary mb-3 border-b pb-2">Información de PC</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+              <DetailItem label="Procesador" value={equipment.processor} icon={Server} />
+              <DetailItem label="Memoria RAM" value={equipment.ramAmount} icon={Info} />
+              <DetailItem label="Tipo de RAM" value={equipment.ramType} icon={Info} />
+              <DetailItem label="Capacidad Disco" value={equipment.storageCapacity} icon={Archive}/>
+              <DetailItem label="Tipo Disco" value={equipment.storageType} icon={Archive}/>
+              <DetailItem label="Sistema Operativo" value={equipment.os} icon={Computer} />
+              <DetailItem label="Dirección IP" value={equipment.ipAddress} icon={Info} />
+              <DetailItem label="Tipo de Equipo (IA)" value={equipment.type} icon={HelpCircle} />
+            </div>
+            <div className="mt-3">
+              <DetailItem label="Puntos Comunes de Falla (IA)" value={equipment.commonFailurePoints} icon={Zap} />
+            </div>
           </div>
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-foreground flex items-center"><CalendarDays size={20} className="mr-2 text-accent" />Fechas de Mantenimiento</h3>
-            <p><strong className="font-medium">Último Mantenimiento:</strong> {formatDate(equipment.lastMaintenanceDate)}</p>
-            <p><strong className="font-medium">Próximo Mantenimiento Sugerido:</strong> {formatDate(equipment.nextMaintenanceDate)}</p>
+
+          {/* Información de Inventario */}
+          <div>
+            <h3 className="text-xl font-semibold text-primary mb-3 border-b pb-2">Información de Inventario</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+              <DetailItem label="Nombre de Usuario" value={equipment.userName} />
+              <DetailItem label="No. Patrimonial PC" value={equipment.pcPatrimonialId} />
+              <DetailItem label="No. Patrimonial Mouse" value={equipment.mousePatrimonialId} icon={Mouse} />
+              <DetailItem label="Marca Mouse" value={equipment.mouseBrand} icon={Mouse} />
+              <DetailItem label="Modelo Mouse" value={equipment.mouseModel} icon={Mouse} />
+              <DetailItem label="No. Patrimonial Monitor" value={equipment.monitorPatrimonialId} icon={Monitor} />
+              <DetailItem label="Marca Monitor" value={equipment.monitorBrand} icon={Monitor} />
+              <DetailItem label="Modelo Monitor" value={equipment.monitorModel} icon={Monitor} />
+              <DetailItem label="No. Patrimonial Teclado" value={equipment.keyboardPatrimonialId} icon={Keyboard} />
+              <DetailItem label="Marca Teclado" value={equipment.keyboardBrand} icon={Keyboard} />
+              <DetailItem label="Modelo Teclado" value={equipment.keyboardModel} icon={Keyboard} />
+              <DetailItem label="No. Patrimonial Regulador" value={equipment.regulatorPatrimonialId} icon={Zap} />
+              <DetailItem label="Marca Regulador" value={equipment.regulatorBrand} icon={Zap} />
+              <DetailItem label="Modelo Regulador" value={equipment.regulatorModel} icon={Zap} />
+              <DetailItem label="Estado de PC" value={equipment.pcStatus} />
+              <DetailItem label="¿Piezas reutilizables?" value={equipment.reusableParts} />
+            </div>
+          </div>
+          
+          {/* Fechas de Mantenimiento */}
+          <div>
+            <h3 className="text-xl font-semibold text-primary mb-3 border-b pb-2">Fechas de Mantenimiento</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                <DetailItem label="Último Mantenimiento" value={formatDate(equipment.lastMaintenanceDate)} icon={CalendarDays}/>
+                <DetailItem label="Próximo Mantenimiento Sugerido" value={formatDate(equipment.nextMaintenanceDate)} icon={CalendarDays}/>
+            </div>
           </div>
         </CardContent>
+
          <CardFooter className="bg-secondary/50 p-6 flex justify-end">
           <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow bg-accent hover:bg-accent/90 text-accent-foreground">
             <Link href={`/equipment/${equipment.id}/edit`}>

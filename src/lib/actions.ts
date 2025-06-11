@@ -37,22 +37,21 @@ export async function addMaintenanceRecord(
   };
   mockMaintenanceRecords.push(newRecord);
   
-  // Update equipment's lastMaintenanceDate and suggest next one
   const equipmentIndex = mockEquipments.findIndex(eq => eq.id === recordData.equipmentId);
   if (equipmentIndex !== -1) {
     mockEquipments[equipmentIndex].lastMaintenanceDate = recordData.date;
-    // Suggest next maintenance in 6 months
     const nextDate = new Date(recordData.date);
     nextDate.setMonth(nextDate.getMonth() + 6);
     mockEquipments[equipmentIndex].nextMaintenanceDate = nextDate.toISOString().split('T')[0];
   }
 
   console.log('New maintenance record added (mock):', newRecord);
-  return {...newRecord}; // Return a copy
+  return {...newRecord}; 
 }
 
 export async function addEquipment(
-  equipmentData: Omit<Equipment, 'lastMaintenanceDate' | 'nextMaintenanceDate'>
+  // Incluye todos los campos de Equipment excepto las fechas de mantenimiento y el 'specifications' obsoleto
+  equipmentData: Omit<Equipment, 'lastMaintenanceDate' | 'nextMaintenanceDate' | 'specifications'>
 ): Promise<Equipment> {
   await delay(400);
   
@@ -62,17 +61,17 @@ export async function addEquipment(
 
   const newEquipment: Equipment = {
     ...equipmentData,
-    // lastMaintenanceDate and nextMaintenanceDate will be undefined for new equipment
-    // or set them based on some default logic if needed
+    // las fechas de mantenimiento se establecen a través de addMaintenanceRecord
+    // o se pueden dejar undefined aquí.
   };
   mockEquipments.push(newEquipment);
   console.log('New equipment added (mock):', newEquipment);
-  return {...newEquipment}; // Return a copy
+  return {...newEquipment};
 }
 
 export async function updateEquipment(
   equipmentId: string,
-  dataToUpdate: Partial<Omit<Equipment, 'id'>>
+  dataToUpdate: Partial<Omit<Equipment, 'id'>> // 'id' no se puede actualizar
 ): Promise<Equipment> {
   await delay(400);
   const equipmentIndex = mockEquipments.findIndex(eq => eq.id === equipmentId);
@@ -81,7 +80,6 @@ export async function updateEquipment(
     throw new Error(`Equipo con ID ${equipmentId} no encontrado.`);
   }
 
-  // Ensure dates are either valid ISO date strings or undefined
   const processedData = { ...dataToUpdate };
   if (processedData.lastMaintenanceDate === '') {
     processedData.lastMaintenanceDate = undefined;
@@ -90,13 +88,18 @@ export async function updateEquipment(
     processedData.nextMaintenanceDate = undefined;
   }
   
+  // Eliminar 'specifications' si se envía vacío, ya que es un campo obsoleto
+  if ('specifications' in processedData && processedData.specifications === '') {
+    delete processedData.specifications;
+  }
+  
   mockEquipments[equipmentIndex] = {
     ...mockEquipments[equipmentIndex],
     ...processedData,
   };
   
   console.log('Equipment updated (mock):', mockEquipments[equipmentIndex]);
-  return {...mockEquipments[equipmentIndex]}; // Return a copy
+  return {...mockEquipments[equipmentIndex]}; 
 }
 
 
@@ -104,13 +107,11 @@ export async function getAiMaintenanceSuggestions(
   input: SuggestMaintenanceProceduresInput
 ): Promise<SuggestMaintenanceProceduresOutput> {
   try {
-    // Simulate delay for AI processing
     await delay(1500); 
     const suggestions = await suggestMaintenanceProcedures(input);
     return suggestions;
   } catch (error) {
     console.error("Error fetching AI maintenance suggestions:", error);
-    // Consider providing a more user-friendly error or specific suggestions based on common cases
     return { suggestedProcedures: "Error al obtener sugerencias de IA. Verifique la conexión o inténtelo más tarde." };
   }
 }
