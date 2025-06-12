@@ -60,13 +60,19 @@ export async function getEquipmentById(id: string): Promise<Equipment | undefine
 export async function getMaintenanceRecordsForEquipment(equipmentId: string): Promise<MaintenanceRecord[]> {
   try {
     const recordsCol = collection(db, 'maintenanceRecords');
-    const q = query(recordsCol, where('equipmentId', '==', equipmentId), orderBy('date', 'desc'));
+    // Removed orderBy('date', 'desc') to avoid needing a composite index immediately.
+    // The MaintenanceHistoryTable component already sorts client-side.
+    const q = query(recordsCol, where('equipmentId', '==', equipmentId));
     const recordSnapshot = await getDocs(q);
     const recordList = recordSnapshot.docs.map(doc => {
       const data = doc.data();
       // Ensure date is a string if it's a Timestamp
       return convertTimestampToISO({ ...data, id: doc.id }) as MaintenanceRecord;
     });
+    // Client-side sorting as a fallback or if server-side is removed.
+    // Note: The MaintenanceHistoryTable component also does its own sorting.
+    // This ensures data is sorted if used elsewhere or if table sorting is removed.
+    recordList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     return recordList;
   } catch (error) {
     console.error("Error fetching maintenance records:", error);
@@ -195,3 +201,4 @@ export async function getAiMaintenanceSuggestions(
     return { suggestedProcedures: "Error al obtener sugerencias de IA. Verifique la conexión o inténtelo más tarde." };
   }
 }
+
