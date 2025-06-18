@@ -7,7 +7,7 @@ import { getEquipments } from '@/lib/actions';
 import { EquipmentTable } from './EquipmentTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, PlusCircle, Printer, ScanLine, Receipt, HardDrive } from 'lucide-react';
+import { Terminal, PlusCircle, Printer, ScanLine, Receipt, HardDrive, Router } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -37,6 +37,7 @@ const EquipmentClientPage: React.FC = () => {
   if (loading) {
     return (
       <div className="space-y-4">
+        <Skeleton className="h-14 w-full rounded-md" />
         <Skeleton className="h-14 w-full rounded-md" />
         <Skeleton className="h-14 w-full rounded-md" />
         <Skeleton className="h-14 w-full rounded-md" />
@@ -129,6 +130,30 @@ const EquipmentClientPage: React.FC = () => {
         </AccordionContent>
       </AccordionItem>
 
+      <AccordionItem value="item-5" className="border rounded-lg shadow-sm overflow-hidden">
+        <AccordionTrigger 
+          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
+        >
+          <div className="flex items-center">
+            <Router size={28} className="mr-3 text-accent" />
+            Switches, Modems y Enrutadores
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="pt-2 p-4 border-t border-border">
+           <div className="space-y-6">
+            <div className="flex justify-end items-center pt-2"> 
+              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
+                <Link href="#">
+                  <PlusCircle size={20} className="mr-2" />
+                  Agregar Dispositivo de Red (Próximamente)
+                </Link>
+              </Button>
+            </div>
+            <p className="text-muted-foreground">La gestión de switches, modems y enrutadores estará disponible próximamente.</p>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+      
       <AccordionItem value="item-4" className="border rounded-lg shadow-sm overflow-hidden">
         <AccordionTrigger 
           className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
