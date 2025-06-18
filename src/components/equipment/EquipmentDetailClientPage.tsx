@@ -14,7 +14,6 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 interface EquipmentDetailClientPageProps {
   equipmentId: string;
@@ -121,88 +120,81 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
         </Button>
       </div>
 
-      <Accordion type="single" collapsible defaultValue="equipment-details" className="w-full space-y-3">
-        <AccordionItem value="equipment-details" className="border rounded-lg shadow-xl overflow-hidden">
-          <AccordionTrigger className="p-0 hover:no-underline [&[data-state=open]>svg]:rotate-180 w-full text-left">
-            <CardHeader className="bg-secondary/50 p-6 w-full flex flex-row items-center justify-between">
-              <div className="flex flex-col">
-                 <CardTitle className="text-3xl font-headline font-bold text-primary flex items-center">
-                    {equipment.type?.toLowerCase().includes('laptop') ? <Laptop size={32} className="mr-3 text-accent" /> : <Computer size={32} className="mr-3 text-accent" />}
-                    {equipment.name}
-                  </CardTitle>
-                  <CardDescription className="text-md text-muted-foreground">ID PC: {equipment.id}</CardDescription>
-              </div>
-              {/* The ChevronDown icon is automatically added by AccordionTrigger */}
-            </CardHeader>
-          </AccordionTrigger>
-          <AccordionContent className="pt-0">
-            <CardContent className="p-6 space-y-6">
-              {/* Información de PC */}
-              <div>
-                <h3 className="text-xl font-semibold text-primary mb-3 border-b pb-2">Información de PC</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                  <DetailItem label="Procesador" value={equipment.processor} icon={Server} />
-                  <DetailItem label="Memoria RAM" value={equipment.ramAmount} icon={Info} />
-                  <DetailItem label="Tipo de RAM" value={equipment.ramType} icon={Info} />
-                  <DetailItem label="Capacidad Disco" value={equipment.storageCapacity} icon={Archive}/>
-                  <DetailItem label="Tipo Disco" value={equipment.storageType} icon={Archive}/>
-                  <DetailItem label="Sistema Operativo" value={equipment.os} icon={Computer} />
-                  <DetailItem label="Dirección IP" value={equipment.ipAddress} icon={Info} />
-                  <DetailItem label="Tipo de Equipo (IA)" value={equipment.type} icon={HelpCircle} />
-                </div>
-                <div className="mt-3">
-                  <DetailItem label="Puntos Comunes de Falla (IA)" value={equipment.commonFailurePoints} icon={Zap} />
-                </div>
-              </div>
+      <Card className="border rounded-lg shadow-xl overflow-hidden">
+        <CardHeader className="bg-secondary/50 p-6">
+          <div className="flex flex-col">
+            <CardTitle className="text-3xl font-headline font-bold text-primary flex items-center">
+              {equipment.type?.toLowerCase().includes('laptop') ? <Laptop size={32} className="mr-3 text-accent" /> : <Computer size={32} className="mr-3 text-accent" />}
+              {equipment.name}
+            </CardTitle>
+            <CardDescription className="text-md text-muted-foreground">ID PC: {equipment.id}</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6 space-y-6">
+          {/* Información de PC */}
+          <div>
+            <h3 className="text-xl font-semibold text-primary mb-3 border-b pb-2">Información de PC</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+              <DetailItem label="Procesador" value={equipment.processor} icon={Server} />
+              <DetailItem label="Memoria RAM" value={equipment.ramAmount} icon={Info} />
+              <DetailItem label="Tipo de RAM" value={equipment.ramType} icon={Info} />
+              <DetailItem label="Capacidad Disco" value={equipment.storageCapacity} icon={Archive}/>
+              <DetailItem label="Tipo Disco" value={equipment.storageType} icon={Archive}/>
+              <DetailItem label="Sistema Operativo" value={equipment.os} icon={Computer} />
+              <DetailItem label="Dirección IP" value={equipment.ipAddress} icon={Info} />
+              <DetailItem label="Tipo de Equipo (IA)" value={equipment.type} icon={HelpCircle} />
+            </div>
+            <div className="mt-3">
+              <DetailItem label="Puntos Comunes de Falla (IA)" value={equipment.commonFailurePoints} icon={Zap} />
+            </div>
+          </div>
 
-              {/* Información de Inventario */}
-              <div>
-                <h3 className="text-xl font-semibold text-primary mb-3 border-b pb-2">Información de Inventario</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                  <DetailItem label="Nombre de Usuario" value={equipment.userName} />
-                  <DetailItem label="No. Patrimonial PC" value={equipment.pcPatrimonialId} />
-                  <DetailItem label="No. Patrimonial Mouse" value={equipment.mousePatrimonialId} icon={Mouse} />
-                  <DetailItem label="Marca Mouse" value={equipment.mouseBrand} icon={Mouse} />
-                  <DetailItem label="Modelo Mouse" value={equipment.mouseModel} icon={Mouse} />
-                  <DetailItem label="No. Patrimonial Monitor" value={equipment.monitorPatrimonialId} icon={Monitor} />
-                  <DetailItem label="Marca Monitor" value={equipment.monitorBrand} icon={Monitor} />
-                  <DetailItem label="Modelo Monitor" value={equipment.monitorModel} icon={Monitor} />
-                  <DetailItem label="No. Patrimonial Teclado" value={equipment.keyboardPatrimonialId} icon={Keyboard} />
-                  <DetailItem label="Marca Teclado" value={equipment.keyboardBrand} icon={Keyboard} />
-                  <DetailItem label="Modelo Teclado" value={equipment.keyboardModel} icon={Keyboard} />
-                  <DetailItem label="No. Patrimonial Regulador" value={equipment.regulatorPatrimonialId} icon={Zap} />
-                  <DetailItem label="Marca Regulador" value={equipment.regulatorBrand} icon={Zap} />
-                  <DetailItem label="Modelo Regulador" value={equipment.regulatorModel} icon={Zap} />
-                  <DetailItem label="Estado de PC" value={equipment.pcStatus} />
-                  <DetailItem label="¿Piezas reutilizables?" value={equipment.reusableParts} />
-                </div>
-              </div>
-              
-              {/* Fechas de Mantenimiento */}
-              <div>
-                <h3 className="text-xl font-semibold text-primary mb-3 border-b pb-2">Fechas de Mantenimiento</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                    <DetailItem label="Último Mantenimiento" value={formatDate(equipment.lastMaintenanceDate)} icon={CalendarDays}/>
-                    <DetailItem label="Próximo Mantenimiento Sugerido" value={formatDate(equipment.nextMaintenanceDate)} icon={CalendarDays}/>
-                </div>
-              </div>
-            </CardContent>
+          {/* Información de Inventario */}
+          <div>
+            <h3 className="text-xl font-semibold text-primary mb-3 border-b pb-2">Información de Inventario</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+              <DetailItem label="Nombre de Usuario" value={equipment.userName} />
+              <DetailItem label="No. Patrimonial PC" value={equipment.pcPatrimonialId} />
+              <DetailItem label="No. Patrimonial Mouse" value={equipment.mousePatrimonialId} icon={Mouse} />
+              <DetailItem label="Marca Mouse" value={equipment.mouseBrand} icon={Mouse} />
+              <DetailItem label="Modelo Mouse" value={equipment.mouseModel} icon={Mouse} />
+              <DetailItem label="No. Patrimonial Monitor" value={equipment.monitorPatrimonialId} icon={Monitor} />
+              <DetailItem label="Marca Monitor" value={equipment.monitorBrand} icon={Monitor} />
+              <DetailItem label="Modelo Monitor" value={equipment.monitorModel} icon={Monitor} />
+              <DetailItem label="No. Patrimonial Teclado" value={equipment.keyboardPatrimonialId} icon={Keyboard} />
+              <DetailItem label="Marca Teclado" value={equipment.keyboardBrand} icon={Keyboard} />
+              <DetailItem label="Modelo Teclado" value={equipment.keyboardModel} icon={Keyboard} />
+              <DetailItem label="No. Patrimonial Regulador" value={equipment.regulatorPatrimonialId} icon={Zap} />
+              <DetailItem label="Marca Regulador" value={equipment.regulatorBrand} icon={Zap} />
+              <DetailItem label="Modelo Regulador" value={equipment.regulatorModel} icon={Zap} />
+              <DetailItem label="Estado de PC" value={equipment.pcStatus} />
+              <DetailItem label="¿Piezas reutilizables?" value={equipment.reusableParts} />
+            </div>
+          </div>
+          
+          {/* Fechas de Mantenimiento */}
+          <div>
+            <h3 className="text-xl font-semibold text-primary mb-3 border-b pb-2">Fechas de Mantenimiento</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                <DetailItem label="Último Mantenimiento" value={formatDate(equipment.lastMaintenanceDate)} icon={CalendarDays}/>
+                <DetailItem label="Próximo Mantenimiento Sugerido" value={formatDate(equipment.nextMaintenanceDate)} icon={CalendarDays}/>
+            </div>
+          </div>
+        </CardContent>
 
-            <CardFooter className="bg-secondary/50 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                <Button asChild size="lg" className="w-full md:w-auto shadow-md hover:shadow-lg transition-shadow bg-primary hover:bg-primary/90">
-                  <Link href={`/equipment/${equipment.id}/register`}>
-                    <Wrench size={20} className="mr-2" /> Registrar Nuevo Mantenimiento
-                  </Link>
-                </Button>
-                <Button asChild size="lg" className="w-full md:w-auto shadow-md hover:shadow-lg transition-shadow bg-accent hover:bg-accent/90 text-accent-foreground">
-                  <Link href={`/equipment/${equipment.id}/edit`}>
-                    <Edit3 size={20} className="mr-2" /> Modificar datos de Equipo
-                  </Link>
-                </Button>
-              </CardFooter>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+        <CardFooter className="bg-secondary/50 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <Button asChild size="lg" className="w-full md:w-auto shadow-md hover:shadow-lg transition-shadow bg-primary hover:bg-primary/90">
+              <Link href={`/equipment/${equipment.id}/register`}>
+                <Wrench size={20} className="mr-2" /> Registrar Nuevo Mantenimiento
+              </Link>
+            </Button>
+            <Button asChild size="lg" className="w-full md:w-auto shadow-md hover:shadow-lg transition-shadow bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Link href={`/equipment/${equipment.id}/edit`}>
+                <Edit3 size={20} className="mr-2" /> Modificar datos de Equipo
+              </Link>
+            </Button>
+          </CardFooter>
+      </Card>
       
       <MaintenanceHistoryTable 
         records={maintenanceRecords} 
@@ -214,4 +206,3 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 };
 
 export default EquipmentDetailClientPage;
-
