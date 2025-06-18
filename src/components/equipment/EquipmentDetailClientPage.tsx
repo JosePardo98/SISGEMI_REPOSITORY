@@ -203,10 +203,6 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                 <div className="mt-2">
                   <DetailItem label="Puntos Comunes de Falla (IA)" value={equipment.commonFailurePoints} icon={Zap} />
                 </div>
-                 <div className="mt-4">
-                    <p className="text-sm"><strong className="font-medium text-foreground/80 flex items-center"><CalendarDays size={18} className="mr-2 text-accent" />Último Mantenimiento General:</strong> {formatDate(equipment.lastMaintenanceDate)}</p>
-                    <p className="text-sm"><strong className="font-medium text-foreground/80 flex items-center"><CalendarClock size={18} className="mr-2 text-accent" />Próximo Mantenimiento Sugerido:</strong> {formatDate(equipment.nextMaintenanceDate)}</p>
-                 </div>
               </AccordionContent>
             </AccordionItem>
 
