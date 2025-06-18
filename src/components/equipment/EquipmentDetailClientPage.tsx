@@ -181,7 +181,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <Accordion type="multiple" defaultValue={['info-pc', 'info-inventario', 'fechas-preventivo']} className="w-full">
+          <Accordion type="multiple" defaultValue={['info-pc', 'info-inventario', 'hist-preventivo']} className="w-full">
             <AccordionItem value="info-pc" className="border-b">
               <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
                 <div className="flex items-center">
@@ -203,6 +203,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                 <div className="mt-2">
                   <DetailItem label="Puntos Comunes de Falla (IA)" value={equipment.commonFailurePoints} icon={Zap} />
                 </div>
+                 
               </AccordionContent>
             </AccordionItem>
 
@@ -235,11 +236,11 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               </AccordionContent>
             </AccordionItem>
             
-            <AccordionItem value="fechas-preventivo" className="border-b">
+            <AccordionItem value="hist-preventivo" className="border-b">
               <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
                 <div className="flex items-center">
                   <HistoryIcon size={26} className="mr-3 text-accent" />
-                  Fechas de Mantenimientos Preventivos
+                  Historial de Mantenimientos Preventivos
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-6 pt-2 pb-6">
@@ -316,11 +317,11 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="fechas-correctivo" className="border-b-0">
+            <AccordionItem value="hist-correctivo" className="border-b-0">
               <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
                 <div className="flex items-center">
                   <Wrench size={26} className="mr-3 text-accent" />
-                  Fechas de Mantenimientos Correctivos
+                  Historial de Mantenimientos Correctivos
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-6 pt-2 pb-6">
@@ -352,4 +353,3 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 };
 
 export default EquipmentDetailClientPage;
-
