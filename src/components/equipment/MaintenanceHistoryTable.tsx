@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import type { Equipment, MaintenanceRecord } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from '@/components/ui/button';
-import { Trash2, Edit, AlertTriangle, HistoryIcon } from 'lucide-react';
+import { Trash2, Edit, AlertTriangle, HistoryIcon, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -72,8 +72,8 @@ export const MaintenanceHistoryTable: React.FC<MaintenanceHistoryTableProps> = (
   };
 
   return (
-    <Accordion type="single" collapsible defaultValue="item-1" className="w-full space-y-3">
-      <AccordionItem value="item-1" className="border rounded-lg shadow-lg overflow-hidden">
+    <Accordion type="single" collapsible defaultValue="preventive-maintenance" className="w-full space-y-3">
+      <AccordionItem value="preventive-maintenance" className="border rounded-lg shadow-lg overflow-hidden">
         <AccordionTrigger 
           className="p-4 text-xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
         >
@@ -153,6 +153,23 @@ export const MaintenanceHistoryTable: React.FC<MaintenanceHistoryTableProps> = (
               No se ha registrado ningún mantenimiento para este equipo.
             </p>
           )}
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="corrective-maintenance" className="border rounded-lg shadow-lg overflow-hidden">
+        <AccordionTrigger 
+          className="p-4 text-xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
+        >
+          <div className="flex items-center">
+            <Wrench size={26} className="mr-3 text-accent" />
+            Historial de Mantenimientos Correctivos
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="pt-2 p-4 border-t border-border">
+          <p className="text-muted-foreground">
+            La gestión de mantenimientos correctivos estará disponible próximamente.
+          </p>
+          {/* Aquí se podría agregar una tabla similar para mantenimientos correctivos en el futuro */}
         </AccordionContent>
       </AccordionItem>
     </Accordion>
