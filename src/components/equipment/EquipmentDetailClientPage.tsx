@@ -136,7 +136,6 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
             <Skeleton className="h-6 w-2/3" />
           </CardContent>
         </Card>
-        {/* Remove skeleton for separate MaintenanceHistoryTable */}
         <Skeleton className="h-10 w-1/3" />
       </div>
     );
@@ -181,8 +180,8 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
             <CardDescription className="text-md text-muted-foreground">ID PC: {equipment.id}</CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="p-0"> {/* Changed padding to p-0 for accordion items to manage their own padding */}
-          <Accordion type="multiple" defaultValue={['info-pc', 'info-inventario', 'hist-preventivo']} className="w-full">
+        <CardContent className="p-0">
+          <Accordion type="multiple" defaultValue={['info-pc', 'info-inventario', 'fechas-preventivo']} className="w-full">
             <AccordionItem value="info-pc" className="border-b">
               <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
                 <div className="flex items-center">
@@ -204,6 +203,10 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                 <div className="mt-2">
                   <DetailItem label="Puntos Comunes de Falla (IA)" value={equipment.commonFailurePoints} icon={Zap} />
                 </div>
+                 <div className="mt-4">
+                    <p className="text-sm"><strong className="font-medium text-foreground/80 flex items-center"><CalendarDays size={18} className="mr-2 text-accent" />Último Mantenimiento General:</strong> {formatDate(equipment.lastMaintenanceDate)}</p>
+                    <p className="text-sm"><strong className="font-medium text-foreground/80 flex items-center"><CalendarClock size={18} className="mr-2 text-accent" />Próximo Mantenimiento Sugerido:</strong> {formatDate(equipment.nextMaintenanceDate)}</p>
+                 </div>
               </AccordionContent>
             </AccordionItem>
 
@@ -236,26 +239,11 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               </AccordionContent>
             </AccordionItem>
             
-            <AccordionItem value="fechas-mantenimiento" className="border-b">
-              <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
-                 <div className="flex items-center">
-                  <CalendarClock size={24} className="mr-3 text-accent" />
-                  Fechas de Mantenimiento
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pt-2 pb-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
-                    <DetailItem label="Último Mantenimiento" value={formatDate(equipment.lastMaintenanceDate)} icon={CalendarDays}/>
-                    <DetailItem label="Próximo Mantenimiento Sugerido" value={formatDate(equipment.nextMaintenanceDate)} icon={CalendarDays}/>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="hist-preventivo" className="border-b">
+            <AccordionItem value="fechas-preventivo" className="border-b">
               <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
                 <div className="flex items-center">
                   <HistoryIcon size={26} className="mr-3 text-accent" />
-                  Historial de Mantenimientos Preventivos
+                  Fechas de Mantenimientos Preventivos
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-6 pt-2 pb-6">
@@ -332,11 +320,11 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="hist-correctivo" className="border-b-0">
+            <AccordionItem value="fechas-correctivo" className="border-b-0">
               <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
                 <div className="flex items-center">
                   <Wrench size={26} className="mr-3 text-accent" />
-                  Historial de Mantenimientos Correctivos
+                  Fechas de Mantenimientos Correctivos
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-6 pt-2 pb-6">
@@ -363,9 +351,9 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
           </CardFooter>
       </Card>
       
-      {/* The MaintenanceHistoryTable component is no longer rendered here separately */}
     </div>
   );
 };
 
 export default EquipmentDetailClientPage;
+
