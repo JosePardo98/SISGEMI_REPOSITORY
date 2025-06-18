@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import type { Equipment, MaintenanceRecord } from '@/lib/types';
 import { getEquipmentById, getMaintenanceRecordsForEquipment } from '@/lib/actions';
 import { MaintenanceHistoryTable } from './MaintenanceHistoryTable';
@@ -33,28 +33,34 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const eqData = await getEquipmentById(equipmentId);
-        if (eqData) {
-          setEquipment(eqData);
-          const recordsData = await getMaintenanceRecordsForEquipment(equipmentId);
-          setMaintenanceRecords(recordsData);
-        } else {
-          setError('Equipo no encontrado.');
-        }
-      } catch (err) {
-        setError('Error al cargar los detalles del equipo.');
-        console.error(err);
-      } finally {
-        setLoading(false);
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const eqData = await getEquipmentById(equipmentId);
+      if (eqData) {
+        setEquipment(eqData);
+        const recordsData = await getMaintenanceRecordsForEquipment(equipmentId);
+        setMaintenanceRecords(recordsData);
+      } else {
+        setError('Equipo no encontrado.');
       }
-    };
-    fetchData();
+    } catch (err) {
+      setError('Error al cargar los detalles del equipo.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }, [equipmentId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleRecordDeleted = () => {
+    // Re-fetch data to update the list and potentially the equipment's last maintenance date
+    fetchData();
+  };
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
@@ -190,7 +196,11 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
           </CardFooter>
       </Card>
       
-      <MaintenanceHistoryTable records={maintenanceRecords} equipment={equipment} />
+      <MaintenanceHistoryTable 
+        records={maintenanceRecords} 
+        equipment={equipment} 
+        onRecordDeleted={handleRecordDeleted}
+      />
     </div>
   );
 };
