@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const EquipmentClientPage: React.FC = () => {
   const [equipments, setEquipments] = useState<Equipment[]>([]);
@@ -36,12 +37,15 @@ const EquipmentClientPage: React.FC = () => {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-12 w-1/3" />
-          <Skeleton className="h-10 w-48" />
+        {/* Skeleton for AccordionTrigger */}
+        <Skeleton className="h-14 w-full rounded-md" />
+        {/* Skeletons for AccordionContent (assuming it's open) */}
+        <div className="space-y-6 pt-4 pl-2 pr-2">
+          <div className="flex justify-end">
+            <Skeleton className="h-10 w-48 rounded-md" /> {/* Add button */}
+          </div>
+          <Skeleton className="h-64 w-full rounded-md" /> {/* Table */}
         </div>
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-64 w-full" />
       </div>
     );
   }
@@ -57,18 +61,28 @@ const EquipmentClientPage: React.FC = () => {
   }
   
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-headline font-bold text-primary">Lista de Equipos</h2>
-        <Button asChild className="bg-primary hover:bg-primary/90">
-          <Link href="/equipment/new">
-            <PlusCircle size={20} className="mr-2" />
-            Agregar Nuevo Equipo
-          </Link>
-        </Button>
-      </div>
-      <EquipmentTable equipments={equipments} />
-    </div>
+    <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
+      <AccordionItem value="item-1" className="border-b-0"> {/* No bottom border for a cleaner section look */}
+        <AccordionTrigger 
+          className="py-3 text-3xl font-headline font-bold text-primary hover:no-underline flex items-center justify-between w-full text-left"
+        >
+          Equipos de Cómputo
+        </AccordionTrigger>
+        <AccordionContent className="pt-2"> 
+          <div className="space-y-6">
+            <div className="flex justify-end items-center pt-2"> 
+              <Button asChild className="bg-primary hover:bg-primary/90">
+                <Link href="/equipment/new">
+                  <PlusCircle size={20} className="mr-2" />
+                  Agregar Nuevo Equipo
+                </Link>
+              </Button>
+            </div>
+            <EquipmentTable equipments={equipments} />
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
 
