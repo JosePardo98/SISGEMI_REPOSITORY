@@ -7,7 +7,7 @@ import { getEquipments } from '@/lib/actions';
 import { EquipmentTable } from './EquipmentTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, PlusCircle } from 'lucide-react';
+import { Terminal, PlusCircle, Printer, ScanLine, Receipt, HardDrive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -37,15 +37,10 @@ const EquipmentClientPage: React.FC = () => {
   if (loading) {
     return (
       <div className="space-y-4">
-        {/* Skeleton for AccordionTrigger */}
         <Skeleton className="h-14 w-full rounded-md" />
-        {/* Skeletons for AccordionContent (assuming it's open) */}
-        <div className="space-y-6 pt-4 pl-2 pr-2">
-          <div className="flex justify-end">
-            <Skeleton className="h-10 w-48 rounded-md" /> {/* Add button */}
-          </div>
-          <Skeleton className="h-64 w-full rounded-md" /> {/* Table */}
-        </div>
+        <Skeleton className="h-14 w-full rounded-md" />
+        <Skeleton className="h-14 w-full rounded-md" />
+        <Skeleton className="h-14 w-full rounded-md" />
       </div>
     );
   }
@@ -61,24 +56,99 @@ const EquipmentClientPage: React.FC = () => {
   }
   
   return (
-    <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
-      <AccordionItem value="item-1" className="border-b-0"> {/* No bottom border for a cleaner section look */}
+    <Accordion type="single" collapsible defaultValue="item-1" className="w-full space-y-3">
+      <AccordionItem value="item-1" className="border rounded-lg shadow-sm overflow-hidden">
         <AccordionTrigger 
-          className="py-3 text-3xl font-headline font-bold text-primary hover:no-underline flex items-center justify-between w-full text-left"
+          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
         >
-          Equipos de Cómputo
+          <div className="flex items-center">
+            <HardDrive size={28} className="mr-3 text-accent" />
+            Equipos de Cómputo
+          </div>
         </AccordionTrigger>
-        <AccordionContent className="pt-2"> 
+        <AccordionContent className="pt-2 p-4 border-t border-border"> 
           <div className="space-y-6">
             <div className="flex justify-end items-center pt-2"> 
               <Button asChild className="bg-primary hover:bg-primary/90">
                 <Link href="/equipment/new">
                   <PlusCircle size={20} className="mr-2" />
-                  Agregar Nuevo Equipo
+                  Agregar Nuevo Equipo de Cómputo
                 </Link>
               </Button>
             </div>
             <EquipmentTable equipments={equipments} />
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="item-2" className="border rounded-lg shadow-sm overflow-hidden">
+        <AccordionTrigger 
+          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
+        >
+          <div className="flex items-center">
+            <Printer size={28} className="mr-3 text-accent" />
+             Impresoras y Escáneres
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="pt-2 p-4 border-t border-border"> 
+          <div className="space-y-6">
+             <div className="flex justify-end items-center pt-2"> 
+              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
+                <Link href="#">
+                  <PlusCircle size={20} className="mr-2" />
+                  Agregar Impresora/Escáner (Próximamente)
+                </Link>
+              </Button>
+            </div>
+            <p className="text-muted-foreground">La gestión de impresoras y escáneres estará disponible próximamente.</p>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="item-3" className="border rounded-lg shadow-sm overflow-hidden">
+        <AccordionTrigger 
+          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
+        >
+          <div className="flex items-center">
+            <Receipt size={28} className="mr-3 text-accent" />
+            Impresoras de Tickets
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="pt-2 p-4 border-t border-border"> 
+          <div className="space-y-6">
+            <div className="flex justify-end items-center pt-2"> 
+              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
+                <Link href="#">
+                  <PlusCircle size={20} className="mr-2" />
+                  Agregar Impresora de Tickets (Próximamente)
+                </Link>
+              </Button>
+            </div>
+            <p className="text-muted-foreground">La gestión de impresoras de tickets estará disponible próximamente.</p>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="item-4" className="border rounded-lg shadow-sm overflow-hidden">
+        <AccordionTrigger 
+          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
+        >
+          <div className="flex items-center">
+            <ScanLine size={28} className="mr-3 text-accent" />
+            Otros Dispositivos
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="pt-2 p-4 border-t border-border">
+           <div className="space-y-6">
+            <div className="flex justify-end items-center pt-2"> 
+              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
+                <Link href="#">
+                  <PlusCircle size={20} className="mr-2" />
+                  Agregar Otro Dispositivo (Próximamente)
+                </Link>
+              </Button>
+            </div>
+            <p className="text-muted-foreground">La gestión de otros tipos de dispositivos estará disponible próximamente.</p>
           </div>
         </AccordionContent>
       </AccordionItem>
