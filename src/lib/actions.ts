@@ -60,13 +60,15 @@ export async function getEquipmentById(id: string): Promise<Equipment | undefine
 export async function getMaintenanceRecordsForEquipment(equipmentId: string): Promise<MaintenanceRecord[]> {
   try {
     const recordsCol = collection(db, 'maintenanceRecords');
-    const q = query(recordsCol, where('equipmentId', '==', equipmentId), orderBy('date', 'desc'));
+    // Removed orderBy('date', 'desc') to prevent missing index error. Sorting is handled client-side.
+    const q = query(recordsCol, where('equipmentId', '==', equipmentId));
     const recordSnapshot = await getDocs(q);
     const recordList = recordSnapshot.docs.map(doc => {
       const data = doc.data();
       return convertTimestampToISO({ ...data, id: doc.id }) as MaintenanceRecord;
     });
-    return recordList;
+    // Client-side sorting can be re-confirmed in MaintenanceHistoryTable.tsx or here if necessary
+    return recordList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   } catch (error) {
     console.error("Error fetching maintenance records:", error);
     throw new Error(`No se pudieron cargar los registros de mantenimiento para el equipo ${equipmentId}.`);
@@ -136,7 +138,8 @@ export async function updateMaintenanceRecord(
     if (dataToUpdate.date) {
       const records = await getMaintenanceRecordsForEquipment(equipmentId);
       if (records.length > 0) {
-        const latestRecord = records[0]; // Already sorted by date desc
+        // Records are now sorted by getMaintenanceRecordsForEquipment
+        const latestRecord = records[0]; 
         const nextDate = new Date(latestRecord.date);
         nextDate.setMonth(nextDate.getMonth() + 6);
         await updateDoc(doc(db, 'equipments', equipmentId), {
@@ -145,7 +148,7 @@ export async function updateMaintenanceRecord(
         });
       } else {
          await updateDoc(doc(db, 'equipments', equipmentId), {
-          lastMaintenanceDate: null, // Or undefined, depending on preference
+          lastMaintenanceDate: null, 
           nextMaintenanceDate: null,
         });
       }
@@ -173,7 +176,8 @@ export async function deleteMaintenanceRecord(recordId: string, equipmentId: str
     const equipmentRef = doc(db, 'equipments', equipmentId);
 
     if (records.length > 0) {
-      const latestRecord = records[0]; // Already sorted by date desc in getMaintenanceRecordsForEquipment
+      // Records are now sorted by getMaintenanceRecordsForEquipment
+      const latestRecord = records[0]; 
       const nextDate = new Date(latestRecord.date);
       nextDate.setMonth(nextDate.getMonth() + 6);
       await updateDoc(equipmentRef, {
@@ -183,8 +187,8 @@ export async function deleteMaintenanceRecord(recordId: string, equipmentId: str
     } else {
       // No maintenance records left, clear the dates
       await updateDoc(equipmentRef, {
-        lastMaintenanceDate: null, // OrFieldValue.delete() if you want to remove the field
-        nextMaintenanceDate: null, // Or FieldValue.delete()
+        lastMaintenanceDate: null, 
+        nextMaintenanceDate: null, 
       });
     }
     revalidatePath(`/equipment/${equipmentId}`);
