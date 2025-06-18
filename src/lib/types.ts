@@ -3,6 +3,7 @@ export type Equipment = {
   name: string; // Nombre PC
   os: string; // Sistema Operativo
   lastMaintenanceDate?: string; // ISO date string, e.g., "2023-10-26"
+  lastTechnician?: string; // Technician from the last maintenance
   nextMaintenanceDate?: string; // ISO date string, e.g., "2024-04-26"
   
   // Información de PC

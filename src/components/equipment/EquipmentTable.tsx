@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -6,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from 'next/link';
-import { ArrowUpDown, Eye, Search } from 'lucide-react';
+import { ArrowUpDown, Eye, Search, Users } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -37,7 +38,8 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
       items = items.filter(eq =>
         eq.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         eq.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        eq.os.toLowerCase().includes(searchTerm.toLowerCase())
+        eq.os.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (eq.lastTechnician && eq.lastTechnician.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -86,10 +88,10 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Buscar equipo por ID, Nombre o SO..."
+          placeholder="Buscar por ID, Nombre, SO o Técnico..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-8 w-full md:w-1/3"
+          className="pl-8 w-full md:w-1/2"
         />
       </div>
       <div className="rounded-md border shadow-sm">
@@ -108,8 +110,8 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
               <TableHead onClick={() => handleSort('lastMaintenanceDate')} className="cursor-pointer hover:bg-accent/50">
                 <div className="flex items-center">Último Mantenimiento {renderSortIcon('lastMaintenanceDate')}</div>
               </TableHead>
-              <TableHead onClick={() => handleSort('nextMaintenanceDate')} className="cursor-pointer hover:bg-accent/50">
-                <div className="flex items-center">Próximo Mantenimiento {renderSortIcon('nextMaintenanceDate')}</div>
+              <TableHead onClick={() => handleSort('lastTechnician')} className="cursor-pointer hover:bg-accent/50">
+                <div className="flex items-center">Técnicos {renderSortIcon('lastTechnician')}</div>
               </TableHead>
               <TableHead>Acción</TableHead>
             </TableRow>
@@ -121,7 +123,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
                 <TableCell>{equipment.name}</TableCell>
                 <TableCell>{equipment.os}</TableCell>
                 <TableCell>{formatDate(equipment.lastMaintenanceDate)}</TableCell>
-                <TableCell>{formatDate(equipment.nextMaintenanceDate)}</TableCell>
+                <TableCell>{equipment.lastTechnician || 'N/A'}</TableCell>
                 <TableCell>
                   <Button asChild variant="outline" size="sm">
                     <Link href={`/equipment/${equipment.id}`}>

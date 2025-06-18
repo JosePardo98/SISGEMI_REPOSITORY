@@ -109,7 +109,8 @@ export async function addMaintenanceRecord(
     
     await updateDoc(equipmentRef, {
       lastMaintenanceDate: recordData.date, 
-      nextMaintenanceDate: nextDate.toISOString().split('T')[0] 
+      nextMaintenanceDate: nextDate.toISOString().split('T')[0],
+      lastTechnician: recordData.technician // Added technician
     });
 
     console.log('New maintenance record added to Firestore with ID:', newRecordRef.id);
@@ -117,6 +118,7 @@ export async function addMaintenanceRecord(
     if (!newRecordSnap.exists()) throw new Error("Failed to retrieve new maintenance record");
     
     revalidatePath(`/equipment/${recordData.equipmentId}`);
+    revalidatePath('/'); // Revalidate home page as equipment list is there
     return convertTimestampToISO({ ...newRecordSnap.data(), id: newRecordSnap.id }) as MaintenanceRecord;
 
   } catch (error) {
@@ -134,30 +136,31 @@ export async function updateMaintenanceRecord(
     const recordRef = doc(db, 'maintenanceRecords', recordId);
     await updateDoc(recordRef, dataToUpdate);
 
-    // If the date was updated, potentially update the equipment's lastMaintenanceDate
-    if (dataToUpdate.date) {
-      const records = await getMaintenanceRecordsForEquipment(equipmentId);
-      if (records.length > 0) {
-        // Records are now sorted by getMaintenanceRecordsForEquipment
-        const latestRecord = records[0]; 
-        const nextDate = new Date(latestRecord.date);
-        nextDate.setMonth(nextDate.getMonth() + 6);
-        await updateDoc(doc(db, 'equipments', equipmentId), {
-          lastMaintenanceDate: latestRecord.date,
-          nextMaintenanceDate: nextDate.toISOString().split('T')[0],
-        });
-      } else {
-         await updateDoc(doc(db, 'equipments', equipmentId), {
-          lastMaintenanceDate: null, 
-          nextMaintenanceDate: null,
-        });
-      }
+    const records = await getMaintenanceRecordsForEquipment(equipmentId);
+    const equipmentDocRef = doc(db, 'equipments', equipmentId);
+
+    if (records.length > 0) {
+      const latestRecord = records[0]; 
+      const nextDate = new Date(latestRecord.date);
+      nextDate.setMonth(nextDate.getMonth() + 6);
+      await updateDoc(equipmentDocRef, {
+        lastMaintenanceDate: latestRecord.date,
+        nextMaintenanceDate: nextDate.toISOString().split('T')[0],
+        lastTechnician: latestRecord.technician // Updated technician
+      });
+    } else {
+       await updateDoc(equipmentDocRef, {
+        lastMaintenanceDate: null, 
+        nextMaintenanceDate: null,
+        lastTechnician: null // Clear technician
+      });
     }
     
     const updatedRecordSnap = await getDoc(recordRef);
     if (!updatedRecordSnap.exists()) throw new Error("Failed to retrieve updated maintenance record");
     
     revalidatePath(`/equipment/${equipmentId}`);
+    revalidatePath('/');
     return convertTimestampToISO({ ...updatedRecordSnap.data(), id: updatedRecordSnap.id }) as MaintenanceRecord;
   } catch (error) {
     console.error("Error updating maintenance record:", error);
@@ -171,27 +174,27 @@ export async function deleteMaintenanceRecord(recordId: string, equipmentId: str
     await deleteDoc(recordRef);
     console.log('Maintenance record deleted from Firestore:', recordId);
 
-    // After deleting, recalculate lastMaintenanceDate and nextMaintenanceDate for the equipment
     const records = await getMaintenanceRecordsForEquipment(equipmentId);
-    const equipmentRef = doc(db, 'equipments', equipmentId);
+    const equipmentDocRef = doc(db, 'equipments', equipmentId);
 
     if (records.length > 0) {
-      // Records are now sorted by getMaintenanceRecordsForEquipment
       const latestRecord = records[0]; 
       const nextDate = new Date(latestRecord.date);
       nextDate.setMonth(nextDate.getMonth() + 6);
-      await updateDoc(equipmentRef, {
+      await updateDoc(equipmentDocRef, {
         lastMaintenanceDate: latestRecord.date,
         nextMaintenanceDate: nextDate.toISOString().split('T')[0],
+        lastTechnician: latestRecord.technician // Updated technician
       });
     } else {
-      // No maintenance records left, clear the dates
-      await updateDoc(equipmentRef, {
+      await updateDoc(equipmentDocRef, {
         lastMaintenanceDate: null, 
         nextMaintenanceDate: null, 
+        lastTechnician: null // Clear technician
       });
     }
     revalidatePath(`/equipment/${equipmentId}`);
+    revalidatePath('/');
   } catch (error) {
     console.error("Error deleting maintenance record from Firestore:", error);
     throw new Error("No se pudo eliminar el registro de mantenimiento de Firestore.");
@@ -200,7 +203,7 @@ export async function deleteMaintenanceRecord(recordId: string, equipmentId: str
 
 
 export async function addEquipment(
-  equipmentData: Omit<Equipment, 'lastMaintenanceDate' | 'nextMaintenanceDate' | 'specifications'>
+  equipmentData: Omit<Equipment, 'lastMaintenanceDate' | 'nextMaintenanceDate' | 'specifications' | 'lastTechnician'>
 ): Promise<Equipment> {
   try {
     const equipmentRef = doc(db, 'equipments', equipmentData.id);
@@ -210,8 +213,13 @@ export async function addEquipment(
       throw new Error(`El equipo con ID ${equipmentData.id} ya existe en Firestore.`);
     }
 
+    // lastMaintenanceDate, nextMaintenanceDate, and lastTechnician are derived from maintenance records
+    // So they are not set when adding new equipment initially
     const dataToSave = {
         ...equipmentData,
+        lastMaintenanceDate: undefined,
+        nextMaintenanceDate: undefined,
+        lastTechnician: undefined,
     };
     
     await setDoc(equipmentRef, dataToSave);
@@ -237,11 +245,16 @@ export async function updateEquipment(
     const equipmentRef = doc(db, 'equipments', equipmentId);
 
     const processedData = { ...dataToUpdate };
+    // If lastMaintenanceDate is being manually set/cleared, lastTechnician might become inconsistent
+    // or should also be cleared/set. For now, only manage what's passed.
     if (processedData.lastMaintenanceDate === '') {
       processedData.lastMaintenanceDate = undefined; 
     }
     if (processedData.nextMaintenanceDate === '') {
       processedData.nextMaintenanceDate = undefined; 
+    }
+    if (processedData.lastTechnician === '') {
+      processedData.lastTechnician = undefined;
     }
     
     if ('specifications' in processedData) {
