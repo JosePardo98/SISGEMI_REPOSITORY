@@ -4,10 +4,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import type { Equipment, MaintenanceRecord } from '@/lib/types';
 import { getEquipmentById, getMaintenanceRecordsForEquipment } from '@/lib/actions';
-import { MaintenanceHistoryTable } from './MaintenanceHistoryTable';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Edit3, CalendarDays, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, Wrench, Briefcase, CalendarClock, FileText } from 'lucide-react';
+import { ArrowLeft, Edit3, CalendarDays, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, Wrench, Briefcase, CalendarClock, FileText, HistoryIcon, Trash2, Edit, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -15,6 +14,19 @@ import { Terminal } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from '@/hooks/use-toast';
 
 interface EquipmentDetailClientPageProps {
   equipmentId: string;
@@ -33,6 +45,8 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
   const [maintenanceRecords, setMaintenanceRecords] = useState<MaintenanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeletingRecord, setIsDeletingRecord] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const fetchData = useCallback(async () => {
     try {
@@ -58,18 +72,54 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
     fetchData();
   }, [fetchData]);
 
-  const handleRecordDeleted = () => {
-    fetchData();
-  };
-
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
      try {
-      return format(parseISO(dateString), 'PPP', { locale: es }); 
+      return format(parseISO(dateString), 'PPP', { locale: es });
     } catch (error) {
       return 'Fecha inválida';
     }
   };
+
+  const formatTableDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    try {
+      return format(parseISO(dateString), 'dd MMM yyyy', { locale: es });
+    } catch (error) {
+      console.error(`Invalid date string: ${dateString}`, error);
+      return 'Fecha inválida';
+    }
+  };
+
+  const sortedMaintenanceRecords = React.useMemo(() => {
+    return [...maintenanceRecords].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [maintenanceRecords]);
+
+  const handleDeleteRecord = async (recordId: string) => {
+    if (!equipment) return;
+    setIsDeletingRecord(recordId);
+    try {
+      const { deleteMaintenanceRecord } = await import('@/lib/actions');
+      await deleteMaintenanceRecord(recordId, equipment.id);
+
+      toast({
+        title: 'Registro Eliminado',
+        description: 'El registro de mantenimiento ha sido eliminado.',
+        variant: 'default',
+      });
+      fetchData(); 
+    } catch (error) {
+      console.error('Error deleting maintenance record:', error);
+      toast({
+        title: 'Error al Eliminar',
+        description: 'No se pudo eliminar el registro de mantenimiento.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsDeletingRecord(null);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -86,7 +136,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
             <Skeleton className="h-6 w-2/3" />
           </CardContent>
         </Card>
-        <Skeleton className="h-64 w-full" />
+        {/* Remove skeleton for separate MaintenanceHistoryTable */}
         <Skeleton className="h-10 w-1/3" />
       </div>
     );
@@ -131,8 +181,8 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
             <CardDescription className="text-md text-muted-foreground">ID PC: {equipment.id}</CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="p-0">
-          <Accordion type="multiple" defaultValue={['info-pc', 'info-inventario']} className="w-full">
+        <CardContent className="p-0"> {/* Changed padding to p-0 for accordion items to manage their own padding */}
+          <Accordion type="multiple" defaultValue={['info-pc', 'info-inventario', 'hist-preventivo']} className="w-full">
             <AccordionItem value="info-pc" className="border-b">
               <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
                 <div className="flex items-center">
@@ -186,7 +236,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               </AccordionContent>
             </AccordionItem>
             
-            <AccordionItem value="fechas-mantenimiento" className="border-b-0">
+            <AccordionItem value="fechas-mantenimiento" className="border-b">
               <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
                  <div className="flex items-center">
                   <CalendarClock size={24} className="mr-3 text-accent" />
@@ -200,6 +250,102 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                 </div>
               </AccordionContent>
             </AccordionItem>
+
+            <AccordionItem value="hist-preventivo" className="border-b">
+              <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
+                <div className="flex items-center">
+                  <HistoryIcon size={26} className="mr-3 text-accent" />
+                  Historial de Mantenimientos Preventivos
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pt-2 pb-6">
+                {sortedMaintenanceRecords.length > 0 ? (
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Fecha</TableHead>
+                          <TableHead>Técnico</TableHead>
+                          <TableHead>Descripción</TableHead>
+                          <TableHead className="text-right">Acciones</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {sortedMaintenanceRecords.map((record) => (
+                          <TableRow key={record.id}>
+                            <TableCell>{formatTableDate(record.date)}</TableCell>
+                            <TableCell>{record.technician}</TableCell>
+                            <TableCell>{record.description}</TableCell>
+                            <TableCell className="text-right space-x-2">
+                              <Button asChild variant="outline" size="sm" className="hover:border-accent hover:text-accent">
+                                <Link href={`/equipment/${equipment.id}/maintenance/${record.id}/edit`}>
+                                  <Edit size={16} className="mr-1" /> Modificar
+                                </Link>
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="outline" size="sm" className="hover:border-destructive hover:text-destructive" disabled={isDeletingRecord === record.id}>
+                                    {isDeletingRecord === record.id ? (
+                                      <>Eliminando...</>
+                                    ) : (
+                                      <><Trash2 size={16} className="mr-1" /> Eliminar</>
+                                    )}
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle className="flex items-center">
+                                      <AlertTriangle size={20} className="mr-2 text-destructive" />
+                                      ¿Confirmar Eliminación?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Esta acción no se puede deshacer. Esto eliminará permanentemente el registro de mantenimiento del {formatTableDate(record.date)}.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction 
+                                      onClick={() => handleDeleteRecord(record.id)}
+                                      className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                                    >
+                                      Sí, Eliminar
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : equipment.lastMaintenanceDate ? (
+                  <p className="text-muted-foreground">
+                    Último mantenimiento general registrado el: {formatDate(equipment.lastMaintenanceDate)}. 
+                    No hay un historial detallado de mantenimientos adicionales para este equipo.
+                  </p>
+                ) : (
+                  <p className="text-muted-foreground">
+                    No se ha registrado ningún mantenimiento para este equipo.
+                  </p>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="hist-correctivo" className="border-b-0">
+              <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
+                <div className="flex items-center">
+                  <Wrench size={26} className="mr-3 text-accent" />
+                  Historial de Mantenimientos Correctivos
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pt-2 pb-6">
+                <p className="text-muted-foreground">
+                  La gestión de mantenimientos correctivos estará disponible próximamente.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
           </Accordion>
         </CardContent>
 
@@ -217,14 +363,9 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
           </CardFooter>
       </Card>
       
-      <MaintenanceHistoryTable 
-        records={maintenanceRecords} 
-        equipment={equipment} 
-        onRecordDeleted={handleRecordDeleted}
-      />
+      {/* The MaintenanceHistoryTable component is no longer rendered here separately */}
     </div>
   );
 };
 
 export default EquipmentDetailClientPage;
-
