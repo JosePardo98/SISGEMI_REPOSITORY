@@ -1,7 +1,8 @@
+
 'use client';
 
 import React from 'react';
-import type { MaintenanceRecord } from '@/lib/types';
+import type { Equipment, MaintenanceRecord } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { format, parseISO } from 'date-fns';
@@ -9,10 +10,11 @@ import { es } from 'date-fns/locale';
 
 interface MaintenanceHistoryTableProps {
   records: MaintenanceRecord[];
+  equipment: Equipment; // Added equipment prop
 }
 
-export const MaintenanceHistoryTable: React.FC<MaintenanceHistoryTableProps> = ({ records }) => {
-  const formatDate = (dateString: string) => {
+export const MaintenanceHistoryTable: React.FC<MaintenanceHistoryTableProps> = ({ records, equipment }) => {
+  const formatDate = (dateString?: string) => { // Made dateString optional for equipment.lastMaintenanceDate
     if (!dateString) return 'N/A';
     try {
       return format(parseISO(dateString), 'dd MMM yyyy', { locale: es });
@@ -22,8 +24,6 @@ export const MaintenanceHistoryTable: React.FC<MaintenanceHistoryTableProps> = (
     }
   };
   
-  // Sort records by date, most recent first, directly in the component
-  // as the data source might not always provide it sorted or could be re-sorted elsewhere.
   const sortedRecords = React.useMemo(() => {
     return [...records].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [records]);
@@ -55,8 +55,15 @@ export const MaintenanceHistoryTable: React.FC<MaintenanceHistoryTableProps> = (
               </TableBody>
             </Table>
           </div>
+        ) : equipment.lastMaintenanceDate ? (
+          <p className="text-muted-foreground">
+            Último mantenimiento general registrado el: {formatDate(equipment.lastMaintenanceDate)}. 
+            No hay un historial detallado de mantenimientos adicionales para este equipo.
+          </p>
         ) : (
-          <p className="text-muted-foreground">No hay historial de mantenimiento para este equipo.</p>
+          <p className="text-muted-foreground">
+            No se ha registrado ningún mantenimiento para este equipo.
+          </p>
         )}
       </CardContent>
     </Card>

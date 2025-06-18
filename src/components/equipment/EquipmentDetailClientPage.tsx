@@ -7,7 +7,7 @@ import { getEquipmentById, getMaintenanceRecordsForEquipment } from '@/lib/actio
 import { MaintenanceHistoryTable } from './MaintenanceHistoryTable';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Edit3, CalendarDays, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive } from 'lucide-react';
+import { ArrowLeft, Edit3, CalendarDays, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, Wrench } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -176,16 +176,21 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
           </div>
         </CardContent>
 
-         <CardFooter className="bg-secondary/50 p-6 flex justify-end">
-          <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow bg-accent hover:bg-accent/90 text-accent-foreground">
-            <Link href={`/equipment/${equipment.id}/edit`}>
-              <Edit3 size={20} className="mr-2" /> Modificar datos de Equipo
-            </Link>
-          </Button>
-        </CardFooter>
+         <CardFooter className="bg-secondary/50 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <Button asChild size="lg" className="w-full md:w-auto shadow-md hover:shadow-lg transition-shadow bg-primary hover:bg-primary/90">
+              <Link href={`/equipment/${equipment.id}/register`}>
+                <Wrench size={20} className="mr-2" /> Registrar Nuevo Mantenimiento
+              </Link>
+            </Button>
+            <Button asChild size="lg" className="w-full md:w-auto shadow-md hover:shadow-lg transition-shadow bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Link href={`/equipment/${equipment.id}/edit`}>
+                <Edit3 size={20} className="mr-2" /> Modificar datos de Equipo
+              </Link>
+            </Button>
+          </CardFooter>
       </Card>
       
-      <MaintenanceHistoryTable records={maintenanceRecords} />
+      <MaintenanceHistoryTable records={maintenanceRecords} equipment={equipment} />
     </div>
   );
 };
