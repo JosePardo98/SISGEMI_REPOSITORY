@@ -203,7 +203,6 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                 <div className="mt-2">
                   <DetailItem label="Puntos Comunes de Falla (IA)" value={equipment.commonFailurePoints} icon={Zap} />
                 </div>
-                
               </AccordionContent>
             </AccordionItem>
 
@@ -261,7 +260,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                             <TableCell>{formatTableDate(record.date)}</TableCell>
                             <TableCell>{record.technician}</TableCell>
                             <TableCell>{record.description}</TableCell>
-                            <TableCell className="text-right space-x-2">
+                            <TableCell className="text-right space-x-4">
                               <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                                 <Link href={`/equipment/${equipment.id}/maintenance/${record.id}/edit`}>
                                   <Edit size={16} className="mr-1" /> Modificar
@@ -304,14 +303,9 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                       </TableBody>
                     </Table>
                   </div>
-                ) : equipment.lastMaintenanceDate ? (
-                  <p className="text-muted-foreground">
-                    Último mantenimiento general registrado el: {formatDate(equipment.lastMaintenanceDate)}. 
-                    No hay un historial detallado de mantenimientos adicionales para este equipo.
-                  </p>
                 ) : (
                   <p className="text-muted-foreground">
-                    No se ha registrado ningún mantenimiento para este equipo.
+                    No se ha registrado ningún mantenimiento preventivo para este equipo.
                   </p>
                 )}
               </AccordionContent>
@@ -353,3 +347,4 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 };
 
 export default EquipmentDetailClientPage;
+
