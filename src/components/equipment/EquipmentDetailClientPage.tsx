@@ -6,7 +6,7 @@ import type { Equipment, MaintenanceRecord } from '@/lib/types';
 import { getEquipmentById, getMaintenanceRecordsForEquipment } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Edit3, CalendarDays, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, Wrench, Briefcase, CalendarClock, FileText, HistoryIcon, Trash2, Edit, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Edit3, CalendarDays, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, Wrench, Briefcase, CalendarClock, FileText, History as HistoryIcon, Trash2, Edit, AlertTriangle, PlusCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -71,15 +71,6 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
-     try {
-      return format(parseISO(dateString), 'PPP', { locale: es });
-    } catch (error) {
-      return 'Fecha inválida';
-    }
-  };
 
   const formatTableDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
@@ -242,7 +233,14 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                   Historial de Mantenimientos Preventivos
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="px-6 pt-2 pb-6">
+              <AccordionContent className="px-6 pt-2 pb-6 space-y-4">
+                 <div className="flex justify-end">
+                  <Button asChild size="sm" className="bg-primary hover:bg-primary/90">
+                    <Link href={`/equipment/${equipment.id}/register`}>
+                      <Wrench size={16} className="mr-2" /> Registrar Mantenimiento Preventivo
+                    </Link>
+                  </Button>
+                </div>
                 {sortedMaintenanceRecords.length > 0 ? (
                   <div className="rounded-md border">
                     <Table>
@@ -304,7 +302,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                     </Table>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-center py-4">
                     No se ha registrado ningún mantenimiento preventivo para este equipo.
                   </p>
                 )}
@@ -318,8 +316,13 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                   Historial de Mantenimientos Correctivos
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="px-6 pt-2 pb-6">
-                <p className="text-muted-foreground">
+              <AccordionContent className="px-6 pt-2 pb-6 space-y-4">
+                <div className="flex justify-end">
+                  <Button size="sm" className="bg-primary hover:bg-primary/90" disabled>
+                    <Wrench size={16} className="mr-2" /> Registrar Mantenimiento Correctivo (Próximamente)
+                  </Button>
+                </div>
+                <p className="text-muted-foreground text-center py-4">
                   La gestión de mantenimientos correctivos estará disponible próximamente.
                 </p>
               </AccordionContent>
@@ -328,12 +331,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
           </Accordion>
         </CardContent>
 
-        <CardFooter className="bg-secondary/50 p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-t">
-            <Button asChild size="lg" className="w-full md:w-auto shadow-md hover:shadow-lg transition-shadow bg-primary hover:bg-primary/90">
-              <Link href={`/equipment/${equipment.id}/register`}>
-                <Wrench size={20} className="mr-2" /> Registrar Nuevo Mantenimiento
-              </Link>
-            </Button>
+        <CardFooter className="bg-secondary/50 p-6 flex flex-col md:flex-row justify-center items-center gap-4 border-t">
             <Button asChild size="lg" className="w-full md:w-auto shadow-md hover:shadow-lg transition-shadow bg-accent hover:bg-accent/90 text-accent-foreground">
               <Link href={`/equipment/${equipment.id}/edit`}>
                 <Edit3 size={20} className="mr-2" /> Modificar datos de Equipo
@@ -348,3 +346,4 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 
 export default EquipmentDetailClientPage;
 
+    
