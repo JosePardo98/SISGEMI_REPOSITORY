@@ -203,7 +203,6 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                 <div className="mt-2">
                   <DetailItem label="Puntos Comunes de Falla (IA)" value={equipment.commonFailurePoints} icon={Zap} />
                 </div>
-                 
               </AccordionContent>
             </AccordionItem>
 
@@ -262,7 +261,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                             <TableCell>{record.technician}</TableCell>
                             <TableCell>{record.description}</TableCell>
                             <TableCell className="text-right space-x-2">
-                              <Button asChild variant="outline" size="sm" className="hover:border-accent hover:text-accent">
+                              <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                                 <Link href={`/equipment/${equipment.id}/maintenance/${record.id}/edit`}>
                                   <Edit size={16} className="mr-1" /> Modificar
                                 </Link>
@@ -353,3 +352,4 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 };
 
 export default EquipmentDetailClientPage;
+
