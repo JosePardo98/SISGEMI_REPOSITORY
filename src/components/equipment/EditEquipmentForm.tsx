@@ -14,7 +14,6 @@ import { getEquipmentById, updateEquipment } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Save } from 'lucide-react';
 import type { Equipment } from '@/lib/types';
-import { format, parseISO } from 'date-fns';
 
 const equipmentFormSchema = z.object({
   // Información de PC
@@ -48,10 +47,6 @@ const equipmentFormSchema = z.object({
   keyboardModel: z.string().optional(),
   pcStatus: z.string().optional(),
   reusableParts: z.string().optional(),
-
-  // Fechas de Mantenimiento
-  lastMaintenanceDate: z.string().optional().refine(val => !val || !isNaN(Date.parse(val)), { message: "Fecha inválida" }),
-  nextMaintenanceDate: z.string().optional().refine(val => !val || !isNaN(Date.parse(val)), { message: "Fecha inválida" }),
 });
 
 export type EquipmentFormData = z.infer<typeof equipmentFormSchema>;
@@ -60,16 +55,6 @@ interface EditEquipmentFormProps {
   equipmentId: string;
   onSuccess?: () => void;
 }
-
-const formatDateForInput = (dateString?: string): string => {
-  if (!dateString) return '';
-  try {
-    return format(parseISO(dateString), 'yyyy-MM-dd');
-  } catch (e) {
-    console.warn("Invalid date string for input:", dateString);
-    return ''; 
-  }
-};
 
 export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentId, onSuccess }) => {
   const { toast } = useToast();
@@ -91,8 +76,8 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
           reset({
             name: equipment.name,
             os: equipment.os,
-            type: equipment.type, // Para IA
-            commonFailurePoints: equipment.commonFailurePoints, // Para IA
+            type: equipment.type, 
+            commonFailurePoints: equipment.commonFailurePoints, 
             processor: equipment.processor || '',
             ramAmount: equipment.ramAmount || '',
             ramType: equipment.ramType || '',
@@ -115,8 +100,6 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
             keyboardModel: equipment.keyboardModel || '',
             pcStatus: equipment.pcStatus || '',
             reusableParts: equipment.reusableParts || '',
-            lastMaintenanceDate: formatDateForInput(equipment.lastMaintenanceDate),
-            nextMaintenanceDate: formatDateForInput(equipment.nextMaintenanceDate),
           });
         } else {
           toast({
@@ -141,11 +124,8 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
   const onSubmit: SubmitHandler<EquipmentFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      const payload: Partial<Equipment> = {
-        ...data,
-        lastMaintenanceDate: data.lastMaintenanceDate || undefined,
-        nextMaintenanceDate: data.nextMaintenanceDate || undefined,
-      };
+      // lastMaintenanceDate and nextMaintenanceDate are managed by maintenance records
+      const payload: Partial<Omit<Equipment, 'lastMaintenanceDate' | 'nextMaintenanceDate'>> = data;
       await updateEquipment(equipmentId, payload);
       toast({
         title: "Equipo Actualizado",
@@ -314,22 +294,6 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
             </div>
           </div>
 
-          {/* Sección Fechas de Mantenimiento */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-foreground border-b pb-2 mb-4">Fechas de Mantenimiento</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="edit-equipment-lastMaintenanceDate">Último Mantenimiento</Label>
-                <Input id="edit-equipment-lastMaintenanceDate" type="date" {...register('lastMaintenanceDate')} />
-                {errors.lastMaintenanceDate && <p className="text-sm text-destructive">{errors.lastMaintenanceDate.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-equipment-nextMaintenanceDate">Próximo Mantenimiento</Label>
-                <Input id="edit-equipment-nextMaintenanceDate" type="date" {...register('nextMaintenanceDate')} />
-                {errors.nextMaintenanceDate && <p className="text-sm text-destructive">{errors.nextMaintenanceDate.message}</p>}
-              </div>
-            </div>
-          </div>
         </CardContent>
         <CardFooter>
           <Button type="submit" disabled={isSubmitting || isLoadingData} className="w-full bg-primary hover:bg-primary/90">
@@ -348,3 +312,4 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
     </Card>
   );
 };
+
