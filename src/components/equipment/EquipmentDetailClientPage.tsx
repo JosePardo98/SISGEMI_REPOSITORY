@@ -203,6 +203,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                 <div className="mt-2">
                   <DetailItem label="Puntos Comunes de Falla (IA)" value={equipment.commonFailurePoints} icon={Zap} />
                 </div>
+                
               </AccordionContent>
             </AccordionItem>
 
@@ -268,7 +269,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                               </Button>
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                  <Button variant="outline" size="sm" className="hover:border-destructive hover:text-destructive" disabled={isDeletingRecord === record.id}>
+                                  <Button variant="destructive" size="sm" disabled={isDeletingRecord === record.id}>
                                     {isDeletingRecord === record.id ? (
                                       <>Eliminando...</>
                                     ) : (
@@ -352,4 +353,3 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 };
 
 export default EquipmentDetailClientPage;
-
