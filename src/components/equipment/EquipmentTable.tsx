@@ -113,7 +113,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
               <TableHead onClick={() => handleSort('lastTechnician')} className="cursor-pointer hover:bg-accent/50">
                 <div className="flex items-center">Técnicos {renderSortIcon('lastTechnician')}</div>
               </TableHead>
-              <TableHead>Acción</TableHead>
+              <TableHead>Información</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -146,3 +146,4 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
     </div>
   );
 };
+
