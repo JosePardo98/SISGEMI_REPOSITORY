@@ -127,7 +127,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
                 <TableCell>
                   <Button asChild variant="outline" size="sm">
                     <Link href={`/equipment/${equipment.id}`}>
-                      <Eye size={16} className="mr-2" /> Ver Detalles
+                      <Eye size={16} className="mr-2" /> Ver información Detallada
                     </Link>
                   </Button>
                 </TableCell>
@@ -146,4 +146,3 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
     </div>
   );
 };
-
