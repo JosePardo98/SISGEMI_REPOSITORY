@@ -201,7 +201,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <Accordion type="multiple" defaultValue={['info-pc', 'info-inventario', 'hist-preventivo']} className="w-full">
+          <Accordion type="multiple" defaultValue={['info-pc', 'hist-preventivo']} className="w-full">
             <AccordionItem value="info-pc" className="border-b">
               <AccordionTrigger className="px-6 py-4 text-xl font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left hover:bg-secondary/20 transition-colors">
                 <div className="flex items-center">
@@ -276,7 +276,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                       <TableHeader>
                         <TableRow>
                           <TableHead>Fecha</TableHead>
-                          <TableHead>Técnico</TableHead>
+                          <TableHead>Ingenieros</TableHead>
                           <TableHead>Descripción</TableHead>
                           <TableHead className="text-right">Acciones</TableHead>
                         </TableRow>
@@ -359,7 +359,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                       <TableHeader>
                         <TableRow>
                           <TableHead>Fecha</TableHead>
-                          <TableHead>Técnico</TableHead>
+                          <TableHead>Ingenieros</TableHead>
                           <TableHead>Descripción</TableHead>
                           <TableHead className="text-right">Acciones</TableHead>
                         </TableRow>
@@ -436,3 +436,4 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 };
 
 export default EquipmentDetailClientPage;
+
