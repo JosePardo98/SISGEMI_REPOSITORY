@@ -7,7 +7,7 @@ import { getEquipments } from '@/lib/actions';
 import { EquipmentTable } from './EquipmentTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, PlusCircle, Printer, ScanLine, Receipt, HardDrive, Router } from 'lucide-react';
+import { Terminal, PlusCircle, Printer, ScanLine, Receipt, Computer, Router } from 'lucide-react'; // Changed HardDrive to Computer
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -63,7 +63,7 @@ const EquipmentClientPage: React.FC = () => {
           className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
         >
           <div className="flex items-center">
-            <HardDrive size={28} className="mr-3 text-accent" />
+            <Computer size={28} className="mr-3 text-accent" /> {/* Changed HardDrive to Computer */}
             Equipos de Cómputo
           </div>
         </AccordionTrigger>

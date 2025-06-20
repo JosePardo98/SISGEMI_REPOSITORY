@@ -127,7 +127,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
                 <TableCell>
                   <Button asChild variant="outline" size="sm">
                     <Link href={`/equipment/${equipment.id}`}>
-                      <Eye size={16} className="mr-2" /> Ver información Detallada
+                      <Eye size={16} className="mr-2" /> Ver Información Detallada
                     </Link>
                   </Button>
                 </TableCell>
