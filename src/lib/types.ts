@@ -2,9 +2,9 @@ export type Equipment = {
   id: string; // Corresponds to ID PC
   name: string; // Nombre PC
   os: string; // Sistema Operativo
-  lastMaintenanceDate?: string; // ISO date string, e.g., "2023-10-26"
-  lastTechnician?: string; // Technician from the last maintenance
-  nextMaintenanceDate?: string; // ISO date string, e.g., "2024-04-26"
+  lastMaintenanceDate?: string; // ISO date string, e.g., "2023-10-26" // For preventive
+  lastTechnician?: string; // Technician from the last preventive maintenance
+  nextMaintenanceDate?: string; // ISO date string, e.g., "2024-04-26" // For preventive
   
   // Información de PC
   processor?: string;
@@ -36,10 +36,19 @@ export type Equipment = {
   reusableParts?: string; // (e.g., "Sí", "No", "Algunas")
 };
 
-export type MaintenanceRecord = {
+export type MaintenanceRecord = { // This is for Preventive Maintenance
   id: string; // Unique ID for the record
   equipmentId: string;
   date: string; // ISO date string
   technician: string;
   description: string;
+};
+
+export type CorrectiveMaintenanceRecord = {
+  id: string; // Unique ID for the record
+  equipmentId: string;
+  date: string; // ISO date string
+  technician: string;
+  description: string;
+  // Potentially other fields specific to corrective maintenance like 'reportedBy', 'issueType', 'partsReplaced'
 };

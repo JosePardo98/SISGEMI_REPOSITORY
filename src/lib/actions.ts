@@ -3,7 +3,7 @@
 
 import { db } from './firebase';
 import { collection, doc, getDoc, getDocs, addDoc, updateDoc, setDoc, query, where, orderBy, serverTimestamp, Timestamp, deleteDoc, writeBatch } from 'firebase/firestore';
-import type { Equipment, MaintenanceRecord } from './types';
+import type { Equipment, MaintenanceRecord, CorrectiveMaintenanceRecord } from './types';
 import { suggestMaintenanceProcedures } from '@/ai/flows/suggest-maintenance-procedures';
 import type { SuggestMaintenanceProceduresInput, SuggestMaintenanceProceduresOutput } from '@/ai/flows/suggest-maintenance-procedures';
 import { revalidatePath } from 'next/cache';
@@ -57,21 +57,20 @@ export async function getEquipmentById(id: string): Promise<Equipment | undefine
   }
 }
 
+// --- Preventive Maintenance Records ---
 export async function getMaintenanceRecordsForEquipment(equipmentId: string): Promise<MaintenanceRecord[]> {
   try {
     const recordsCol = collection(db, 'maintenanceRecords');
-    // Removed orderBy('date', 'desc') to prevent missing index error. Sorting is handled client-side.
     const q = query(recordsCol, where('equipmentId', '==', equipmentId));
     const recordSnapshot = await getDocs(q);
     const recordList = recordSnapshot.docs.map(doc => {
       const data = doc.data();
       return convertTimestampToISO({ ...data, id: doc.id }) as MaintenanceRecord;
     });
-    // Client-side sorting can be re-confirmed in MaintenanceHistoryTable.tsx or here if necessary
     return recordList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   } catch (error) {
-    console.error("Error fetching maintenance records:", error);
-    throw new Error(`No se pudieron cargar los registros de mantenimiento para el equipo ${equipmentId}.`);
+    console.error("Error fetching preventive maintenance records:", error);
+    throw new Error(`No se pudieron cargar los registros de mantenimiento preventivo para el equipo ${equipmentId}.`);
   }
 }
 
@@ -84,12 +83,12 @@ export async function getMaintenanceRecordById(recordId: string): Promise<Mainte
       const data = recordSnap.data();
       return convertTimestampToISO({ ...data, id: recordSnap.id }) as MaintenanceRecord;
     } else {
-      console.log(`No such maintenance record with id: ${recordId}`);
+      console.log(`No such preventive maintenance record with id: ${recordId}`);
       return undefined;
     }
   } catch (error) {
-    console.error("Error fetching maintenance record by ID:", error);
-    throw new Error(`No se pudo cargar el registro de mantenimiento ${recordId} desde Firestore.`);
+    console.error("Error fetching preventive maintenance record by ID:", error);
+    throw new Error(`No se pudo cargar el registro de mantenimiento preventivo ${recordId} desde Firestore.`);
   }
 }
 
@@ -110,20 +109,19 @@ export async function addMaintenanceRecord(
     await updateDoc(equipmentRef, {
       lastMaintenanceDate: recordData.date, 
       nextMaintenanceDate: nextDate.toISOString().split('T')[0],
-      lastTechnician: recordData.technician // Added technician
+      lastTechnician: recordData.technician
     });
 
-    console.log('New maintenance record added to Firestore with ID:', newRecordRef.id);
     const newRecordSnap = await getDoc(newRecordRef);
-    if (!newRecordSnap.exists()) throw new Error("Failed to retrieve new maintenance record");
+    if (!newRecordSnap.exists()) throw new Error("Failed to retrieve new preventive maintenance record");
     
     revalidatePath(`/equipment/${recordData.equipmentId}`);
-    revalidatePath('/'); // Revalidate home page as equipment list is there
+    revalidatePath('/');
     return convertTimestampToISO({ ...newRecordSnap.data(), id: newRecordSnap.id }) as MaintenanceRecord;
 
   } catch (error) {
-    console.error("Error adding maintenance record to Firestore:", error);
-    throw new Error("No se pudo registrar el mantenimiento en Firestore.");
+    console.error("Error adding preventive maintenance record to Firestore:", error);
+    throw new Error("No se pudo registrar el mantenimiento preventivo en Firestore.");
   }
 }
 
@@ -146,25 +144,25 @@ export async function updateMaintenanceRecord(
       await updateDoc(equipmentDocRef, {
         lastMaintenanceDate: latestRecord.date,
         nextMaintenanceDate: nextDate.toISOString().split('T')[0],
-        lastTechnician: latestRecord.technician // Updated technician
+        lastTechnician: latestRecord.technician
       });
     } else {
        await updateDoc(equipmentDocRef, {
-        lastMaintenanceDate: null, 
-        nextMaintenanceDate: null,
-        lastTechnician: null // Clear technician
+        lastMaintenanceDate: undefined, 
+        nextMaintenanceDate: undefined,
+        lastTechnician: undefined
       });
     }
     
     const updatedRecordSnap = await getDoc(recordRef);
-    if (!updatedRecordSnap.exists()) throw new Error("Failed to retrieve updated maintenance record");
+    if (!updatedRecordSnap.exists()) throw new Error("Failed to retrieve updated preventive maintenance record");
     
     revalidatePath(`/equipment/${equipmentId}`);
     revalidatePath('/');
     return convertTimestampToISO({ ...updatedRecordSnap.data(), id: updatedRecordSnap.id }) as MaintenanceRecord;
   } catch (error) {
-    console.error("Error updating maintenance record:", error);
-    throw new Error("No se pudo actualizar el registro de mantenimiento.");
+    console.error("Error updating preventive maintenance record:", error);
+    throw new Error("No se pudo actualizar el registro de mantenimiento preventivo.");
   }
 }
 
@@ -172,7 +170,6 @@ export async function deleteMaintenanceRecord(recordId: string, equipmentId: str
   try {
     const recordRef = doc(db, 'maintenanceRecords', recordId);
     await deleteDoc(recordRef);
-    console.log('Maintenance record deleted from Firestore:', recordId);
 
     const records = await getMaintenanceRecordsForEquipment(equipmentId);
     const equipmentDocRef = doc(db, 'equipments', equipmentId);
@@ -184,24 +181,77 @@ export async function deleteMaintenanceRecord(recordId: string, equipmentId: str
       await updateDoc(equipmentDocRef, {
         lastMaintenanceDate: latestRecord.date,
         nextMaintenanceDate: nextDate.toISOString().split('T')[0],
-        lastTechnician: latestRecord.technician // Updated technician
+        lastTechnician: latestRecord.technician
       });
     } else {
       await updateDoc(equipmentDocRef, {
-        lastMaintenanceDate: null, 
-        nextMaintenanceDate: null, 
-        lastTechnician: null // Clear technician
+        lastMaintenanceDate: undefined, 
+        nextMaintenanceDate: undefined, 
+        lastTechnician: undefined
       });
     }
     revalidatePath(`/equipment/${equipmentId}`);
     revalidatePath('/');
   } catch (error) {
-    console.error("Error deleting maintenance record from Firestore:", error);
-    throw new Error("No se pudo eliminar el registro de mantenimiento de Firestore.");
+    console.error("Error deleting preventive maintenance record from Firestore:", error);
+    throw new Error("No se pudo eliminar el registro de mantenimiento preventivo de Firestore.");
   }
 }
 
+// --- Corrective Maintenance Records ---
+export async function getCorrectiveMaintenanceRecordsForEquipment(equipmentId: string): Promise<CorrectiveMaintenanceRecord[]> {
+  try {
+    const recordsCol = collection(db, 'correctiveMaintenanceRecords');
+    // Order by date descending to get the latest first
+    const q = query(recordsCol, where('equipmentId', '==', equipmentId)); // orderBy('date', 'desc') might need index
+    const recordSnapshot = await getDocs(q);
+    const recordList = recordSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return convertTimestampToISO({ ...data, id: doc.id }) as CorrectiveMaintenanceRecord;
+    });
+     // Client-side sorting if orderBy is not used or fails due to missing index
+    return recordList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  } catch (error) {
+    console.error("Error fetching corrective maintenance records:", error);
+    throw new Error(`No se pudieron cargar los registros de mantenimiento correctivo para el equipo ${equipmentId}.`);
+  }
+}
 
+export async function addCorrectiveMaintenanceRecord(
+  recordData: Omit<CorrectiveMaintenanceRecord, 'id'>
+): Promise<CorrectiveMaintenanceRecord> {
+  try {
+    const newRecordRef = await addDoc(collection(db, 'correctiveMaintenanceRecords'), {
+      ...recordData,
+      createdAt: serverTimestamp()
+    });
+    
+    const newRecordSnap = await getDoc(newRecordRef);
+    if (!newRecordSnap.exists()) throw new Error("Failed to retrieve new corrective maintenance record");
+    
+    revalidatePath(`/equipment/${recordData.equipmentId}`);
+    // No revalidatePath('/') as corrective actions might not impact the main list directly
+    return convertTimestampToISO({ ...newRecordSnap.data(), id: newRecordSnap.id }) as CorrectiveMaintenanceRecord;
+
+  } catch (error) {
+    console.error("Error adding corrective maintenance record to Firestore:", error);
+    throw new Error("No se pudo registrar el mantenimiento correctivo en Firestore.");
+  }
+}
+
+export async function deleteCorrectiveMaintenanceRecord(recordId: string, equipmentId: string): Promise<void> {
+  try {
+    const recordRef = doc(db, 'correctiveMaintenanceRecords', recordId);
+    await deleteDoc(recordRef);
+    
+    revalidatePath(`/equipment/${equipmentId}`);
+  } catch (error) {
+    console.error("Error deleting corrective maintenance record from Firestore:", error);
+    throw new Error("No se pudo eliminar el registro de mantenimiento correctivo de Firestore.");
+  }
+}
+
+// --- Equipment Actions ---
 export async function addEquipment(
   equipmentData: Omit<Equipment, 'lastMaintenanceDate' | 'nextMaintenanceDate' | 'specifications' | 'lastTechnician'>
 ): Promise<Equipment> {
@@ -213,8 +263,6 @@ export async function addEquipment(
       throw new Error(`El equipo con ID ${equipmentData.id} ya existe en Firestore.`);
     }
 
-    // lastMaintenanceDate, nextMaintenanceDate, and lastTechnician are derived from maintenance records
-    // So they are not set when adding new equipment initially
     const dataToSave = {
         ...equipmentData,
         lastMaintenanceDate: undefined,
@@ -224,7 +272,6 @@ export async function addEquipment(
     
     await setDoc(equipmentRef, dataToSave);
     
-    console.log('New equipment added to Firestore:', equipmentData.id);
     revalidatePath('/');
     return { ...dataToSave } as Equipment; 
 
@@ -245,8 +292,6 @@ export async function updateEquipment(
     const equipmentRef = doc(db, 'equipments', equipmentId);
 
     const processedData = { ...dataToUpdate };
-    // If lastMaintenanceDate is being manually set/cleared, lastTechnician might become inconsistent
-    // or should also be cleared/set. For now, only manage what's passed.
     if (processedData.lastMaintenanceDate === '') {
       processedData.lastMaintenanceDate = undefined; 
     }
@@ -263,7 +308,6 @@ export async function updateEquipment(
 
     await updateDoc(equipmentRef, processedData);
     
-    console.log('Equipment updated in Firestore:', equipmentId);
     const updatedEquipmentSnap = await getDoc(equipmentRef);
     if (!updatedEquipmentSnap.exists()) throw new Error("Failed to retrieve updated equipment");
     
@@ -276,6 +320,7 @@ export async function updateEquipment(
   }
 }
 
+// --- AI Suggestions ---
 export async function getAiMaintenanceSuggestions(
   input: SuggestMaintenanceProceduresInput
 ): Promise<SuggestMaintenanceProceduresOutput> {

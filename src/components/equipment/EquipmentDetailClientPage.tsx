@@ -2,11 +2,11 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import type { Equipment, MaintenanceRecord } from '@/lib/types';
-import { getEquipmentById, getMaintenanceRecordsForEquipment } from '@/lib/actions';
+import type { Equipment, MaintenanceRecord, CorrectiveMaintenanceRecord } from '@/lib/types';
+import { getEquipmentById, getMaintenanceRecordsForEquipment, getCorrectiveMaintenanceRecordsForEquipment, deleteMaintenanceRecord, deleteCorrectiveMaintenanceRecord } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Edit3, CalendarDays, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, Wrench, Briefcase, CalendarClock, FileText, History as HistoryIcon, Trash2, Edit, AlertTriangle, PlusCircle } from 'lucide-react';
+import { ArrowLeft, Edit3, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, Wrench, Briefcase, FileText, History as HistoryIcon, Trash2, Edit, AlertTriangle, PlusCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -43,11 +43,11 @@ const DetailItem: React.FC<{ label: string; value?: string; icon?: React.Element
 const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ equipmentId }) => {
   const [equipment, setEquipment] = useState<Equipment | null>(null);
   const [maintenanceRecords, setMaintenanceRecords] = useState<MaintenanceRecord[]>([]);
-  const [correctiveMaintenanceRecords, setCorrectiveMaintenanceRecords] = useState<MaintenanceRecord[]>([]); // For future use
+  const [correctiveMaintenanceRecords, setCorrectiveMaintenanceRecords] = useState<CorrectiveMaintenanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isDeletingRecord, setIsDeletingRecord] = useState<string | null>(null);
-  const [isDeletingCorrectiveRecord, setIsDeletingCorrectiveRecord] = useState<string | null>(null); // For future use
+  const [isDeletingPreventiveRecord, setIsDeletingPreventiveRecord] = useState<string | null>(null);
+  const [isDeletingCorrectiveRecord, setIsDeletingCorrectiveRecord] = useState<string | null>(null);
   const { toast } = useToast();
 
   const fetchData = useCallback(async () => {
@@ -57,11 +57,10 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
       const eqData = await getEquipmentById(equipmentId);
       if (eqData) {
         setEquipment(eqData);
-        const recordsData = await getMaintenanceRecordsForEquipment(equipmentId);
-        setMaintenanceRecords(recordsData);
-        // In the future, fetch corrective maintenance records here
-        // const correctiveRecordsData = await getCorrectiveMaintenanceRecordsForEquipment(equipmentId);
-        // setCorrectiveMaintenanceRecords(correctiveRecordsData);
+        const preventiveRecordsData = await getMaintenanceRecordsForEquipment(equipmentId);
+        setMaintenanceRecords(preventiveRecordsData);
+        const correctiveRecordsData = await getCorrectiveMaintenanceRecordsForEquipment(equipmentId);
+        setCorrectiveMaintenanceRecords(correctiveRecordsData);
       } else {
         setError('Equipo no encontrado.');
       }
@@ -92,17 +91,14 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
   }, [maintenanceRecords]);
 
   const sortedCorrectiveMaintenanceRecords = React.useMemo(() => {
-    // Placeholder: will be populated when corrective maintenance is implemented
     return [...correctiveMaintenanceRecords].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [correctiveMaintenanceRecords]);
 
-  const handleDeleteRecord = async (recordId: string) => {
+  const handleDeletePreventiveRecord = async (recordId: string) => {
     if (!equipment) return;
-    setIsDeletingRecord(recordId);
+    setIsDeletingPreventiveRecord(recordId);
     try {
-      const { deleteMaintenanceRecord } = await import('@/lib/actions');
       await deleteMaintenanceRecord(recordId, equipment.id);
-
       toast({
         title: 'Registro Eliminado',
         description: 'El registro de mantenimiento preventivo ha sido eliminado.',
@@ -110,28 +106,38 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
       });
       fetchData(); 
     } catch (error) {
-      console.error('Error deleting maintenance record:', error);
+      console.error('Error deleting preventive maintenance record:', error);
       toast({
         title: 'Error al Eliminar',
         description: 'No se pudo eliminar el registro de mantenimiento preventivo.',
         variant: 'destructive',
       });
     } finally {
-      setIsDeletingRecord(null);
+      setIsDeletingPreventiveRecord(null);
     }
   };
 
   const handleDeleteCorrectiveRecord = async (recordId: string) => {
     if (!equipment) return;
     setIsDeletingCorrectiveRecord(recordId);
-    // Placeholder for actual delete logic
-    console.warn(`Attempted to delete corrective maintenance record ${recordId} - (Not Implemented)`);
-    toast({
-      title: 'Acción no implementada',
-      description: 'La eliminación de mantenimientos correctivos estará disponible próximamente.',
-      variant: 'default',
-    });
-    setIsDeletingCorrectiveRecord(null);
+    try {
+      await deleteCorrectiveMaintenanceRecord(recordId, equipment.id);
+      toast({
+        title: 'Registro Eliminado',
+        description: 'El registro de mantenimiento correctivo ha sido eliminado.',
+        variant: 'default',
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting corrective maintenance record:', error);
+      toast({
+        title: 'Error al Eliminar',
+        description: 'No se pudo eliminar el registro de mantenimiento correctivo.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsDeletingCorrectiveRecord(null);
+    }
   };
 
 
@@ -260,7 +266,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                  <div className="flex justify-end">
                   <Button asChild size="sm" className="bg-primary hover:bg-primary/90">
                     <Link href={`/equipment/${equipment.id}/register`}>
-                      <Wrench size={16} className="mr-2" /> Registrar Mantenimiento Preventivo
+                      <PlusCircle size={16} className="mr-2" /> Registrar Mantenimiento Preventivo
                     </Link>
                   </Button>
                 </div>
@@ -289,8 +295,8 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                               </Button>
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                  <Button variant="destructive" size="sm" disabled={isDeletingRecord === record.id}>
-                                    {isDeletingRecord === record.id ? (
+                                  <Button variant="destructive" size="sm" disabled={isDeletingPreventiveRecord === record.id}>
+                                    {isDeletingPreventiveRecord === record.id ? (
                                       <>Eliminando...</>
                                     ) : (
                                       <><Trash2 size={16} className="mr-1" /> Eliminar</>
@@ -310,7 +316,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
                                     <AlertDialogAction 
-                                      onClick={() => handleDeleteRecord(record.id)}
+                                      onClick={() => handleDeletePreventiveRecord(record.id)}
                                       className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                                     >
                                       Sí, Eliminar
@@ -341,8 +347,10 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               </AccordionTrigger>
               <AccordionContent className="px-6 pt-2 pb-6 space-y-4">
                 <div className="flex justify-end">
-                  <Button size="sm" className="bg-primary hover:bg-primary/90" disabled>
-                    <PlusCircle size={16} className="mr-2" /> Registrar Mantenimiento Correctivo (Próximamente)
+                  <Button asChild size="sm" className="bg-primary hover:bg-primary/90">
+                    <Link href={`/equipment/${equipment.id}/register-corrective`}>
+                      <PlusCircle size={16} className="mr-2" /> Registrar Mantenimiento Correctivo
+                    </Link>
                   </Button>
                 </div>
                 {sortedCorrectiveMaintenanceRecords.length > 0 ? (
@@ -368,7 +376,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                               </Button>
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                  <Button variant="destructive" size="sm" disabled={isDeletingCorrectiveRecord === record.id || true}>
+                                  <Button variant="destructive" size="sm" disabled={isDeletingCorrectiveRecord === record.id}>
                                     {isDeletingCorrectiveRecord === record.id ? (
                                       <>Eliminando...</>
                                     ) : (
@@ -383,7 +391,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                                       ¿Confirmar Eliminación?
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Esta acción no se puede deshacer. Esto eliminará permanentemente el registro de mantenimiento correctivo del {formatTableDate(record.date)}. (Funcionalidad Próximamente)
+                                      Esta acción no se puede deshacer. Esto eliminará permanentemente el registro de mantenimiento correctivo del {formatTableDate(record.date)}.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
@@ -391,7 +399,6 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                                     <AlertDialogAction 
                                       onClick={() => handleDeleteCorrectiveRecord(record.id)}
                                       className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                                      disabled // Disabled until implemented
                                     >
                                       Sí, Eliminar
                                     </AlertDialogAction>
@@ -429,5 +436,3 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 };
 
 export default EquipmentDetailClientPage;
-
-    
