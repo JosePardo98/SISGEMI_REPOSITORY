@@ -43,9 +43,11 @@ const DetailItem: React.FC<{ label: string; value?: string; icon?: React.Element
 const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ equipmentId }) => {
   const [equipment, setEquipment] = useState<Equipment | null>(null);
   const [maintenanceRecords, setMaintenanceRecords] = useState<MaintenanceRecord[]>([]);
+  const [correctiveMaintenanceRecords, setCorrectiveMaintenanceRecords] = useState<MaintenanceRecord[]>([]); // For future use
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeletingRecord, setIsDeletingRecord] = useState<string | null>(null);
+  const [isDeletingCorrectiveRecord, setIsDeletingCorrectiveRecord] = useState<string | null>(null); // For future use
   const { toast } = useToast();
 
   const fetchData = useCallback(async () => {
@@ -57,6 +59,9 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
         setEquipment(eqData);
         const recordsData = await getMaintenanceRecordsForEquipment(equipmentId);
         setMaintenanceRecords(recordsData);
+        // In the future, fetch corrective maintenance records here
+        // const correctiveRecordsData = await getCorrectiveMaintenanceRecordsForEquipment(equipmentId);
+        // setCorrectiveMaintenanceRecords(correctiveRecordsData);
       } else {
         setError('Equipo no encontrado.');
       }
@@ -86,6 +91,11 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
     return [...maintenanceRecords].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [maintenanceRecords]);
 
+  const sortedCorrectiveMaintenanceRecords = React.useMemo(() => {
+    // Placeholder: will be populated when corrective maintenance is implemented
+    return [...correctiveMaintenanceRecords].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [correctiveMaintenanceRecords]);
+
   const handleDeleteRecord = async (recordId: string) => {
     if (!equipment) return;
     setIsDeletingRecord(recordId);
@@ -95,7 +105,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 
       toast({
         title: 'Registro Eliminado',
-        description: 'El registro de mantenimiento ha sido eliminado.',
+        description: 'El registro de mantenimiento preventivo ha sido eliminado.',
         variant: 'default',
       });
       fetchData(); 
@@ -103,12 +113,25 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
       console.error('Error deleting maintenance record:', error);
       toast({
         title: 'Error al Eliminar',
-        description: 'No se pudo eliminar el registro de mantenimiento.',
+        description: 'No se pudo eliminar el registro de mantenimiento preventivo.',
         variant: 'destructive',
       });
     } finally {
       setIsDeletingRecord(null);
     }
+  };
+
+  const handleDeleteCorrectiveRecord = async (recordId: string) => {
+    if (!equipment) return;
+    setIsDeletingCorrectiveRecord(recordId);
+    // Placeholder for actual delete logic
+    console.warn(`Attempted to delete corrective maintenance record ${recordId} - (Not Implemented)`);
+    toast({
+      title: 'Acción no implementada',
+      description: 'La eliminación de mantenimientos correctivos estará disponible próximamente.',
+      variant: 'default',
+    });
+    setIsDeletingCorrectiveRecord(null);
   };
 
 
@@ -281,7 +304,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                                       ¿Confirmar Eliminación?
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Esta acción no se puede deshacer. Esto eliminará permanentemente el registro de mantenimiento del {formatTableDate(record.date)}.
+                                      Esta acción no se puede deshacer. Esto eliminará permanentemente el registro de mantenimiento preventivo del {formatTableDate(record.date)}.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
@@ -319,12 +342,73 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               <AccordionContent className="px-6 pt-2 pb-6 space-y-4">
                 <div className="flex justify-end">
                   <Button size="sm" className="bg-primary hover:bg-primary/90" disabled>
-                    <Wrench size={16} className="mr-2" /> Registrar Mantenimiento Correctivo (Próximamente)
+                    <PlusCircle size={16} className="mr-2" /> Registrar Mantenimiento Correctivo (Próximamente)
                   </Button>
                 </div>
-                <p className="text-muted-foreground text-center py-4">
-                  La gestión de mantenimientos correctivos estará disponible próximamente.
-                </p>
+                {sortedCorrectiveMaintenanceRecords.length > 0 ? (
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Fecha</TableHead>
+                          <TableHead>Técnico</TableHead>
+                          <TableHead>Descripción</TableHead>
+                          <TableHead className="text-right">Acciones</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {sortedCorrectiveMaintenanceRecords.map((record) => (
+                          <TableRow key={record.id}>
+                            <TableCell>{formatTableDate(record.date)}</TableCell>
+                            <TableCell>{record.technician}</TableCell>
+                            <TableCell>{record.description}</TableCell>
+                            <TableCell className="text-right space-x-4">
+                              <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground" disabled>
+                                <Edit size={16} className="mr-1" /> Modificar
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="destructive" size="sm" disabled={isDeletingCorrectiveRecord === record.id || true}>
+                                    {isDeletingCorrectiveRecord === record.id ? (
+                                      <>Eliminando...</>
+                                    ) : (
+                                      <><Trash2 size={16} className="mr-1" /> Eliminar</>
+                                    )}
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle className="flex items-center">
+                                      <AlertTriangle size={20} className="mr-2 text-destructive" />
+                                      ¿Confirmar Eliminación?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Esta acción no se puede deshacer. Esto eliminará permanentemente el registro de mantenimiento correctivo del {formatTableDate(record.date)}. (Funcionalidad Próximamente)
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction 
+                                      onClick={() => handleDeleteCorrectiveRecord(record.id)}
+                                      className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                                      disabled // Disabled until implemented
+                                    >
+                                      Sí, Eliminar
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No se ha registrado ningún mantenimiento correctivo para este equipo.
+                  </p>
+                )}
               </AccordionContent>
             </AccordionItem>
 
