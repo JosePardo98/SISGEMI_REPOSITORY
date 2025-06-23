@@ -7,7 +7,7 @@ import { getEquipments } from '@/lib/actions';
 import { EquipmentTable } from './EquipmentTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, PlusCircle, Printer, ScanLine, Receipt, Computer, Router, Speaker, Calendar, Users } from 'lucide-react'; // Changed HardDrive to Computer, added Speaker
+import { Terminal, PlusCircle, Printer, ScanLine, Receipt, Computer, Router, Speaker, Calendar, Users, Ticket } from 'lucide-react'; // Changed HardDrive to Computer, added Speaker
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -189,6 +189,20 @@ const EquipmentClientPage: React.FC = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="item-tickets" className="border rounded-lg shadow-sm overflow-hidden">
+        <AccordionTrigger
+          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
+        >
+          <div className="flex items-center">
+            <Ticket size={28} className="mr-3 text-accent" />
+            Tickets para Mantenimientos
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="pt-2 p-4 border-t border-border">
+          <p className="text-muted-foreground text-sm">La gestión de tickets para mantenimientos estará disponible próximamente.</p>
         </AccordionContent>
       </AccordionItem>
 
