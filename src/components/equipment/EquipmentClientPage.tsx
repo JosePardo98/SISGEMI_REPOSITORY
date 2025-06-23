@@ -82,7 +82,7 @@ const EquipmentClientPage: React.FC = () => {
         </AccordionContent>
       </AccordionItem>
       
-      <AccordionItem value="item-peripherals" className="border rounded-lg shadow-sm overflow-hidden">
+      <AccordionItem value="item-peripherals-main" className="border rounded-lg shadow-sm overflow-hidden">
         <AccordionTrigger
           className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
         >
@@ -91,114 +91,104 @@ const EquipmentClientPage: React.FC = () => {
             Mantenimiento de Equipos Periféricos
           </div>
         </AccordionTrigger>
-        <AccordionContent className="pt-2 p-4 border-t border-border">
-          <div className="space-y-6">
-            <div className="flex justify-end items-center pt-2">
-              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
-                <Link href="#">
-                  <PlusCircle size={20} className="mr-2" />
-                  Agregar Equipo Periférico (Próximamente)
-                </Link>
-              </Button>
-            </div>
-            <p className="text-muted-foreground">La gestión de equipos periféricos estará disponible próximamente.</p>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
+        <AccordionContent className="p-2 border-t border-border">
+          <Accordion type="multiple" className="w-full space-y-2">
+            <AccordionItem value="item-2" className="border rounded-lg shadow-sm overflow-hidden bg-secondary/20">
+              <AccordionTrigger 
+                className="p-3 text-lg font-headline font-semibold text-primary/90 hover:no-underline flex items-center justify-between w-full text-left"
+              >
+                <div className="flex items-center">
+                  <Printer size={22} className="mr-3 text-accent/90" />
+                   Impresoras y Escáneres
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 p-4 border-t border-border bg-background"> 
+                <div className="space-y-4">
+                  <div className="flex justify-end items-center"> 
+                    <Button asChild className="bg-primary/90 hover:bg-primary/80" size="sm" disabled>
+                      <Link href="#">
+                        <PlusCircle size={18} className="mr-2" />
+                        Agregar Impresora/Escáner (Próximamente)
+                      </Link>
+                    </Button>
+                  </div>
+                  <p className="text-muted-foreground text-sm">La gestión de impresoras y escáneres estará disponible próximamente.</p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
 
-      <AccordionItem value="item-2" className="border rounded-lg shadow-sm overflow-hidden">
-        <AccordionTrigger 
-          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
-        >
-          <div className="flex items-center">
-            <Printer size={28} className="mr-3 text-accent" />
-             Impresoras y Escáneres
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pt-2 p-4 border-t border-border"> 
-          <div className="space-y-6">
-             <div className="flex justify-end items-center pt-2"> 
-              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
-                <Link href="#">
-                  <PlusCircle size={20} className="mr-2" />
-                  Agregar Impresora/Escáner (Próximamente)
-                </Link>
-              </Button>
-            </div>
-            <p className="text-muted-foreground">La gestión de impresoras y escáneres estará disponible próximamente.</p>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
+            <AccordionItem value="item-3" className="border rounded-lg shadow-sm overflow-hidden bg-secondary/20">
+              <AccordionTrigger 
+                className="p-3 text-lg font-headline font-semibold text-primary/90 hover:no-underline flex items-center justify-between w-full text-left"
+              >
+                <div className="flex items-center">
+                  <Receipt size={22} className="mr-3 text-accent/90" />
+                  Impresoras de Tickets
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 p-4 border-t border-border bg-background"> 
+                <div className="space-y-4">
+                  <div className="flex justify-end items-center"> 
+                    <Button asChild className="bg-primary/90 hover:bg-primary/80" size="sm" disabled>
+                      <Link href="#">
+                        <PlusCircle size={18} className="mr-2" />
+                        Agregar Impresora de Tickets (Próximamente)
+                      </Link>
+                    </Button>
+                  </div>
+                  <p className="text-muted-foreground text-sm">La gestión de impresoras de tickets estará disponible próximamente.</p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
 
-      <AccordionItem value="item-3" className="border rounded-lg shadow-sm overflow-hidden">
-        <AccordionTrigger 
-          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
-        >
-          <div className="flex items-center">
-            <Receipt size={28} className="mr-3 text-accent" />
-            Impresoras de Tickets
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pt-2 p-4 border-t border-border"> 
-          <div className="space-y-6">
-            <div className="flex justify-end items-center pt-2"> 
-              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
-                <Link href="#">
-                  <PlusCircle size={20} className="mr-2" />
-                  Agregar Impresora de Tickets (Próximamente)
-                </Link>
-              </Button>
-            </div>
-            <p className="text-muted-foreground">La gestión de impresoras de tickets estará disponible próximamente.</p>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-
-      <AccordionItem value="item-5" className="border rounded-lg shadow-sm overflow-hidden">
-        <AccordionTrigger 
-          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
-        >
-          <div className="flex items-center">
-            <Router size={28} className="mr-3 text-accent" />
-            Switches, Modems y Enrutadores
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pt-2 p-4 border-t border-border">
-           <div className="space-y-6">
-            <div className="flex justify-end items-center pt-2"> 
-              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
-                <Link href="#">
-                  <PlusCircle size={20} className="mr-2" />
-                  Agregar Dispositivo de Red (Próximamente)
-                </Link>
-              </Button>
-            </div>
-            <p className="text-muted-foreground">La gestión de switches, modems y enrutadores estará disponible próximamente.</p>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-      
-      <AccordionItem value="item-4" className="border rounded-lg shadow-sm overflow-hidden">
-        <AccordionTrigger 
-          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
-        >
-          <div className="flex items-center">
-            <ScanLine size={28} className="mr-3 text-accent" />
-            Otros Dispositivos
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pt-2 p-4 border-t border-border">
-           <div className="space-y-6">
-            <div className="flex justify-end items-center pt-2"> 
-              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
-                <Link href="#">
-                  <PlusCircle size={20} className="mr-2" />
-                  Agregar Otro Dispositivo (Próximamente)
-                </Link>
-              </Button>
-            </div>
-            <p className="text-muted-foreground">La gestión de otros tipos de dispositivos estará disponible próximamente.</p>
-          </div>
+            <AccordionItem value="item-5" className="border rounded-lg shadow-sm overflow-hidden bg-secondary/20">
+              <AccordionTrigger 
+                className="p-3 text-lg font-headline font-semibold text-primary/90 hover:no-underline flex items-center justify-between w-full text-left"
+              >
+                <div className="flex items-center">
+                  <Router size={22} className="mr-3 text-accent/90" />
+                  Switches, Modems y Enrutadores
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 p-4 border-t border-border bg-background">
+                 <div className="space-y-4">
+                  <div className="flex justify-end items-center"> 
+                    <Button asChild className="bg-primary/90 hover:bg-primary/80" size="sm" disabled>
+                      <Link href="#">
+                        <PlusCircle size={18} className="mr-2" />
+                        Agregar Dispositivo de Red (Próximamente)
+                      </Link>
+                    </Button>
+                  </div>
+                  <p className="text-muted-foreground text-sm">La gestión de switches, modems y enrutadores estará disponible próximamente.</p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-4" className="border rounded-lg shadow-sm overflow-hidden bg-secondary/20">
+              <AccordionTrigger 
+                className="p-3 text-lg font-headline font-semibold text-primary/90 hover:no-underline flex items-center justify-between w-full text-left"
+              >
+                <div className="flex items-center">
+                  <ScanLine size={22} className="mr-3 text-accent/90" />
+                  Otros Dispositivos
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 p-4 border-t border-border bg-background">
+                 <div className="space-y-4">
+                  <div className="flex justify-end items-center"> 
+                    <Button asChild className="bg-primary/90 hover:bg-primary/80" size="sm" disabled>
+                      <Link href="#">
+                        <PlusCircle size={18} className="mr-2" />
+                        Agregar Otro Dispositivo (Próximamente)
+                      </Link>
+                    </Button>
+                  </div>
+                  <p className="text-muted-foreground text-sm">La gestión de otros tipos de dispositivos estará disponible próximamente.</p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </AccordionContent>
       </AccordionItem>
     </Accordion>
