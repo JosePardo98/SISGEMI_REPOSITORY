@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -64,7 +63,7 @@ const EquipmentClientPage: React.FC = () => {
         >
           <div className="flex items-center">
             <Computer size={28} className="mr-3 text-accent" /> {/* Changed HardDrive to Computer */}
-            Equipos de Cómputo
+            Mantenimiento de Equipos de Cómputo
           </div>
         </AccordionTrigger>
         <AccordionContent className="pt-2 p-4 border-t border-border"> 
@@ -73,7 +72,7 @@ const EquipmentClientPage: React.FC = () => {
               <Button asChild className="bg-primary hover:bg-primary/90">
                 <Link href="/equipment/new">
                   <PlusCircle size={20} className="mr-2" />
-                  Agregar Nuevo Equipo de Cómputo
+                  Agregar Nuevo Equipo
                 </Link>
               </Button>
             </div>
