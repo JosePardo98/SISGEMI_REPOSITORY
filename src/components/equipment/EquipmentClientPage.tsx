@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -6,7 +7,7 @@ import { getEquipments } from '@/lib/actions';
 import { EquipmentTable } from './EquipmentTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, PlusCircle, Printer, ScanLine, Receipt, Computer, Router } from 'lucide-react'; // Changed HardDrive to Computer
+import { Terminal, PlusCircle, Printer, ScanLine, Receipt, Computer, Router, Speaker } from 'lucide-react'; // Changed HardDrive to Computer, added Speaker
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -62,7 +63,7 @@ const EquipmentClientPage: React.FC = () => {
           className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
         >
           <div className="flex items-center">
-            <Computer size={28} className="mr-3 text-accent" /> {/* Changed HardDrive to Computer */}
+            <Computer size={28} className="mr-3 text-accent" />
             Mantenimiento de Equipos de Cómputo
           </div>
         </AccordionTrigger>
@@ -77,6 +78,30 @@ const EquipmentClientPage: React.FC = () => {
               </Button>
             </div>
             <EquipmentTable equipments={equipments} />
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+      
+      <AccordionItem value="item-peripherals" className="border rounded-lg shadow-sm overflow-hidden">
+        <AccordionTrigger
+          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
+        >
+          <div className="flex items-center">
+            <Speaker size={28} className="mr-3 text-accent" />
+            Mantenimiento de Equipos Periféricos
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="pt-2 p-4 border-t border-border">
+          <div className="space-y-6">
+            <div className="flex justify-end items-center pt-2">
+              <Button asChild className="bg-primary hover:bg-primary/90" disabled>
+                <Link href="#">
+                  <PlusCircle size={20} className="mr-2" />
+                  Agregar Equipo Periférico (Próximamente)
+                </Link>
+              </Button>
+            </div>
+            <p className="text-muted-foreground">La gestión de equipos periféricos estará disponible próximamente.</p>
           </div>
         </AccordionContent>
       </AccordionItem>
