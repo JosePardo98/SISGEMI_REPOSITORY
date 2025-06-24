@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Wand2 } from 'lucide-react';
-import { getAiMaintenanceSuggestions } from '@/lib/actions';
+import { getAiMaintenanceSuggestions } from '@/lib/ai-actions';
 import type { Equipment, MaintenanceRecord } from '@/lib/types';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';

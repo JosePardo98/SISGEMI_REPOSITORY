@@ -4,8 +4,6 @@
 import { db } from './firebase';
 import { collection, doc, getDoc, getDocs, addDoc, updateDoc, setDoc, query, where, orderBy, serverTimestamp, Timestamp, deleteDoc, writeBatch } from 'firebase/firestore';
 import type { Equipment, MaintenanceRecord, CorrectiveMaintenanceRecord } from './types';
-import { suggestMaintenanceProcedures } from '@/ai/flows/suggest-maintenance-procedures';
-import type { SuggestMaintenanceProceduresInput, SuggestMaintenanceProceduresOutput } from '@/ai/flows/suggest-maintenance-procedures';
 import { revalidatePath } from 'next/cache';
 
 // Helper function to convert Firestore Timestamps to ISO strings or return other values as is
@@ -317,18 +315,5 @@ export async function updateEquipment(
   } catch (error) {
     console.error("Error updating equipment in Firestore:", error);
     throw new Error(`No se pudo actualizar el equipo ${equipmentId} en Firestore.`);
-  }
-}
-
-// --- AI Suggestions ---
-export async function getAiMaintenanceSuggestions(
-  input: SuggestMaintenanceProceduresInput
-): Promise<SuggestMaintenanceProceduresOutput> {
-  try {
-    const suggestions = await suggestMaintenanceProcedures(input);
-    return suggestions;
-  } catch (error) {
-    console.error("Error fetching AI maintenance suggestions:", error);
-    return { suggestedProcedures: "Error al obtener sugerencias de IA. Verifique la conexión o inténtelo más tarde." };
   }
 }
