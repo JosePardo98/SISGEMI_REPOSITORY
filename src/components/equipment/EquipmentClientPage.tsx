@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -7,233 +6,167 @@ import { getEquipments } from '@/lib/actions';
 import { EquipmentTable } from './EquipmentTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, PlusCircle, Printer, ScanLine, Receipt, Computer, Router, Speaker, Calendar, Users, Ticket } from 'lucide-react'; // Changed HardDrive to Computer, added Speaker
+import { Terminal, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import MaintenanceChart from './MaintenanceChart';
+import AlertsCard from './AlertsCard';
+import { cn } from '@/lib/utils';
 
 const EquipmentClientPage: React.FC = () => {
   const [equipments, setEquipments] = useState<Equipment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeView, setActiveView] = useState<string>('computo');
 
   useEffect(() => {
     const fetchEquipments = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getEquipments();
-        setEquipments(data);
-      } catch (err) {
-        setError('Error al cargar los equipos. Por favor, intente de nuevo más tarde.');
-        console.error(err);
-      } finally {
+      // Only fetch data if the relevant view is active
+      if (activeView === 'computo') {
+        try {
+          setLoading(true);
+          setError(null);
+          const data = await getEquipments();
+          setEquipments(data);
+        } catch (err) {
+          setError('Error al cargar los equipos. Por favor, intente de nuevo más tarde.');
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      } else {
         setLoading(false);
       }
     };
     fetchEquipments();
-  }, []);
+  }, [activeView]);
 
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-14 w-full rounded-md" />
-        <Skeleton className="h-14 w-full rounded-md" />
-        <Skeleton className="h-14 w-full rounded-md" />
-        <Skeleton className="h-14 w-full rounded-md" />
-        <Skeleton className="h-14 w-full rounded-md" />
-      </div>
-    );
-  }
+  const renderContent = () => {
+    if (loading && activeView === 'computo') {
+      return (
+        <div className="space-y-4 mt-6">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      );
+    }
+    if (error) {
+      return (
+        <Alert variant="destructive" className="mt-6">
+          <Terminal className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      );
+    }
 
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <Terminal className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
-    );
-  }
+    switch (activeView) {
+      case 'computo':
+        return (
+          <Card className="mt-6 shadow-lg animate-fade-in">
+            <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
+                <CardTitle>Mantenimiento de Equipos de Cómputo</CardTitle>
+                <Button asChild className="bg-primary hover:bg-primary/90">
+                    <Link href="/equipment/new">
+                    <PlusCircle size={20} className="mr-2" />
+                    Agregar Nuevo Equipo
+                    </Link>
+                </Button>
+            </CardHeader>
+            <CardContent>
+                <EquipmentTable equipments={equipments} />
+            </CardContent>
+          </Card>
+        );
+      case 'perifericos':
+        return (
+          <Card className="mt-6 shadow-lg animate-fade-in">
+            <CardHeader>
+              <CardTitle>Mantenimiento de Equipos Periféricos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">La gestión de equipos periféricos estará disponible próximamente.</p>
+            </CardContent>
+          </Card>
+        );
+      case 'tickets':
+         return (
+          <Card className="mt-6 shadow-lg animate-fade-in">
+            <CardHeader>
+              <CardTitle>Tickets para Mantenimiento</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">La gestión de tickets para mantenimientos estará disponible próximamente.</p>
+            </CardContent>
+          </Card>
+        );
+      case 'calendarios':
+         return (
+          <Card className="mt-6 shadow-lg animate-fade-in">
+            <CardHeader>
+              <CardTitle>Calendarios de Mantenimiento</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">La visualización de calendarios de mantenimiento estará disponible próximamente.</p>
+            </CardContent>
+          </Card>
+        );
+      case 'usuarios':
+         return (
+          <Card className="mt-6 shadow-lg animate-fade-in">
+            <CardHeader>
+              <CardTitle>Información de Usuarios</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">La gestión de información de usuarios estará disponible próximamente.</p>
+            </CardContent>
+          </Card>
+        );
+      default:
+        return null;
+    }
+  };
   
+  const NavButton = ({ viewName, children }: { viewName: string; children: React.ReactNode }) => (
+    <Button
+      onClick={() => setActiveView(viewName)}
+      className={cn(
+        'h-24 w-full text-base sm:text-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 rounded-xl shadow-md',
+        activeView === viewName ? 'bg-primary ring-4 ring-primary/50 shadow-2xl scale-105' : 'bg-accent hover:bg-accent/90'
+      )}
+    >
+      {children}
+    </Button>
+  );
+
   return (
-    <Accordion type="single" collapsible defaultValue="item-1" className="w-full space-y-3">
-      <AccordionItem value="item-1" className="border rounded-lg shadow-sm overflow-hidden">
-        <AccordionTrigger 
-          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
-        >
-          <div className="flex items-center">
-            <Computer size={28} className="mr-3 text-accent" />
-            Mantenimiento de Equipos de Cómputo
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pt-2 p-4 border-t border-border"> 
-          <div className="space-y-6">
-            <div className="flex justify-end items-center pt-2"> 
-              <Button asChild className="bg-primary hover:bg-primary/90">
-                <Link href="/equipment/new">
-                  <PlusCircle size={20} className="mr-2" />
-                  Agregar Nuevo Equipo
-                </Link>
-              </Button>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column */}
+        <div className="lg:col-span-1 space-y-8">
+            <AlertsCard />
+            <MaintenanceChart />
+        </div>
+
+        {/* Right Column */}
+        <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <NavButton viewName="computo">Mantenimiento de Equipo de Cómputo</NavButton>
+                <NavButton viewName="perifericos">Mantenimiento de Equipos Periféricos</NavButton>
+                <NavButton viewName="tickets">Tickets para Mantenimiento</NavButton>
+                <NavButton viewName="calendarios">Calendarios de Mantenimiento</NavButton>
+                <div className="sm:col-span-2 flex justify-center">
+                  <div className="w-full sm:w-1/2">
+                    <NavButton viewName="usuarios">Información de Usuarios</NavButton>
+                  </div>
+                </div>
             </div>
-            <EquipmentTable equipments={equipments} />
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-      
-      <AccordionItem value="item-peripherals-main" className="border rounded-lg shadow-sm overflow-hidden">
-        <AccordionTrigger
-          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
-        >
-          <div className="flex items-center">
-            <Speaker size={28} className="mr-3 text-accent" />
-            Mantenimiento de Equipos Periféricos
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="p-2 border-t border-border">
-          <Accordion type="multiple" className="w-full space-y-2">
-            <AccordionItem value="item-2" className="border rounded-lg shadow-sm overflow-hidden bg-secondary/20">
-              <AccordionTrigger 
-                className="p-3 text-lg font-headline font-semibold text-primary/90 hover:no-underline flex items-center justify-between w-full text-left"
-              >
-                <div className="flex items-center">
-                  <Printer size={22} className="mr-3 text-accent/90" />
-                   Impresoras y Escáneres
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pt-2 p-4 border-t border-border bg-background"> 
-                <div className="space-y-4">
-                  <div className="flex justify-end items-center"> 
-                    <Button asChild className="bg-primary/90 hover:bg-primary/80" size="sm" disabled>
-                      <Link href="#">
-                        <PlusCircle size={18} className="mr-2" />
-                        Agregar Impresora/Escáner (Próximamente)
-                      </Link>
-                    </Button>
-                  </div>
-                  <p className="text-muted-foreground text-sm">La gestión de impresoras y escáneres estará disponible próximamente.</p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
 
-            <AccordionItem value="item-3" className="border rounded-lg shadow-sm overflow-hidden bg-secondary/20">
-              <AccordionTrigger 
-                className="p-3 text-lg font-headline font-semibold text-primary/90 hover:no-underline flex items-center justify-between w-full text-left"
-              >
-                <div className="flex items-center">
-                  <Receipt size={22} className="mr-3 text-accent/90" />
-                  Impresoras de Tickets
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pt-2 p-4 border-t border-border bg-background"> 
-                <div className="space-y-4">
-                  <div className="flex justify-end items-center"> 
-                    <Button asChild className="bg-primary/90 hover:bg-primary/80" size="sm" disabled>
-                      <Link href="#">
-                        <PlusCircle size={18} className="mr-2" />
-                        Agregar Impresora de Tickets (Próximamente)
-                      </Link>
-                    </Button>
-                  </div>
-                  <p className="text-muted-foreground text-sm">La gestión de impresoras de tickets estará disponible próximamente.</p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-5" className="border rounded-lg shadow-sm overflow-hidden bg-secondary/20">
-              <AccordionTrigger 
-                className="p-3 text-lg font-headline font-semibold text-primary/90 hover:no-underline flex items-center justify-between w-full text-left"
-              >
-                <div className="flex items-center">
-                  <Router size={22} className="mr-3 text-accent/90" />
-                  Switches, Modems y Enrutadores
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pt-2 p-4 border-t border-border bg-background">
-                 <div className="space-y-4">
-                  <div className="flex justify-end items-center"> 
-                    <Button asChild className="bg-primary/90 hover:bg-primary/80" size="sm" disabled>
-                      <Link href="#">
-                        <PlusCircle size={18} className="mr-2" />
-                        Agregar Dispositivo de Red (Próximamente)
-                      </Link>
-                    </Button>
-                  </div>
-                  <p className="text-muted-foreground text-sm">La gestión de switches, modems y enrutadores estará disponible próximamente.</p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-            
-            <AccordionItem value="item-4" className="border rounded-lg shadow-sm overflow-hidden bg-secondary/20">
-              <AccordionTrigger 
-                className="p-3 text-lg font-headline font-semibold text-primary/90 hover:no-underline flex items-center justify-between w-full text-left"
-              >
-                <div className="flex items-center">
-                  <ScanLine size={22} className="mr-3 text-accent/90" />
-                  Otros Dispositivos
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pt-2 p-4 border-t border-border bg-background">
-                 <div className="space-y-4">
-                  <div className="flex justify-end items-center"> 
-                    <Button asChild className="bg-primary/90 hover:bg-primary/80" size="sm" disabled>
-                      <Link href="#">
-                        <PlusCircle size={18} className="mr-2" />
-                        Agregar Otro Dispositivo (Próximamente)
-                      </Link>
-                    </Button>
-                  </div>
-                  <p className="text-muted-foreground text-sm">La gestión de otros tipos de dispositivos estará disponible próximamente.</p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </AccordionContent>
-      </AccordionItem>
-
-      <AccordionItem value="item-tickets" className="border rounded-lg shadow-sm overflow-hidden">
-        <AccordionTrigger
-          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
-        >
-          <div className="flex items-center">
-            <Ticket size={28} className="mr-3 text-accent" />
-            Tickets para Mantenimientos
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pt-2 p-4 border-t border-border">
-          <p className="text-muted-foreground text-sm">La gestión de tickets para mantenimientos estará disponible próximamente.</p>
-        </AccordionContent>
-      </AccordionItem>
-
-      <AccordionItem value="item-users" className="border rounded-lg shadow-sm overflow-hidden">
-        <AccordionTrigger
-          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
-        >
-          <div className="flex items-center">
-            <Users size={28} className="mr-3 text-accent" />
-            Información de Usuarios
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pt-2 p-4 border-t border-border">
-          <p className="text-muted-foreground text-sm">La gestión de información de usuarios estará disponible próximamente.</p>
-        </AccordionContent>
-      </AccordionItem>
-
-      <AccordionItem value="item-calendars" className="border rounded-lg shadow-sm overflow-hidden">
-        <AccordionTrigger
-          className="p-4 text-2xl font-headline font-semibold text-primary hover:no-underline flex items-center justify-between w-full text-left bg-secondary/30 hover:bg-secondary/50 transition-colors"
-        >
-          <div className="flex items-center">
-            <Calendar size={28} className="mr-3 text-accent" />
-            Calendarios de Mantenimientos
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pt-2 p-4 border-t border-border">
-          <p className="text-muted-foreground text-sm">La visualización de calendarios de mantenimiento estará disponible próximamente.</p>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+            <div className="mt-6">
+              {renderContent()}
+            </div>
+        </div>
+    </div>
   );
 };
 
