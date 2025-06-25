@@ -112,17 +112,6 @@ const EquipmentClientPage: React.FC = () => {
             </CardContent>
           </Card>
         );
-      case 'usuarios':
-         return (
-          <Card className="mt-6 shadow-lg animate-fade-in">
-            <CardHeader>
-              <CardTitle>Información de Usuarios</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">La gestión de información de usuarios estará disponible próximamente.</p>
-            </CardContent>
-          </Card>
-        );
       default:
         return null;
     }
@@ -155,11 +144,6 @@ const EquipmentClientPage: React.FC = () => {
                 <NavButton viewName="perifericos">Mantenimiento de Equipos Periféricos</NavButton>
                 <NavButton viewName="tickets">Tickets para Mantenimiento</NavButton>
                 <NavButton viewName="calendarios">Calendarios de Mantenimiento</NavButton>
-                <div className="sm:col-span-2 flex justify-center">
-                  <div className="w-full sm:w-1/2">
-                    <NavButton viewName="usuarios">Información de Usuarios</NavButton>
-                  </div>
-                </div>
             </div>
 
             <div className="mt-6">
