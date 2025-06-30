@@ -65,6 +65,7 @@ export default function HomePage() {
   };
 
   const menuItems = [
+    { id: 'dashboard', label: 'Dashboard' },
     { id: 'mantenimientos', label: 'Mantenimientos' },
     { id: 'perifericos', label: 'Equipos Periféricos' },
     { id: 'tickets', label: 'Tickets' },
@@ -79,14 +80,6 @@ export default function HomePage() {
                     <JadLogo />
                 </SidebarHeader>
                 <SidebarContent className="flex flex-col justify-start pt-4">
-                    <div className="px-6 mb-4">
-                        <h2 
-                            className="text-lg font-bold border-b-2 border-red-500 inline-block pb-1 cursor-pointer"
-                            onClick={() => setActiveView('dashboard')}
-                        >
-                            Dashboard
-                        </h2>
-                    </div>
                     <SidebarMenu>
                         {menuItems.map(item => (
                              <SidebarMenuItem key={item.id}>
