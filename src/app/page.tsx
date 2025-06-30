@@ -6,6 +6,7 @@ import AlertsCard from '@/components/equipment/AlertsCard';
 import MaintenanceChart from '@/components/equipment/MaintenanceChart';
 import EquipmentClientPage from '@/components/equipment/EquipmentClientPage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 // This is a placeholder for the logo based on the image provided.
 const JadLogo = () => (
@@ -41,8 +42,35 @@ export default function HomePage() {
       case 'perifericos':
         return (
             <Card className="mt-6 shadow-lg animate-fade-in">
-                <CardHeader><CardTitle>Equipos Periféricos</CardTitle></CardHeader>
-                <CardContent><p className="text-muted-foreground">La gestión de equipos periféricos estará disponible próximamente.</p></CardContent>
+                <CardHeader><CardTitle>Mantenimiento de Equipos Periféricos</CardTitle></CardHeader>
+                <CardContent>
+                    <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="printers">
+                            <AccordionTrigger>Impresoras y Escáneres</AccordionTrigger>
+                            <AccordionContent>
+                                <p className="text-muted-foreground p-4">La gestión de impresoras y escáneres estará disponible próximamente.</p>
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="ticket-printers">
+                            <AccordionTrigger>Impresoras de Tickets</AccordionTrigger>
+                            <AccordionContent>
+                                <p className="text-muted-foreground p-4">La gestión de impresoras de tickets estará disponible próximamente.</p>
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="networking">
+                            <AccordionTrigger>Switches, Modems y Enrutadores</AccordionTrigger>
+                            <AccordionContent>
+                                <p className="text-muted-foreground p-4">La gestión de equipos de red estará disponible próximamente.</p>
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="other">
+                            <AccordionTrigger>Otros Dispositivos</AccordionTrigger>
+                            <AccordionContent>
+                                <p className="text-muted-foreground p-4">La gestión de otros dispositivos periféricos estará disponible próximamente.</p>
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                </CardContent>
             </Card>
         );
       case 'tickets':
