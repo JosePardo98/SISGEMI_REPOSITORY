@@ -7,8 +7,6 @@ import EquipmentClientPage from '@/components/equipment/EquipmentClientPage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from '@/components/ui/button';
-import { Computer } from 'lucide-react';
-import RegisteredEquipmentCard from '@/components/equipment/RegisteredEquipmentCard';
 
 const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
     const lines = label.split('\n');
@@ -39,12 +37,11 @@ export default function HomePage() {
     switch (activeView) {
       case 'panel':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 animate-fade-in">
-            <div className="lg:col-span-2 space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+            <div className="lg:col-span-1">
               <AlertsCard />
-              <RegisteredEquipmentCard />
             </div>
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-2">
               <MaintenanceChart />
             </div>
           </div>
@@ -110,7 +107,6 @@ export default function HomePage() {
         <div className="container mx-auto flex items-stretch" style={{ height: '140px' }}>
           <div className="flex-grow flex flex-col">
             <div className="bg-primary text-primary-foreground flex-grow flex items-center px-6">
-               <Computer size={32} className="mr-3" />
                <h1 className="text-xl md:text-2xl font-headline font-semibold">
                  SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
                </h1>
