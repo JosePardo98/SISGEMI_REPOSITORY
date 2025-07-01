@@ -13,7 +13,7 @@ import RegisteredEquipmentCard from '@/components/equipment/RegisteredEquipmentC
 
 const JadLogo = () => (
     <div className="bg-white p-4 flex flex-col items-center justify-center shadow-lg h-full w-auto">
-        <Image src="/logo-jad.png" alt="JAD Matamoros Logo" width={220} height={70} />
+        <Image src="/logo-jad.png" alt="JAD Matamoros Logo" width={220} height={70} unoptimized={true} />
         <div className="text-sm text-black mt-2 font-semibold tracking-wider">SISGEMI</div>
     </div>
 );
