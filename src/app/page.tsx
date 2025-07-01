@@ -1,17 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sidebar, SidebarContent, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider } from '@/components/ui/sidebar';
 import AlertsCard from '@/components/equipment/AlertsCard';
 import MaintenanceChart from '@/components/equipment/MaintenanceChart';
 import EquipmentClientPage from '@/components/equipment/EquipmentClientPage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from '@/components/ui/button';
+import { Computer } from 'lucide-react';
+import RegisteredEquipmentCard from '@/components/equipment/RegisteredEquipmentCard';
 
-// This is a placeholder for the logo based on the image provided.
 const JadLogo = () => (
-    <div className="p-4 bg-white rounded-md flex flex-col items-center shadow-md my-4 w-40">
-        <svg width="100" height="50" viewBox="0 0 160 80" className="text-blue-800">
+    <div className="bg-white p-4 flex flex-col items-center justify-center shadow-lg h-full w-auto">
+        <svg width="100" height="50" viewBox="0 0 160 80" className="text-primary">
             <circle cx="30" cy="40" r="25" fill="currentColor"/>
             <text x="18" y="52" fontFamily="Arial, sans-serif" fontSize="30" fill="white" fontWeight="bold">J</text>
             <path d="M 30 40 a 25 25 0 0 1 0 -2.5" stroke="white" strokeWidth="2.5" fill="none"/>
@@ -20,25 +21,51 @@ const JadLogo = () => (
             <text x="65" y="35" fontFamily="Arial, sans-serif" fontSize="30" fontWeight="bold" fill="currentColor">JAD</text>
             <text x="65" y="60" fontFamily="Arial, sans-serif" fontSize="14" fill="#333" fontWeight="bold">MATAMOROS</text>
         </svg>
-        <div className="text-sm text-red-600 mt-2 font-semibold tracking-wider">SISGEMI</div>
+        <div className="text-sm text-black mt-2 font-semibold tracking-wider">SISGEMI</div>
     </div>
 );
 
+const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
+    const lines = label.split('\n');
+    return (
+        <Button
+            onClick={onClick}
+            variant="ghost"
+            className={`h-auto flex-col items-center justify-center p-2 rounded-md shadow-md transition-transform transform hover:scale-105 ${isActive ? 'bg-white text-primary font-bold' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+            style={{ minWidth: '140px', height: '60px' }}
+        >
+            {lines.map((line, index) => <span key={index} className="leading-tight text-sm">{line}</span>)}
+        </Button>
+    );
+};
 
 export default function HomePage() {
-  const [activeView, setActiveView] = useState('dashboard');
+  const [activeView, setActiveView] = useState('panel');
+
+  const menuItems = [
+    { id: 'panel', label: 'Panel' },
+    { id: 'registro-mantenimientos', label: 'Registro de\nMantenimientos' },
+    { id: 'perifericos', label: 'Mantenimiento de\nPeriféricos' },
+    { id: 'tickets', label: 'Tickets' },
+    { id: 'calendarios', label: 'Calendarios' },
+  ];
 
   const renderContent = () => {
     switch (activeView) {
-      case 'dashboard':
+      case 'panel':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
-            <AlertsCard />
-            <MaintenanceChart />
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 animate-fade-in">
+            <div className="lg:col-span-2 space-y-8">
+              <AlertsCard />
+              <RegisteredEquipmentCard />
+            </div>
+            <div className="lg:col-span-3">
+              <MaintenanceChart />
+            </div>
           </div>
         );
-      case 'mantenimientos':
-        return <EquipmentClientPage />; // This component is now just the equipment table view
+      case 'registro-mantenimientos':
+        return <EquipmentClientPage />;
       case 'perifericos':
         return (
             <Card className="mt-6 shadow-lg animate-fade-in">
@@ -92,43 +119,39 @@ export default function HomePage() {
     }
   };
 
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'mantenimientos', label: 'Mantenimientos' },
-    { id: 'perifericos', label: 'Equipos Periféricos' },
-    { id: 'tickets', label: 'Tickets' },
-    { id: 'calendarios', label: 'Calendarios' },
-  ];
-
   return (
-    <div className="bg-gray-100 min-h-screen">
-        <SidebarProvider>
-            <Sidebar className="bg-cyan-100 border-r-2 border-cyan-200" style={{backgroundColor: 'hsl(195, 75%, 92%)'}}>
-                <SidebarHeader className="items-center">
-                    <JadLogo />
-                </SidebarHeader>
-                <SidebarContent className="flex flex-col justify-start pt-4">
-                    <SidebarMenu>
-                        {menuItems.map(item => (
-                             <SidebarMenuItem key={item.id}>
-                                <SidebarMenuButton 
-                                    onClick={() => setActiveView(item.id)} 
-                                    className="bg-white text-black hover:bg-gray-200 data-[active=true]:bg-primary data-[active=true]:text-white mx-4 font-medium" 
-                                    isActive={activeView === item.id}
-                                >
-                                    {item.label}
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
-                </SidebarContent>
-            </Sidebar>
-            <SidebarInset>
-                <main className="flex-grow container mx-auto px-4 py-8">
-                    {renderContent()}
-                </main>
-            </SidebarInset>
-        </SidebarProvider>
+    <div className="min-h-screen bg-background">
+      <header className="bg-white shadow-lg sticky top-0 z-50">
+        <div className="container mx-auto flex items-stretch" style={{ height: '140px' }}>
+          <div className="flex-shrink-0">
+            <JadLogo />
+          </div>
+          <div className="flex-grow flex flex-col">
+            <div className="bg-primary text-primary-foreground flex-grow flex items-center px-6">
+               <Computer size={32} className="mr-3" />
+               <h1 className="text-xl md:text-2xl font-headline font-semibold">
+                 SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
+               </h1>
+            </div>
+            <div className="bg-primary/90 flex-grow flex items-center px-4">
+                <nav className="flex items-center space-x-2">
+                    {menuItems.map(item => (
+                        <NavButton 
+                          key={item.id}
+                          label={item.label}
+                          isActive={activeView === item.id}
+                          onClick={() => setActiveView(item.id)}
+                        />
+                    ))}
+                </nav>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        {renderContent()}
+      </main>
     </div>
   );
 }
