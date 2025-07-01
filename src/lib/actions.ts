@@ -33,7 +33,7 @@ export async function getEquipments(): Promise<Equipment[]> {
     return equipmentList;
   } catch (error) {
     console.error("Error fetching equipments:", error);
-    throw new Error("No se pudieron cargar los equipos desde Firestore.");
+    throw error;
   }
 }
 
@@ -51,7 +51,7 @@ export async function getEquipmentById(id: string): Promise<Equipment | undefine
     }
   } catch (error) {
     console.error("Error fetching equipment by ID:", error);
-    throw new Error(`No se pudo cargar el equipo ${id} desde Firestore.`);
+    throw error;
   }
 }
 
@@ -68,7 +68,7 @@ export async function getMaintenanceRecordsForEquipment(equipmentId: string): Pr
     return recordList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   } catch (error) {
     console.error("Error fetching preventive maintenance records:", error);
-    throw new Error(`No se pudieron cargar los registros de mantenimiento preventivo para el equipo ${equipmentId}.`);
+    throw error;
   }
 }
 
@@ -86,7 +86,7 @@ export async function getMaintenanceRecordById(recordId: string): Promise<Mainte
     }
   } catch (error) {
     console.error("Error fetching preventive maintenance record by ID:", error);
-    throw new Error(`No se pudo cargar el registro de mantenimiento preventivo ${recordId} desde Firestore.`);
+    throw error;
   }
 }
 
@@ -119,7 +119,7 @@ export async function addMaintenanceRecord(
 
   } catch (error) {
     console.error("Error adding preventive maintenance record to Firestore:", error);
-    throw new Error("No se pudo registrar el mantenimiento preventivo en Firestore.");
+    throw error;
   }
 }
 
@@ -160,7 +160,7 @@ export async function updateMaintenanceRecord(
     return convertTimestampToISO({ ...updatedRecordSnap.data(), id: updatedRecordSnap.id }) as MaintenanceRecord;
   } catch (error) {
     console.error("Error updating preventive maintenance record:", error);
-    throw new Error("No se pudo actualizar el registro de mantenimiento preventivo.");
+    throw error;
   }
 }
 
@@ -192,7 +192,7 @@ export async function deleteMaintenanceRecord(recordId: string, equipmentId: str
     revalidatePath('/');
   } catch (error) {
     console.error("Error deleting preventive maintenance record from Firestore:", error);
-    throw new Error("No se pudo eliminar el registro de mantenimiento preventivo de Firestore.");
+    throw error;
   }
 }
 
@@ -211,7 +211,7 @@ export async function getCorrectiveMaintenanceRecordsForEquipment(equipmentId: s
     return recordList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   } catch (error) {
     console.error("Error fetching corrective maintenance records:", error);
-    throw new Error(`No se pudieron cargar los registros de mantenimiento correctivo para el equipo ${equipmentId}.`);
+    throw error;
   }
 }
 
@@ -233,7 +233,7 @@ export async function addCorrectiveMaintenanceRecord(
 
   } catch (error) {
     console.error("Error adding corrective maintenance record to Firestore:", error);
-    throw new Error("No se pudo registrar el mantenimiento correctivo en Firestore.");
+    throw error;
   }
 }
 
@@ -245,7 +245,7 @@ export async function deleteCorrectiveMaintenanceRecord(recordId: string, equipm
     revalidatePath(`/equipment/${equipmentId}`);
   } catch (error) {
     console.error("Error deleting corrective maintenance record from Firestore:", error);
-    throw new Error("No se pudo eliminar el registro de mantenimiento correctivo de Firestore.");
+    throw error;
   }
 }
 
@@ -275,10 +275,7 @@ export async function addEquipment(
 
   } catch (error: any) {
     console.error("Error adding equipment to Firestore:", error);
-    if (error.message.includes("ya existe")) {
-        throw error;
-    }
-    throw new Error("No se pudo agregar el equipo a Firestore.");
+    throw error;
   }
 }
 
@@ -314,6 +311,6 @@ export async function updateEquipment(
     return convertTimestampToISO({ ...updatedEquipmentSnap.data(), id: updatedEquipmentSnap.id }) as Equipment;
   } catch (error) {
     console.error("Error updating equipment in Firestore:", error);
-    throw new Error(`No se pudo actualizar el equipo ${equipmentId} en Firestore.`);
+    throw error;
   }
 }
