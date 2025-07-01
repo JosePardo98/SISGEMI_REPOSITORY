@@ -12,14 +12,15 @@ import RegisteredEquipmentCard from '@/components/equipment/RegisteredEquipmentC
 
 const JadLogo = () => (
     <div className="bg-white p-4 flex flex-col items-center justify-center shadow-lg h-full w-auto">
-        <svg width="100" height="50" viewBox="0 0 160 80" className="text-primary">
-            <circle cx="30" cy="40" r="25" fill="currentColor"/>
-            <text x="18" y="52" fontFamily="Arial, sans-serif" fontSize="30" fill="white" fontWeight="bold">J</text>
-            <path d="M 30 40 a 25 25 0 0 1 0 -2.5" stroke="white" strokeWidth="2.5" fill="none"/>
-            <path d="M 22 45 q 8 6 16 0" stroke="white" strokeWidth="2.5" fill="none"/>
-            <path d="M 18 45 q 8 6 16 0" stroke="white" strokeWidth="2.5" fill="none"/>
-            <text x="65" y="35" fontFamily="Arial, sans-serif" fontSize="30" fontWeight="bold" fill="currentColor">JAD</text>
-            <text x="65" y="60" fontFamily="Arial, sans-serif" fontSize="14" fill="#333" fontWeight="bold">MATAMOROS</text>
+        <svg width="120" height="60" viewBox="0 0 180 90" className="text-primary">
+            <g>
+                <circle cx="45" cy="45" r="35" fill="currentColor"/>
+                <text x="32" y="62" fontFamily="Inter, sans-serif" fontSize="40" fill="white" fontWeight="bold">J</text>
+            </g>
+            <g>
+                <text x="90" y="45" fontFamily="Inter, sans-serif" fontSize="32" fontWeight="bold" fill="currentColor">JAD</text>
+                <text x="90" y="68" fontFamily="Inter, sans-serif" fontSize="14" fill="#333" fontWeight="bold">MATAMOROS</text>
+            </g>
         </svg>
         <div className="text-sm text-black mt-2 font-semibold tracking-wider">SISGEMI</div>
     </div>
