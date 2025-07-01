@@ -12,15 +12,21 @@ import RegisteredEquipmentCard from '@/components/equipment/RegisteredEquipmentC
 
 const JadLogo = () => (
     <div className="bg-white p-4 flex flex-col items-center justify-center shadow-lg h-full w-auto">
-        <svg width="120" height="60" viewBox="0 0 180 90" className="text-primary">
-            <g>
-                <circle cx="45" cy="45" r="35" fill="currentColor"/>
-                <text x="32" y="62" fontFamily="Inter, sans-serif" fontSize="40" fill="white" fontWeight="bold">J</text>
-            </g>
-            <g>
-                <text x="90" y="45" fontFamily="Inter, sans-serif" fontSize="32" fontWeight="bold" fill="currentColor">JAD</text>
-                <text x="90" y="68" fontFamily="Inter, sans-serif" fontSize="14" fill="#333" fontWeight="bold">MATAMOROS</text>
-            </g>
+        <svg width="220" height="70" viewBox="0 0 220 70">
+          {/* Logo Circle */}
+          <g>
+            <circle cx="35" cy="35" r="30" fill="#4CAF50"/>
+            <path d="M 10,48 C 20,38, 50,38, 60,48" stroke="#1E3A8A" strokeWidth="4" fill="none" strokeLinecap="round"/>
+            <path d="M 10,55 C 20,45, 50,45, 60,55" stroke="#1E3A8A" strokeWidth="4" fill="none" strokeLinecap="round"/>
+            <text x="35" y="40" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="22" fontWeight="bold" fill="white">JAD</text>
+            {/* This part "cuts out" the drop from the A */}
+            <path d="M35,34 C32,38 35,41 35,41 C35,41 38,38 35,34 Z" fill="#4CAF50"/>
+          </g>
+          {/* Text on the right */}
+          <g transform="translate(80, 0)">
+            <text x="0" y="38" fontFamily="Inter, sans-serif" fontSize="32" fontWeight="bold" fill="#1E3A8A">JAD</text>
+            <text x="0" y="58" fontFamily="Inter, sans-serif" fontSize="12" fontWeight="bold" fill="#1E3A8A" letterSpacing="1">MATAMOROS</text>
+          </g>
         </svg>
         <div className="text-sm text-black mt-2 font-semibold tracking-wider">SISGEMI</div>
     </div>
