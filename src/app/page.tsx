@@ -10,14 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Computer } from 'lucide-react';
 import RegisteredEquipmentCard from '@/components/equipment/RegisteredEquipmentCard';
 
-const JadLogo = () => (
-    <div className="bg-white px-4 flex flex-col items-center justify-evenly shadow-lg h-full w-auto">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-jad.png" alt="JAD Matamoros Logo" width="220" height="70" />
-        <div className="text-sm text-black font-semibold tracking-wider">SISGEMI</div>
-    </div>
-);
-
 const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
     const lines = label.split('\n');
     return (
@@ -116,9 +108,6 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       <header className="bg-white shadow-lg sticky top-0 z-50">
         <div className="container mx-auto flex items-stretch" style={{ height: '140px' }}>
-          <div className="flex-shrink-0">
-            <JadLogo />
-          </div>
           <div className="flex-grow flex flex-col">
             <div className="bg-primary text-primary-foreground flex-grow flex items-center px-6">
                <Computer size={32} className="mr-3" />
