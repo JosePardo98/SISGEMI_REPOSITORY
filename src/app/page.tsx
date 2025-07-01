@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import AlertsCard from '@/components/equipment/AlertsCard';
 import MaintenanceChart from '@/components/equipment/MaintenanceChart';
 import EquipmentClientPage from '@/components/equipment/EquipmentClientPage';
@@ -13,7 +12,8 @@ import RegisteredEquipmentCard from '@/components/equipment/RegisteredEquipmentC
 
 const JadLogo = () => (
     <div className="bg-white px-4 flex flex-col items-center justify-evenly shadow-lg h-full w-auto">
-        <Image src="/logo-jad.png" alt="JAD Matamoros Logo" width={220} height={70} unoptimized={true} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo-jad.png" alt="JAD Matamoros Logo" width="220" height="70" />
         <div className="text-sm text-black font-semibold tracking-wider">SISGEMI</div>
     </div>
 );
