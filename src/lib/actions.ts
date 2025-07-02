@@ -146,9 +146,9 @@ export async function updateMaintenanceRecord(
       });
     } else {
        await updateDoc(equipmentDocRef, {
-        lastMaintenanceDate: undefined, 
-        nextMaintenanceDate: undefined,
-        lastTechnician: undefined
+        lastMaintenanceDate: null, 
+        nextMaintenanceDate: null,
+        lastTechnician: null
       });
     }
     
@@ -183,9 +183,9 @@ export async function deleteMaintenanceRecord(recordId: string, equipmentId: str
       });
     } else {
       await updateDoc(equipmentDocRef, {
-        lastMaintenanceDate: undefined, 
-        nextMaintenanceDate: undefined, 
-        lastTechnician: undefined
+        lastMaintenanceDate: null, 
+        nextMaintenanceDate: null, 
+        lastTechnician: null
       });
     }
     revalidatePath(`/equipment/${equipmentId}`);
@@ -263,9 +263,9 @@ export async function addEquipment(
 
     const dataToSave = {
         ...equipmentData,
-        lastMaintenanceDate: undefined,
-        nextMaintenanceDate: undefined,
-        lastTechnician: undefined,
+        lastMaintenanceDate: null,
+        nextMaintenanceDate: null,
+        lastTechnician: null,
     };
     
     await setDoc(equipmentRef, dataToSave);
@@ -286,15 +286,15 @@ export async function updateEquipment(
   try {
     const equipmentRef = doc(db, 'equipments', equipmentId);
 
-    const processedData = { ...dataToUpdate };
+    const processedData: { [key: string]: any } = { ...dataToUpdate };
     if (processedData.lastMaintenanceDate === '') {
-      processedData.lastMaintenanceDate = undefined; 
+      processedData.lastMaintenanceDate = null; 
     }
     if (processedData.nextMaintenanceDate === '') {
-      processedData.nextMaintenanceDate = undefined; 
+      processedData.nextMaintenanceDate = null; 
     }
     if (processedData.lastTechnician === '') {
-      processedData.lastTechnician = undefined;
+      processedData.lastTechnician = null;
     }
     
     if ('specifications' in processedData) {

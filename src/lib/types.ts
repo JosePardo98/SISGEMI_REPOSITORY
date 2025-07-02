@@ -2,9 +2,9 @@ export type Equipment = {
   id: string; // Corresponds to ID PC
   name: string; // Nombre PC
   os: string; // Sistema Operativo
-  lastMaintenanceDate?: string; // ISO date string, e.g., "2023-10-26" // For preventive
-  lastTechnician?: string; // Technician from the last preventive maintenance
-  nextMaintenanceDate?: string; // ISO date string, e.g., "2024-04-26" // For preventive
+  lastMaintenanceDate?: string | null; // ISO date string, e.g., "2023-10-26" // For preventive
+  lastTechnician?: string | null; // Technician from the last preventive maintenance
+  nextMaintenanceDate?: string | null; // ISO date string, e.g., "2024-04-26" // For preventive
   
   // Información de PC
   processor?: string;
