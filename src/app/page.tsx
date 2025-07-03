@@ -14,7 +14,7 @@ const NavButton = ({ label, isActive, onClick }: { label: string, isActive: bool
         <Button
             onClick={onClick}
             variant="ghost"
-            className={`h-auto flex-col items-center justify-center p-2 rounded-md shadow-md transition-transform transform hover:scale-105 ${isActive ? 'bg-white text-primary font-bold' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+            className={`h-auto flex-col items-center justify-center p-2 rounded-md shadow-md transition-transform transform hover:scale-105 ${isActive ? 'bg-card text-primary font-bold' : 'bg-secondary hover:bg-muted text-secondary-foreground'}`}
             style={{ minWidth: '140px', height: '60px' }}
         >
             {lines.map((line, index) => <span key={index} className="leading-tight text-sm">{line}</span>)}
