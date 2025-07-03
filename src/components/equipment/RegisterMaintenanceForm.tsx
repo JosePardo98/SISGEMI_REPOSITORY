@@ -72,13 +72,7 @@ export const RegisterMaintenanceForm: React.FC<RegisterMaintenanceFormProps> = (
   const onSubmit: SubmitHandler<MaintenanceFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      // Sanitize images array to remove the 'id' field from useFieldArray
-      const submissionData = {
-        ...data,
-        images: data.images?.map(({ url, description }) => ({ url, description })),
-      };
-
-      await addMaintenanceRecord({ ...submissionData, equipmentId });
+      await addMaintenanceRecord({ ...data, equipmentId });
       toast({
         title: "Mantenimiento Registrado",
         description: `El mantenimiento para ${equipmentName} ha sido guardado exitosamente.`,

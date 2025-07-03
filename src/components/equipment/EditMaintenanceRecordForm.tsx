@@ -115,13 +115,7 @@ export const EditMaintenanceRecordForm: React.FC<EditMaintenanceFormProps> = ({ 
   const onSubmit: SubmitHandler<MaintenanceFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      // Sanitize images array to remove the 'id' field from useFieldArray
-      const submissionData = {
-        ...data,
-        images: data.images?.map(({ url, description }) => ({ url, description })),
-      };
-
-      await updateMaintenanceRecord(recordId, equipmentId, submissionData);
+      await updateMaintenanceRecord(recordId, equipmentId, data);
       toast({
         title: "Registro Actualizado",
         description: `El registro de mantenimiento ha sido actualizado exitosamente.`,

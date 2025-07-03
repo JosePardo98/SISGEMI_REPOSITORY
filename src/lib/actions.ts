@@ -95,14 +95,25 @@ export async function addMaintenanceRecord(
   recordData: Omit<MaintenanceRecord, 'id'>
 ): Promise<MaintenanceRecord> {
   try {
-    const dataToSave = {
-      ...recordData,
-      // Sanitize the images array to prevent Firestore errors by ensuring it's an array and descriptions are strings.
-      images: recordData.images?.map(img => ({
-        url: img.url,
-        description: img.description || '',
-      })) || [],
+    // Create a new object for saving to ensure we don't mutate the original and to explicitly set the structure
+    const dataToSave: any = {
+      equipmentId: recordData.equipmentId,
+      date: recordData.date,
+      technician: recordData.technician,
+      description: recordData.description,
+      images: [], // Start with a clean slate for images
     };
+
+    // Robustly sanitize the images array on the server
+    if (recordData.images && Array.isArray(recordData.images)) {
+      dataToSave.images = recordData.images.map(img => {
+        // Only include url and description. Explicitly ignore any other fields like the 'id' from react-hook-form.
+        return {
+          url: img.url,
+          description: img.description || '', // Ensure description is at least an empty string
+        };
+      });
+    }
 
     const newRecordRef = await addDoc(collection(db, 'maintenanceRecords'), {
       ...dataToSave,
@@ -138,18 +149,30 @@ export async function updateMaintenanceRecord(
   dataToUpdate: Partial<Omit<MaintenanceRecord, 'id' | 'equipmentId'>>
 ): Promise<MaintenanceRecord> {
   try {
-    const sanitizedData = { ...dataToUpdate };
+    const recordRef = doc(db, 'maintenanceRecords', recordId);
+    
+    // Create a new object for updating, ensuring no extraneous fields are included.
+    const sanitizedDataToUpdate: { [key: string]: any } = {};
 
-    // If 'images' is being updated, sanitize it to prevent Firestore errors.
-    if ('images' in sanitizedData) {
-      sanitizedData.images = sanitizedData.images?.map(img => ({
+    // Only add fields to the update object if they are present in the input data.
+    if (dataToUpdate.date !== undefined) sanitizedDataToUpdate.date = dataToUpdate.date;
+    if (dataToUpdate.technician !== undefined) sanitizedDataToUpdate.technician = dataToUpdate.technician;
+    if (dataToUpdate.description !== undefined) sanitizedDataToUpdate.description = dataToUpdate.description;
+
+    // Robustly sanitize the images array on the server
+    if (dataToUpdate.images && Array.isArray(dataToUpdate.images)) {
+      sanitizedDataToUpdate.images = dataToUpdate.images.map(img => ({
         url: img.url,
         description: img.description || '',
-      })) || [];
+      }));
+    } else if (dataToUpdate.images !== undefined) {
+      // Handle cases where 'images' might be null or something else, default to empty array
+      sanitizedDataToUpdate.images = [];
     }
 
-    const recordRef = doc(db, 'maintenanceRecords', recordId);
-    await updateDoc(recordRef, sanitizedData);
+    if (Object.keys(sanitizedDataToUpdate).length > 0) {
+      await updateDoc(recordRef, sanitizedDataToUpdate);
+    }
 
     const records = await getMaintenanceRecordsForEquipment(equipmentId);
     const equipmentDocRef = doc(db, 'equipments', equipmentId);
@@ -333,4 +356,3 @@ export async function updateEquipment(
     throw error;
   }
 }
-
