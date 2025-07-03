@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -283,49 +282,70 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                       </TableHeader>
                       <TableBody>
                         {sortedMaintenanceRecords.map((record) => (
-                          <TableRow key={record.id}>
-                            <TableCell>{formatTableDate(record.date)}</TableCell>
-                            <TableCell>{record.technician}</TableCell>
-                            <TableCell>{record.description}</TableCell>
-                            <TableCell className="text-right space-x-4">
-                              <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                                <Link href={`/equipment/${equipment.id}/maintenance/${record.id}/edit`}>
-                                  <Edit size={16} className="mr-1" /> Modificar
-                                </Link>
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="destructive" size="sm" disabled={isDeletingPreventiveRecord === record.id}>
-                                    {isDeletingPreventiveRecord === record.id ? (
-                                      <>Eliminando...</>
-                                    ) : (
-                                      <><Trash2 size={16} className="mr-1" /> Eliminar</>
-                                    )}
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle className="flex items-center">
-                                      <AlertTriangle size={20} className="mr-2 text-destructive" />
-                                      ¿Confirmar Eliminación?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Esta acción no se puede deshacer. Esto eliminará permanentemente el registro de mantenimiento preventivo del {formatTableDate(record.date)}.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                    <AlertDialogAction 
-                                      onClick={() => handleDeletePreventiveRecord(record.id)}
-                                      className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                                    >
-                                      Sí, Eliminar
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </TableCell>
-                          </TableRow>
+                           <React.Fragment key={record.id}>
+                            <TableRow>
+                              <TableCell>{formatTableDate(record.date)}</TableCell>
+                              <TableCell>{record.technician}</TableCell>
+                              <TableCell className="max-w-xs whitespace-pre-wrap">{record.description}</TableCell>
+                              <TableCell className="text-right space-x-4">
+                                <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                                  <Link href={`/equipment/${equipment.id}/maintenance/${record.id}/edit`}>
+                                    <Edit size={16} className="mr-1" /> Modificar
+                                  </Link>
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="destructive" size="sm" disabled={isDeletingPreventiveRecord === record.id}>
+                                      {isDeletingPreventiveRecord === record.id ? (
+                                        <>Eliminando...</>
+                                      ) : (
+                                        <><Trash2 size={16} className="mr-1" /> Eliminar</>
+                                      )}
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle className="flex items-center">
+                                        <AlertTriangle size={20} className="mr-2 text-destructive" />
+                                        ¿Confirmar Eliminación?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Esta acción no se puede deshacer. Esto eliminará permanentemente el registro de mantenimiento preventivo del {formatTableDate(record.date)}.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                      <AlertDialogAction 
+                                        onClick={() => handleDeletePreventiveRecord(record.id)}
+                                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                                      >
+                                        Sí, Eliminar
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </TableCell>
+                            </TableRow>
+                             {record.images && record.images.length > 0 && (
+                              <TableRow>
+                                  <TableCell colSpan={4} className="p-0">
+                                      <div className="p-4 bg-muted/50">
+                                          <h4 className="font-semibold mb-2 text-sm">Evidencia Fotográfica:</h4>
+                                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                              {record.images.map((image, index) => (
+                                                  <div key={index} className="space-y-2">
+                                                      <a href={image.url} target="_blank" rel="noopener noreferrer">
+                                                        <img src={image.url} alt={image.description || `Evidencia ${index + 1}`} className="w-full h-32 object-cover rounded-md shadow-md hover:scale-105 transition-transform" />
+                                                      </a>
+                                                      <p className="text-xs text-muted-foreground">{image.description}</p>
+                                                  </div>
+                                              ))}
+                                          </div>
+                                      </div>
+                                  </TableCell>
+                              </TableRow>
+                            )}
+                          </React.Fragment>
                         ))}
                       </TableBody>
                     </Table>
@@ -436,4 +456,3 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
 };
 
 export default EquipmentDetailClientPage;
-
