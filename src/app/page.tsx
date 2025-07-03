@@ -103,26 +103,24 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-white shadow-lg sticky top-0 z-50">
-        <div className="container mx-auto flex items-stretch" style={{ height: '140px' }}>
-          <div className="flex-grow flex flex-col">
-            <div className="bg-primary text-primary-foreground flex-grow flex items-center px-6">
-               <h1 className="text-xl md:text-2xl font-headline font-semibold">
-                 SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
-               </h1>
-            </div>
-            <div className="bg-primary/90 flex-grow flex items-center px-4">
-                <nav className="flex items-center space-x-2">
-                    {menuItems.map(item => (
-                        <NavButton 
-                          key={item.id}
-                          label={item.label}
-                          isActive={activeView === item.id}
-                          onClick={() => setActiveView(item.id)}
-                        />
-                    ))}
-                </nav>
-            </div>
+      <header className="bg-primary text-primary-foreground shadow-lg sticky top-0 z-50">
+        <div className="container mx-auto">
+          <div className="flex items-center px-6 py-4">
+             <h1 className="text-xl md:text-2xl font-headline font-semibold">
+               SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
+             </h1>
+          </div>
+          <div className="bg-primary/90 flex items-center px-4 py-2">
+              <nav className="flex items-center space-x-2">
+                  {menuItems.map(item => (
+                      <NavButton 
+                        key={item.id}
+                        label={item.label}
+                        isActive={activeView === item.id}
+                        onClick={() => setActiveView(item.id)}
+                      />
+                  ))}
+              </nav>
           </div>
         </div>
       </header>
