@@ -86,7 +86,7 @@ export const EditMaintenanceRecordForm: React.FC<EditMaintenanceFormProps> = ({ 
       } catch (error) {
         toast({
           title: "Error al Cargar Datos",
-          description: "Hubo un problema al obtener los detalles del registro.",
+          description: error instanceof Error ? error.message : "Hubo un problema al obtener los detalles del registro.",
           variant: "destructive",
         });
       } finally {
@@ -115,7 +115,13 @@ export const EditMaintenanceRecordForm: React.FC<EditMaintenanceFormProps> = ({ 
   const onSubmit: SubmitHandler<MaintenanceFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      await updateMaintenanceRecord(recordId, equipmentId, data);
+      // Sanitize images array to remove the 'id' field from useFieldArray
+      const submissionData = {
+        ...data,
+        images: data.images?.map(({ url, description }) => ({ url, description })),
+      };
+
+      await updateMaintenanceRecord(recordId, equipmentId, submissionData);
       toast({
         title: "Registro Actualizado",
         description: `El registro de mantenimiento ha sido actualizado exitosamente.`,

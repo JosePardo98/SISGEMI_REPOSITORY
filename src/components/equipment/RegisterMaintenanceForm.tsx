@@ -72,10 +72,16 @@ export const RegisterMaintenanceForm: React.FC<RegisterMaintenanceFormProps> = (
   const onSubmit: SubmitHandler<MaintenanceFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      await addMaintenanceRecord({ ...data, equipmentId });
+      // Sanitize images array to remove the 'id' field from useFieldArray
+      const submissionData = {
+        ...data,
+        images: data.images?.map(({ url, description }) => ({ url, description })),
+      };
+
+      await addMaintenanceRecord({ ...submissionData, equipmentId });
       toast({
         title: "Mantenimiento Registrado",
-        description: `El mantenimiento para ${equipmentName} ha sido guardado exitosamente. (Simulado)`,
+        description: `El mantenimiento para ${equipmentName} ha sido guardado exitosamente.`,
         variant: "default",
       });
       reset();
@@ -86,7 +92,7 @@ export const RegisterMaintenanceForm: React.FC<RegisterMaintenanceFormProps> = (
       console.error("Error registering maintenance:", error);
       toast({
         title: "Error al Registrar",
-        description: "Hubo un problema al guardar el mantenimiento. Intente de nuevo.",
+        description: error instanceof Error ? error.message : "Hubo un problema al guardar el mantenimiento. Intente de nuevo.",
         variant: "destructive",
       });
     } finally {
