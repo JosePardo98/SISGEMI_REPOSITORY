@@ -72,7 +72,15 @@ export const RegisterMaintenanceForm: React.FC<RegisterMaintenanceFormProps> = (
   const onSubmit: SubmitHandler<MaintenanceFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      await addMaintenanceRecord({ ...data, equipmentId });
+      // Sanitize the images array to remove the internal 'id' from react-hook-form.
+      // Firestore does not allow extra properties on objects in an array.
+      const sanitizedPayload = {
+        ...data,
+        equipmentId: equipmentId,
+        images: data.images ? data.images.map(({ url, description }) => ({ url, description: description || '' })) : [],
+      };
+
+      await addMaintenanceRecord(sanitizedPayload);
       toast({
         title: "Mantenimiento Registrado",
         description: `El mantenimiento para ${equipmentName} ha sido guardado exitosamente.`,
