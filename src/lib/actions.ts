@@ -95,8 +95,17 @@ export async function addMaintenanceRecord(
   recordData: Omit<MaintenanceRecord, 'id'>
 ): Promise<MaintenanceRecord> {
   try {
-    const newRecordRef = await addDoc(collection(db, 'maintenanceRecords'), {
+    const dataToSave = {
       ...recordData,
+      // Sanitize the images array to prevent Firestore errors by ensuring it's an array and descriptions are strings.
+      images: recordData.images?.map(img => ({
+        url: img.url,
+        description: img.description || '',
+      })) || [],
+    };
+
+    const newRecordRef = await addDoc(collection(db, 'maintenanceRecords'), {
+      ...dataToSave,
       createdAt: serverTimestamp() 
     });
 
@@ -129,8 +138,18 @@ export async function updateMaintenanceRecord(
   dataToUpdate: Partial<Omit<MaintenanceRecord, 'id' | 'equipmentId'>>
 ): Promise<MaintenanceRecord> {
   try {
+    const sanitizedData = { ...dataToUpdate };
+
+    // If 'images' is being updated, sanitize it to prevent Firestore errors.
+    if ('images' in sanitizedData) {
+      sanitizedData.images = sanitizedData.images?.map(img => ({
+        url: img.url,
+        description: img.description || '',
+      })) || [];
+    }
+
     const recordRef = doc(db, 'maintenanceRecords', recordId);
-    await updateDoc(recordRef, dataToUpdate);
+    await updateDoc(recordRef, sanitizedData);
 
     const records = await getMaintenanceRecordsForEquipment(equipmentId);
     const equipmentDocRef = doc(db, 'equipments', equipmentId);
@@ -314,3 +333,4 @@ export async function updateEquipment(
     throw error;
   }
 }
+
