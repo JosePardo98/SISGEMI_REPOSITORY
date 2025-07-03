@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -31,7 +32,7 @@ interface EquipmentDetailClientPageProps {
   equipmentId: string;
 }
 
-const DetailItem: React.FC<{ label: string; value?: string; icon?: React.ElementType }> = ({ label, value, icon: Icon }) => (
+const DetailItem: React.FC<{ label: string; value?: string | null; icon?: React.ElementType }> = ({ label, value, icon: Icon }) => (
   <div className="flex items-start py-1">
     {Icon && <Icon size={18} className="mr-2 mt-0.5 text-accent flex-shrink-0" />}
     <p className="text-sm"><strong className="font-medium text-foreground/80">{label}:</strong> {value || 'N/A'}</p>
@@ -64,7 +65,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
         setError('Equipo no encontrado.');
       }
     } catch (err) {
-      setError('Error al cargar los detalles del equipo.');
+      setError(err instanceof Error ? err.message : 'Error al cargar los detalles del equipo.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -108,7 +109,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
       console.error('Error deleting preventive maintenance record:', error);
       toast({
         title: 'Error al Eliminar',
-        description: 'No se pudo eliminar el registro de mantenimiento preventivo.',
+        description: error instanceof Error ? error.message : 'No se pudo eliminar el registro de mantenimiento preventivo.',
         variant: 'destructive',
       });
     } finally {
@@ -131,7 +132,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
       console.error('Error deleting corrective maintenance record:', error);
       toast({
         title: 'Error al Eliminar',
-        description: 'No se pudo eliminar el registro de mantenimiento correctivo.',
+        description: error instanceof Error ? error.message : 'No se pudo eliminar el registro de mantenimiento correctivo.',
         variant: 'destructive',
       });
     } finally {
@@ -248,7 +249,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                   <DetailItem label="No. Patrimonial Regulador" value={equipment.regulatorPatrimonialId} icon={Zap} />
                   <DetailItem label="Marca Regulador" value={equipment.regulatorBrand} icon={Zap} />
                   <DetailItem label="Modelo Regulador" value={equipment.regulatorModel} icon={Zap} />
-                  <DetailItem label="Estado de PC" value={equipment.pcStatus} />
+                  <DetailItem label="Condición de PC" value={equipment.pcStatus} />
                   <DetailItem label="¿Piezas reutilizables?" value={equipment.reusableParts} />
                 </div>
               </AccordionContent>

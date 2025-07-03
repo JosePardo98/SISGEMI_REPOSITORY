@@ -96,13 +96,11 @@ export const AddEquipmentForm: React.FC<AddEquipmentFormProps> = ({ onSuccess })
   const onSubmit: SubmitHandler<EquipmentFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      // Omitimos 'specifications' ya que se desglosa en campos granulares
-      // Las fechas de mantenimiento se manejan por separado o se inicializan como undefined
-      const newEquipmentData: Omit<Equipment, 'lastMaintenanceDate' | 'nextMaintenanceDate' | 'specifications'> = data;
+      const newEquipmentData: Omit<Equipment, 'lastMaintenanceDate' | 'nextMaintenanceDate' | 'specifications' | 'lastTechnician'> = data;
       await addEquipment(newEquipmentData);
       toast({
         title: "Equipo Agregado",
-        description: `El equipo ${data.name} ha sido agregado exitosamente. (Simulado)`,
+        description: `El equipo ${data.name} ha sido agregado exitosamente.`,
         variant: "default",
       });
       reset();
@@ -250,7 +248,7 @@ export const AddEquipmentForm: React.FC<AddEquipmentFormProps> = ({ onSuccess })
                 <Input id="equipment-regulatorModel" placeholder="Ej: Back-UPS 600VA" {...register('regulatorModel')} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="equipment-pcStatus">Estado de PC</Label>
+                <Label htmlFor="equipment-pcStatus">Condición de PC</Label>
                 <Input id="equipment-pcStatus" placeholder="Ej: Operativo, En Reparación" {...register('pcStatus')} />
               </div>
               <div className="space-y-2">

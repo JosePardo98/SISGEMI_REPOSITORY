@@ -111,7 +111,7 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
       } catch (error) {
         toast({
           title: "Error al Cargar Datos",
-          description: "Hubo un problema al obtener los detalles del equipo.",
+          description: error instanceof Error ? error.message : "Hubo un problema al obtener los detalles del equipo.",
           variant: "destructive",
         });
       } finally {
@@ -124,12 +124,11 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
   const onSubmit: SubmitHandler<EquipmentFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      // lastMaintenanceDate and nextMaintenanceDate are managed by maintenance records
       const payload: Partial<Omit<Equipment, 'lastMaintenanceDate' | 'nextMaintenanceDate'>> = data;
       await updateEquipment(equipmentId, payload);
       toast({
         title: "Equipo Actualizado",
-        description: `El equipo ${data.name} ha sido actualizado exitosamente. (Simulado)`,
+        description: `El equipo ${data.name} ha sido actualizado exitosamente.`,
         variant: "default",
       });
       if (onSuccess) onSuccess();
@@ -284,7 +283,7 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
                 <Input id="edit-equipment-regulatorModel" placeholder="Ej: Back-UPS 600VA" {...register('regulatorModel')} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-equipment-pcStatus">Estado de PC</Label>
+                <Label htmlFor="edit-equipment-pcStatus">Condición de PC</Label>
                 <Input id="edit-equipment-pcStatus" placeholder="Ej: Operativo, En Reparación" {...register('pcStatus')} />
               </div>
               <div className="space-y-2">
@@ -312,4 +311,3 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
     </Card>
   );
 };
-
