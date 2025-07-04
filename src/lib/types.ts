@@ -1,3 +1,4 @@
+
 export type Equipment = {
   id: string; // Corresponds to ID PC
   name: string; // Nombre PC
@@ -38,7 +39,6 @@ export type Equipment = {
 
 export type MaintenanceImage = {
   url: string; // data URI or a future storage URL
-  description: string;
 };
 
 export type MaintenanceRecord = { // This is for Preventive Maintenance

@@ -23,22 +23,18 @@ const convertTimestampToISO = (data: any) => {
 };
 
 // --- Zod Schemas for Validation ---
-// This schema validates and sanitizes the image objects, stripping extra fields from react-hook-form.
 const MaintenanceImageSchema = z.object({
   url: z.string().min(1, "La URL de la imagen es requerida."),
-  description: z.string().default(''), // Ensure description is always a string.
 });
 
-// This schema validates the complete payload for adding a new maintenance record.
 const AddMaintenanceRecordInputSchema = z.object({
   equipmentId: z.string(),
   date: z.string().min(1, "La fecha es requerida."),
   technician: z.string().min(1, "El nombre del técnico es requerido."),
   description: z.string().min(10, "La descripción debe tener al menos 10 caracteres."),
-  images: z.array(MaintenanceImageSchema).optional().default([]),
+  images: z.array(MaintenanceImageSchema).optional(),
 });
 
-// This schema validates the partial payload for updating a maintenance record.
 const UpdateMaintenanceRecordInputSchema = AddMaintenanceRecordInputSchema.omit({ equipmentId: true }).partial();
 
 
@@ -115,9 +111,6 @@ export async function addMaintenanceRecord(
   recordData: Omit<MaintenanceRecord, 'id'>
 ): Promise<MaintenanceRecord> {
   try {
-    // Validate and sanitize the input data using Zod.
-    // This strips any unknown fields (like the temporary 'id' from react-hook-form)
-    // and ensures data integrity before it touches Firestore.
     const validatedData = AddMaintenanceRecordInputSchema.parse(recordData);
 
     const newRecordRef = await addDoc(collection(db, 'maintenanceRecords'), {
@@ -160,7 +153,6 @@ export async function updateMaintenanceRecord(
   try {
     const recordRef = doc(db, 'maintenanceRecords', recordId);
     
-    // Validate and sanitize the input data using Zod.
     const validatedData = UpdateMaintenanceRecordInputSchema.parse(dataToUpdate);
     
     await updateDoc(recordRef, validatedData);

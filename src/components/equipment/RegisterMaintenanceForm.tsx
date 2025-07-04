@@ -21,7 +21,6 @@ const maintenanceSchema = z.object({
   description: z.string().min(10, "La descripción debe tener al menos 10 caracteres."),
   images: z.array(z.object({
       url: z.string().min(1, "La URL de la imagen es requerida."),
-      description: z.string(),
   })).optional(),
 });
 
@@ -60,7 +59,7 @@ export const RegisterMaintenanceForm: React.FC<RegisterMaintenanceFormProps> = (
             const reader = new FileReader();
             reader.onload = (e) => {
                 if (e.target?.result) {
-                    append({ url: e.target.result as string, description: '' });
+                    append({ url: e.target.result as string });
                 }
             };
             reader.readAsDataURL(file);
@@ -139,13 +138,7 @@ export const RegisterMaintenanceForm: React.FC<RegisterMaintenanceFormProps> = (
                         <div key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-2 border rounded-md bg-background">
                             <img src={item.url} alt={`Evidencia ${index + 1}`} className="w-24 h-24 object-cover rounded-md flex-shrink-0"/>
                             <div className="flex-grow space-y-2 w-full">
-                                <Label htmlFor={`images.${index}.description`}>Descripción de la imagen {index + 1}</Label>
-                                <Textarea
-                                    id={`images.${index}.description`}
-                                    placeholder="Ej: Estado del disipador antes de la limpieza."
-                                    {...register(`images.${index}.description` as const)}
-                                    rows={2}
-                                />
+                                {/* Description Textarea removed for testing */}
                             </div>
                             <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} className="flex-shrink-0">
                                 <Trash2 className="h-5 w-5 text-destructive" />

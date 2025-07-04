@@ -336,9 +336,9 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
                                               {record.images.map((image, index) => (
                                                   <div key={index} className="space-y-2">
                                                       <a href={image.url} target="_blank" rel="noopener noreferrer">
-                                                        <img src={image.url} alt={image.description || `Evidencia ${index + 1}`} className="w-full h-32 object-cover rounded-md shadow-md hover:scale-105 transition-transform" />
+                                                        <img src={image.url} alt={`Evidencia ${index + 1}`} className="w-full h-32 object-cover rounded-md shadow-md hover:scale-105 transition-transform" />
                                                       </a>
-                                                      <p className="text-xs text-muted-foreground">{image.description}</p>
+                                                      {/* Description removed for testing */}
                                                   </div>
                                               ))}
                                           </div>
