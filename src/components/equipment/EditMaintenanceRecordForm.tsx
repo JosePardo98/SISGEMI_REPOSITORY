@@ -116,13 +116,18 @@ export const EditMaintenanceRecordForm: React.FC<EditMaintenanceFormProps> = ({ 
     setIsSubmitting(true);
     try {
       // Sanitize the images array to remove the internal 'id' from react-hook-form.
-      // Firestore does not allow extra properties on objects in an array.
-      const sanitizedPayload = {
+      const sanitizedImages = data.images?.map(({ url, description }) => ({
+        url,
+        description: description || '',
+      }));
+
+      const payload = {
         ...data,
-        images: data.images ? data.images.map(({ url, description }) => ({ url, description: description || '' })) : [],
+        images: sanitizedImages || [],
       };
 
-      await updateMaintenanceRecord(recordId, equipmentId, sanitizedPayload);
+
+      await updateMaintenanceRecord(recordId, equipmentId, payload);
       toast({
         title: "Registro Actualizado",
         description: `El registro de mantenimiento ha sido actualizado exitosamente.`,
