@@ -23,16 +23,11 @@ const convertTimestampToISO = (data: any) => {
 };
 
 // --- Zod Schemas for Validation ---
-const MaintenanceImageSchema = z.object({
-  url: z.string().min(1, "La URL de la imagen es requerida."),
-});
-
 const AddMaintenanceRecordInputSchema = z.object({
   equipmentId: z.string(),
   date: z.string().min(1, "La fecha es requerida."),
   technician: z.string().min(1, "El nombre del técnico es requerido."),
   description: z.string().min(10, "La descripción debe tener al menos 10 caracteres."),
-  images: z.array(MaintenanceImageSchema).optional(),
 });
 
 const UpdateMaintenanceRecordInputSchema = AddMaintenanceRecordInputSchema.omit({ equipmentId: true }).partial();

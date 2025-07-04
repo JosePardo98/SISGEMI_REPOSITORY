@@ -1,8 +1,7 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useForm, type SubmitHandler, useFieldArray } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardFooter, CardTitle } from '@/components/ui/card';
 import { getMaintenanceRecordById, updateMaintenanceRecord } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save, ImagePlus, Trash2 } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import type { MaintenanceRecord } from '@/lib/types';
 import { format, parseISO } from 'date-fns';
 
@@ -20,9 +19,6 @@ const maintenanceSchema = z.object({
   date: z.string().min(1, "La fecha es requerida."),
   technician: z.string().min(1, "El nombre del técnico es requerido."),
   description: z.string().min(10, "La descripción debe tener al menos 10 caracteres."),
-  images: z.array(z.object({
-      url: z.string().min(1, "La URL de la imagen es requerida."),
-  })).optional(),
 });
 
 type MaintenanceFormData = z.infer<typeof maintenanceSchema>;
@@ -49,13 +45,8 @@ export const EditMaintenanceRecordForm: React.FC<EditMaintenanceFormProps> = ({ 
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [equipmentName, setEquipmentName] = useState('');
 
-  const { register, handleSubmit, formState: { errors }, reset, control } = useForm<MaintenanceFormData>({
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<MaintenanceFormData>({
     resolver: zodResolver(maintenanceSchema),
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "images"
   });
 
   useEffect(() => {
@@ -74,7 +65,6 @@ export const EditMaintenanceRecordForm: React.FC<EditMaintenanceFormProps> = ({ 
             date: formatDateForInput(record.date),
             technician: record.technician,
             description: record.description,
-            images: record.images?.map(img => ({ url: img.url })) || [],
           });
         } else {
           toast({
@@ -95,22 +85,6 @@ export const EditMaintenanceRecordForm: React.FC<EditMaintenanceFormProps> = ({ 
     };
     fetchRecordData();
   }, [recordId, equipmentId, reset, toast]);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-        const files = Array.from(event.target.files);
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (e.target?.result) {
-                    append({ url: e.target.result as string });
-                }
-            };
-            reader.readAsDataURL(file);
-        });
-        event.target.value = '';
-    }
-  };
 
   const onSubmit: SubmitHandler<MaintenanceFormData> = async (data) => {
     setIsSubmitting(true);
@@ -176,41 +150,6 @@ export const EditMaintenanceRecordForm: React.FC<EditMaintenanceFormProps> = ({ 
               {...register('description')} 
             />
             {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
-          </div>
-          
-          <div className="space-y-4">
-            <Label>Evidencia Fotográfica (Opcional)</Label>
-            <Card className="p-4 bg-secondary/30 border-dashed">
-                <div className="space-y-4">
-                    {fields.map((item, index) => (
-                        <div key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-2 border rounded-md bg-background">
-                            <img src={item.url} alt={`Evidencia ${index + 1}`} className="w-24 h-24 object-cover rounded-md flex-shrink-0"/>
-                            <div className="flex-grow space-y-2 w-full">
-                               {/* Description Textarea removed for testing */}
-                            </div>
-                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} className="flex-shrink-0">
-                                <Trash2 className="h-5 w-5 text-destructive" />
-                            </Button>
-                        </div>
-                    ))}
-                </div>
-                <div className="mt-4">
-                    <Label htmlFor="image-upload" className="flex items-center justify-center w-full h-24 border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/50">
-                        <div className="text-center">
-                            <ImagePlus size={24} className="mx-auto text-muted-foreground" />
-                            <p className="mt-2 text-sm text-muted-foreground">Haga clic para agregar imágenes</p>
-                        </div>
-                    </Label>
-                    <Input 
-                        id="image-upload" 
-                        type="file" 
-                        className="hidden" 
-                        accept="image/*" 
-                        multiple 
-                        onChange={handleFileChange}
-                    />
-                </div>
-            </Card>
           </div>
         </CardContent>
         <CardFooter>

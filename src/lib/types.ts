@@ -37,17 +37,12 @@ export type Equipment = {
   reusableParts?: string; // (e.g., "Sí", "No", "Algunas")
 };
 
-export type MaintenanceImage = {
-  url: string; // data URI or a future storage URL
-};
-
 export type MaintenanceRecord = { // This is for Preventive Maintenance
   id: string; // Unique ID for the record
   equipmentId: string;
   date: string; // ISO date string
   technician: string;
   description: string;
-  images?: MaintenanceImage[];
 };
 
 export type CorrectiveMaintenanceRecord = {
