@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -72,16 +73,9 @@ export const RegisterMaintenanceForm: React.FC<RegisterMaintenanceFormProps> = (
   const onSubmit: SubmitHandler<MaintenanceFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      // Sanitize the images array to remove the internal 'id' from react-hook-form.
-      const sanitizedImages = data.images?.map(({ url, description }) => ({
-        url,
-        description: description || '',
-      }));
-      
       const payload = {
         ...data,
         equipmentId,
-        images: sanitizedImages || [],
       };
 
       await addMaintenanceRecord(payload);

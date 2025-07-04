@@ -5,6 +5,7 @@ import { db } from './firebase';
 import { collection, doc, getDoc, getDocs, addDoc, updateDoc, setDoc, query, where, orderBy, serverTimestamp, Timestamp, deleteDoc, writeBatch } from 'firebase/firestore';
 import type { Equipment, MaintenanceRecord, CorrectiveMaintenanceRecord } from './types';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
 // Helper function to convert Firestore Timestamps to ISO strings or return other values as is
 // Handles fields that might be Timestamps or already strings/undefined
@@ -20,6 +21,25 @@ const convertTimestampToISO = (data: any) => {
   }
   return newObj;
 };
+
+// --- Zod Schemas for Validation ---
+// This schema validates and sanitizes the image objects, stripping extra fields from react-hook-form.
+const MaintenanceImageSchema = z.object({
+  url: z.string().min(1, "La URL de la imagen es requerida."),
+  description: z.string().default(''), // Ensure description is always a string.
+});
+
+// This schema validates the complete payload for adding a new maintenance record.
+const AddMaintenanceRecordInputSchema = z.object({
+  equipmentId: z.string(),
+  date: z.string().min(1, "La fecha es requerida."),
+  technician: z.string().min(1, "El nombre del técnico es requerido."),
+  description: z.string().min(10, "La descripción debe tener al menos 10 caracteres."),
+  images: z.array(MaintenanceImageSchema).optional().default([]),
+});
+
+// This schema validates the partial payload for updating a maintenance record.
+const UpdateMaintenanceRecordInputSchema = AddMaintenanceRecordInputSchema.omit({ equipmentId: true }).partial();
 
 
 export async function getEquipments(): Promise<Equipment[]> {
@@ -95,31 +115,39 @@ export async function addMaintenanceRecord(
   recordData: Omit<MaintenanceRecord, 'id'>
 ): Promise<MaintenanceRecord> {
   try {
-    // The data is now pre-sanitized on the client-side.
+    // Validate and sanitize the input data using Zod.
+    // This strips any unknown fields (like the temporary 'id' from react-hook-form)
+    // and ensures data integrity before it touches Firestore.
+    const validatedData = AddMaintenanceRecordInputSchema.parse(recordData);
+
     const newRecordRef = await addDoc(collection(db, 'maintenanceRecords'), {
-      ...recordData,
+      ...validatedData,
       createdAt: serverTimestamp() 
     });
 
-    const equipmentRef = doc(db, 'equipments', recordData.equipmentId);
-    const nextDate = new Date(recordData.date);
+    const equipmentRef = doc(db, 'equipments', validatedData.equipmentId);
+    const nextDate = new Date(validatedData.date);
     nextDate.setMonth(nextDate.getMonth() + 6);
     
     await updateDoc(equipmentRef, {
-      lastMaintenanceDate: recordData.date, 
+      lastMaintenanceDate: validatedData.date, 
       nextMaintenanceDate: nextDate.toISOString().split('T')[0],
-      lastTechnician: recordData.technician
+      lastTechnician: validatedData.technician
     });
 
     const newRecordSnap = await getDoc(newRecordRef);
     if (!newRecordSnap.exists()) throw new Error("Failed to retrieve new preventive maintenance record");
     
-    revalidatePath(`/equipment/${recordData.equipmentId}`);
+    revalidatePath(`/equipment/${validatedData.equipmentId}`);
     revalidatePath('/');
     return convertTimestampToISO({ ...newRecordSnap.data(), id: newRecordSnap.id }) as MaintenanceRecord;
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error adding preventive maintenance record to Firestore:", error);
+    if (error instanceof z.ZodError) {
+      console.error("Zod Validation Error:", error.issues);
+      throw new Error(`Validation failed: ${error.issues.map(i => i.message).join(', ')}`);
+    }
     throw error;
   }
 }
@@ -132,8 +160,10 @@ export async function updateMaintenanceRecord(
   try {
     const recordRef = doc(db, 'maintenanceRecords', recordId);
     
-    // The data is now pre-sanitized on the client-side.
-    await updateDoc(recordRef, dataToUpdate);
+    // Validate and sanitize the input data using Zod.
+    const validatedData = UpdateMaintenanceRecordInputSchema.parse(dataToUpdate);
+    
+    await updateDoc(recordRef, validatedData);
 
     const records = await getMaintenanceRecordsForEquipment(equipmentId);
     const equipmentDocRef = doc(db, 'equipments', equipmentId);
@@ -161,8 +191,12 @@ export async function updateMaintenanceRecord(
     revalidatePath(`/equipment/${equipmentId}`);
     revalidatePath('/');
     return convertTimestampToISO({ ...updatedRecordSnap.data(), id: updatedRecordSnap.id }) as MaintenanceRecord;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating preventive maintenance record:", error);
+    if (error instanceof z.ZodError) {
+      console.error("Zod Validation Error:", error.issues);
+      throw new Error(`Validation failed: ${error.issues.map(i => i.message).join(', ')}`);
+    }
     throw error;
   }
 }

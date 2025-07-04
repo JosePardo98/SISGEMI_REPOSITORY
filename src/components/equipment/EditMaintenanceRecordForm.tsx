@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -115,19 +116,7 @@ export const EditMaintenanceRecordForm: React.FC<EditMaintenanceFormProps> = ({ 
   const onSubmit: SubmitHandler<MaintenanceFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      // Sanitize the images array to remove the internal 'id' from react-hook-form.
-      const sanitizedImages = data.images?.map(({ url, description }) => ({
-        url,
-        description: description || '',
-      }));
-
-      const payload = {
-        ...data,
-        images: sanitizedImages || [],
-      };
-
-
-      await updateMaintenanceRecord(recordId, equipmentId, payload);
+      await updateMaintenanceRecord(recordId, equipmentId, data);
       toast({
         title: "Registro Actualizado",
         description: `El registro de mantenimiento ha sido actualizado exitosamente.`,
