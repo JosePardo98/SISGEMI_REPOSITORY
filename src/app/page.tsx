@@ -28,7 +28,6 @@ export default function HomePage() {
   const menuItems = [
     { id: 'panel', label: 'Panel' },
     { id: 'registro-mantenimientos', label: 'Registro de\nMantenimientos' },
-    { id: 'perifericos', label: 'Mantenimiento de\nPeriféricos' },
     { id: 'tickets', label: 'Tickets' },
     { id: 'calendarios', label: 'Calendarios' },
   ];
@@ -48,40 +47,6 @@ export default function HomePage() {
         );
       case 'registro-mantenimientos':
         return <EquipmentClientPage />;
-      case 'perifericos':
-        return (
-            <Card className="mt-6 shadow-lg animate-fade-in">
-                <CardHeader><CardTitle>Mantenimiento de Equipos Periféricos</CardTitle></CardHeader>
-                <CardContent>
-                    <Accordion type="single" collapsible className="w-full">
-                        <AccordionItem value="printers">
-                            <AccordionTrigger>Impresoras y Escáneres</AccordionTrigger>
-                            <AccordionContent>
-                                <p className="text-muted-foreground p-4">La gestión de impresoras y escáneres estará disponible próximamente.</p>
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="ticket-printers">
-                            <AccordionTrigger>Impresoras de Tickets</AccordionTrigger>
-                            <AccordionContent>
-                                <p className="text-muted-foreground p-4">La gestión de impresoras de tickets estará disponible próximamente.</p>
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="networking">
-                            <AccordionTrigger>Switches, Modems y Enrutadores</AccordionTrigger>
-                            <AccordionContent>
-                                <p className="text-muted-foreground p-4">La gestión de equipos de red estará disponible próximamente.</p>
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="other">
-                            <AccordionTrigger>Otros Dispositivos</AccordionTrigger>
-                            <AccordionContent>
-                                <p className="text-muted-foreground p-4">La gestión de otros dispositivos periféricos estará disponible próximamente.</p>
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                </CardContent>
-            </Card>
-        );
       case 'tickets':
         return (
             <Card className="mt-6 shadow-lg animate-fade-in">
