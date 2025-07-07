@@ -125,7 +125,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
                 <TableCell>{formatDate(equipment.lastMaintenanceDate)}</TableCell>
                 <TableCell>{equipment.lastTechnician || 'N/A'}</TableCell>
                 <TableCell>
-                  <Button asChild variant="secondary" size="sm">
+                  <Button asChild variant="default" size="sm">
                     <Link href={`/equipment/${equipment.id}`}>
                       <Eye size={16} className="mr-2" /> Ver información Detallada
                     </Link>
@@ -146,5 +146,3 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
     </div>
   );
 };
-
-
