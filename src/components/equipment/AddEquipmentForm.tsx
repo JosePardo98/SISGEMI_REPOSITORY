@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -19,6 +18,7 @@ const equipmentSchema = z.object({
   // Información de PC
   id: z.string().min(1, "El ID del PC es requerido.").max(20, "El ID no debe exceder los 20 caracteres."),
   name: z.string().min(1, "El nombre del PC es requerido.").max(50, "El nombre no debe exceder los 50 caracteres."),
+  userName: z.string().optional(),
   processor: z.string().optional(),
   ramAmount: z.string().optional(),
   ramType: z.string().optional(),
@@ -32,7 +32,6 @@ const equipmentSchema = z.object({
   commonFailurePoints: z.string().min(1, "Los puntos comunes de falla son requeridos.").max(200, "Puntos de falla no debe exceder 200 caracteres."), // Para IA
 
   // Información de Inventario
-  userName: z.string().optional(),
   pcPatrimonialId: z.string().optional(),
   mousePatrimonialId: z.string().optional(),
   mouseBrand: z.string().optional(),
@@ -68,13 +67,13 @@ export const AddEquipmentForm: React.FC<AddEquipmentFormProps> = ({ onSuccess })
       os: '',
       type: '', // Para IA
       commonFailurePoints: '', // Para IA
+      userName: '',
       processor: '',
       ramAmount: '',
       ramType: '',
       storageCapacity: '',
       storageType: '',
       ipAddress: '',
-      userName: '',
       pcPatrimonialId: '',
       mousePatrimonialId: '',
       mouseBrand: '',
@@ -140,6 +139,10 @@ export const AddEquipmentForm: React.FC<AddEquipmentFormProps> = ({ onSuccess })
                 {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
               </div>
               <div className="space-y-2">
+                <Label htmlFor="equipment-userName">Nombre de Usuario</Label>
+                <Input id="equipment-userName" placeholder="Ej: Juan Pérez" {...register('userName')} />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="equipment-processor">Procesador</Label>
                 <Input id="equipment-processor" placeholder="Ej: Intel Core i5-8500" {...register('processor')} />
               </div>
@@ -191,10 +194,6 @@ export const AddEquipmentForm: React.FC<AddEquipmentFormProps> = ({ onSuccess })
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-foreground border-b pb-2 mb-4">Información de Inventario</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="equipment-userName">Nombre de Usuario</Label>
-                <Input id="equipment-userName" placeholder="Ej: Juan Pérez" {...register('userName')} />
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="equipment-pcPatrimonialId">No. Patrimonial de PC</Label>
                 <Input id="equipment-pcPatrimonialId" placeholder="Ej: PAT-PC-001" {...register('pcPatrimonialId')} />

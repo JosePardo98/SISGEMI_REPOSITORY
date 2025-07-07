@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -6,7 +5,7 @@ import type { Equipment, MaintenanceRecord, CorrectiveMaintenanceRecord } from '
 import { getEquipmentById, getMaintenanceRecordsForEquipment, getCorrectiveMaintenanceRecordsForEquipment, deleteMaintenanceRecord, deleteCorrectiveMaintenanceRecord } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Edit3, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, Wrench, Briefcase, FileText, History as HistoryIcon, Trash2, Edit, AlertTriangle, PlusCircle } from 'lucide-react';
+import { ArrowLeft, Edit3, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, Wrench, Briefcase, FileText, History as HistoryIcon, Trash2, Edit, AlertTriangle, PlusCircle, User } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -211,6 +210,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               </AccordionTrigger>
               <AccordionContent className="px-6 pt-2 pb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
+                  <DetailItem label="Nombre de Usuario" value={equipment.userName} icon={User} />
                   <DetailItem label="Procesador" value={equipment.processor} icon={Server} />
                   <DetailItem label="Memoria RAM" value={equipment.ramAmount} icon={Info} />
                   <DetailItem label="Tipo de RAM" value={equipment.ramType} icon={Info} />
@@ -235,7 +235,6 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               </AccordionTrigger>
               <AccordionContent className="px-6 pt-2 pb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
-                  <DetailItem label="Nombre de Usuario" value={equipment.userName} />
                   <DetailItem label="No. Patrimonial PC" value={equipment.pcPatrimonialId} />
                   <DetailItem label="No. Patrimonial Mouse" value={equipment.mousePatrimonialId} icon={Mouse} />
                   <DetailItem label="Marca Mouse" value={equipment.mouseBrand} icon={Mouse} />

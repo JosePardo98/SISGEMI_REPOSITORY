@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -18,6 +17,7 @@ import type { Equipment } from '@/lib/types';
 const equipmentFormSchema = z.object({
   // Información de PC
   name: z.string().min(1, "El nombre del PC es requerido.").max(50, "El nombre no debe exceder los 50 caracteres."),
+  userName: z.string().optional(),
   processor: z.string().optional(),
   ramAmount: z.string().optional(),
   ramType: z.string().optional(),
@@ -31,7 +31,6 @@ const equipmentFormSchema = z.object({
   commonFailurePoints: z.string().min(1, "Los puntos comunes de falla son requeridos.").max(200, "Puntos de falla no debe exceder 200 caracteres."), // Para IA
   
   // Información de Inventario
-  userName: z.string().optional(),
   pcPatrimonialId: z.string().optional(),
   mousePatrimonialId: z.string().optional(),
   mouseBrand: z.string().optional(),
@@ -78,13 +77,13 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
             os: equipment.os,
             type: equipment.type, 
             commonFailurePoints: equipment.commonFailurePoints, 
+            userName: equipment.userName || '',
             processor: equipment.processor || '',
             ramAmount: equipment.ramAmount || '',
             ramType: equipment.ramType || '',
             storageCapacity: equipment.storageCapacity || '',
             storageType: equipment.storageType || '',
             ipAddress: equipment.ipAddress || '',
-            userName: equipment.userName || '',
             pcPatrimonialId: equipment.pcPatrimonialId || '',
             mousePatrimonialId: equipment.mousePatrimonialId || '',
             mouseBrand: equipment.mouseBrand || '',
@@ -175,6 +174,10 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
                 {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
               </div>
               <div className="space-y-2">
+                <Label htmlFor="edit-equipment-userName">Nombre de Usuario</Label>
+                <Input id="edit-equipment-userName" placeholder="Ej: Juan Pérez" {...register('userName')} />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="edit-equipment-processor">Procesador</Label>
                 <Input id="edit-equipment-processor" placeholder="Ej: Intel Core i5-8500" {...register('processor')} />
               </div>
@@ -226,10 +229,6 @@ export const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({ equipmentI
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-foreground border-b pb-2 mb-4">Información de Inventario</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="edit-equipment-userName">Nombre de Usuario</Label>
-                <Input id="edit-equipment-userName" placeholder="Ej: Juan Pérez" {...register('userName')} />
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-equipment-pcPatrimonialId">No. Patrimonial de PC</Label>
                 <Input id="edit-equipment-pcPatrimonialId" placeholder="Ej: PAT-PC-001" {...register('pcPatrimonialId')} />
