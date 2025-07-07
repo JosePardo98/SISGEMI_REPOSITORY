@@ -36,8 +36,8 @@ export default function MaintenanceChart() {
       try {
         setLoading(true);
         const allMonthsData = await getMaintenanceCountsByMonth();
-        // Filter for May, June, and August as requested
-        const relevantData = allMonthsData.filter(d => ['MAY', 'JUN', 'AGO'].includes(d.month.toUpperCase()));
+        // Filter for May, June, July, and August as requested
+        const relevantData = allMonthsData.filter(d => ['MAY', 'JUN', 'JUL', 'AGO'].includes(d.month.toUpperCase()));
         setData(relevantData);
         setError(null);
       } catch (err) {
