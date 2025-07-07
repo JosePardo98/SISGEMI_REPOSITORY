@@ -68,4 +68,5 @@ export type Ticket = {
   problemDescription: string;
   actionsTaken: string;
   status: 'Abierto' | 'En Proceso' | 'Cerrado';
+  createdAt?: string;
 };

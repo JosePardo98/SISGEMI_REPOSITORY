@@ -7,7 +7,7 @@ import EquipmentClientPage from '@/components/equipment/EquipmentClientPage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from '@/components/ui/button';
-import TicketForm from '@/components/tickets/TicketForm';
+import TicketsClientPage from '@/components/tickets/TicketsClientPage';
 
 const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
     const lines = label.split('\n');
@@ -48,7 +48,7 @@ export default function HomePage() {
       case 'registro-mantenimientos':
         return <EquipmentClientPage />;
       case 'tickets':
-        return <TicketForm />;
+        return <TicketsClientPage />;
       default:
         return null;
     }

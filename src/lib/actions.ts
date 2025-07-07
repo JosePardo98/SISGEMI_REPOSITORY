@@ -3,7 +3,7 @@
 
 import { db } from './firebase';
 import { collection, doc, getDoc, getDocs, addDoc, updateDoc, setDoc, query, where, orderBy, serverTimestamp, Timestamp, deleteDoc, writeBatch } from 'firebase/firestore';
-import type { Equipment, MaintenanceRecord, CorrectiveMaintenanceRecord } from './types';
+import type { Equipment, MaintenanceRecord, CorrectiveMaintenanceRecord, Ticket } from './types';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -419,5 +419,25 @@ export async function addTicket(ticketData: z.infer<typeof TicketSchema>) {
       throw new Error(`Validation failed: ${error.issues.map(i => i.message).join(', ')}`);
     }
     throw error;
+  }
+}
+
+export async function getTickets(): Promise<Ticket[]> {
+  try {
+    const ticketsCol = collection(db, 'tickets');
+    const q = query(ticketsCol, orderBy('createdAt', 'desc'));
+    const ticketSnapshot = await getDocs(q);
+    const ticketList = ticketSnapshot.docs.map(doc => {
+      const data = doc.data();
+      const convertedData = convertTimestampToISO(data);
+      return {
+        ...convertedData,
+        id: doc.id,
+      } as Ticket;
+    });
+    return ticketList;
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+    throw new Error("Failed to fetch tickets.");
   }
 }
