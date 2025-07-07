@@ -17,9 +17,9 @@ export type Equipment = {
   type: string; // e.g., "CPU Desktop", "Laptop", for AI - Mantenido para IA
   commonFailurePoints: string; // for AI, e.g., "PSU, HDD, RAM overheating" - Mantenido para IA
   specifications?: string; // General specs description - Puede ser obsoleto con campos granulares
+  userName?: string;
 
   // Información de Inventario
-  userName?: string;
   pcPatrimonialId?: string;
   mousePatrimonialId?: string;
   mouseBrand?: string;
@@ -52,4 +52,20 @@ export type CorrectiveMaintenanceRecord = {
   technician: string;
   description: string;
   // Potentially other fields specific to corrective maintenance like 'reportedBy', 'issueType', 'partsReplaced'
+};
+
+export type Ticket = {
+  id: string;
+  pcId: string;
+  pcName: string;
+  userName: string;
+  patrimonialId?: string;
+  brand?: string;
+  model?: string;
+  date: string;
+  assignedEngineer: string;
+  maintenanceType: 'Preventivo' | 'Correctivo';
+  problemDescription: string;
+  actionsTaken: string;
+  status: 'Abierto' | 'En Proceso' | 'Cerrado';
 };

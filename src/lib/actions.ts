@@ -387,3 +387,37 @@ export async function getMaintenanceCountsByMonth() {
     throw new Error("Failed to fetch maintenance counts for chart.");
   }
 }
+
+
+// --- Ticket Actions ---
+const TicketSchema = z.object({
+  pcId: z.string(),
+  pcName: z.string(),
+  userName: z.string(),
+  patrimonialId: z.string().optional(),
+  brand: z.string().optional(),
+  model: z.string().optional(),
+  date: z.string(),
+  assignedEngineer: z.string(),
+  maintenanceType: z.enum(['Preventivo', 'Correctivo']),
+  problemDescription: z.string(),
+  actionsTaken: z.string(),
+});
+
+export async function addTicket(ticketData: z.infer<typeof TicketSchema>) {
+  try {
+    const validatedData = TicketSchema.parse(ticketData);
+    await addDoc(collection(db, 'tickets'), {
+      ...validatedData,
+      status: 'Abierto',
+      createdAt: serverTimestamp(),
+    });
+    revalidatePath('/'); // Revalidate the home page to potentially show a success message or update a list of tickets
+  } catch (error) {
+    console.error("Error adding ticket to Firestore:", error);
+    if (error instanceof z.ZodError) {
+      throw new Error(`Validation failed: ${error.issues.map(i => i.message).join(', ')}`);
+    }
+    throw error;
+  }
+}

@@ -7,6 +7,7 @@ import EquipmentClientPage from '@/components/equipment/EquipmentClientPage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from '@/components/ui/button';
+import TicketForm from '@/components/tickets/TicketForm';
 
 const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
     const lines = label.split('\n');
@@ -47,12 +48,7 @@ export default function HomePage() {
       case 'registro-mantenimientos':
         return <EquipmentClientPage />;
       case 'tickets':
-        return (
-            <Card className="mt-6 shadow-lg animate-fade-in">
-                <CardHeader><CardTitle>Tickets para Mantenimiento</CardTitle></CardHeader>
-                <CardContent><p className="text-muted-foreground">La gestión de tickets para mantenimientos estará disponible próximamente.</p></CardContent>
-            </Card>
-        );
+        return <TicketForm />;
       default:
         return null;
     }
