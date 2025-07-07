@@ -30,7 +30,11 @@ const ticketSchema = z.object({
 
 type TicketFormData = z.infer<typeof ticketSchema>;
 
-const TicketForm = () => {
+interface TicketFormProps {
+  onTicketCreated?: () => void;
+}
+
+const TicketForm: React.FC<TicketFormProps> = ({ onTicketCreated }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,6 +63,7 @@ const TicketForm = () => {
         description: `El ticket para la PC ${data.pcId} ha sido creado exitosamente.`,
       });
       reset();
+      if (onTicketCreated) onTicketCreated();
     } catch (error) {
       console.error("Error creating ticket:", error);
       toast({
@@ -72,7 +77,7 @@ const TicketForm = () => {
   };
 
   return (
-    <Card className="mt-6 shadow-lg animate-fade-in">
+    <Card className="shadow-lg">
       <CardHeader>
         <CardTitle>Generar Ticket para Mantenimiento</CardTitle>
         <CardDescription>Complete la información para generar un nuevo ticket de soporte.</CardDescription>

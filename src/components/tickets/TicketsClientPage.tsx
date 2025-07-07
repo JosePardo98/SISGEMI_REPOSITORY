@@ -5,48 +5,48 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import TicketForm from './TicketForm';
 import TicketList from './TicketList';
-import { PlusCircle, List } from 'lucide-react';
+import { PlusCircle, ArrowLeft } from 'lucide-react';
 
 const TicketsClientPage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'create' | 'view'>('create');
+    const [view, setView] = useState<'list' | 'form'>('list');
 
+    const handleTicketCreated = () => {
+        setView('list'); // Switch back to the list view after creation
+    };
+
+    // Show the form view
+    if (view === 'form') {
+        return (
+            <div className="animate-fade-in space-y-6">
+                <Button variant="outline" onClick={() => setView('list')}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Volver al Listado
+                </Button>
+                <TicketForm onTicketCreated={handleTicketCreated} />
+            </div>
+        );
+    }
+
+    // Show the list view by default
     return (
-        <div className="animate-fade-in space-y-6">
-            <Card>
+        <div className="animate-fade-in">
+            <Card className="shadow-lg">
                 <CardHeader>
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div>
-                            <CardTitle>Gestión de Tickets de Soporte</CardTitle>
-                            <CardDescription>
-                                Seleccione una opción para continuar.
-                            </CardDescription>
+                            <CardTitle>Listado de Tickets</CardTitle>
+                            <CardDescription>Revise el estado de todos los tickets generados.</CardDescription>
                         </div>
-                        <div className="flex gap-2">
-                            <Button onClick={() => setActiveTab('create')} variant={activeTab === 'create' ? 'default' : 'outline'}>
-                                <PlusCircle className="mr-2 h-4 w-4" />
-                                Crear Ticket
-                            </Button>
-                            <Button onClick={() => setActiveTab('view')} variant={activeTab === 'view' ? 'default' : 'outline'}>
-                                <List className="mr-2 h-4 w-4" />
-                                Ver Tickets
-                            </Button>
-                        </div>
+                        <Button onClick={() => setView('form')}>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Crear Ticket
+                        </Button>
                     </div>
                 </CardHeader>
+                <CardContent>
+                    <TicketList />
+                </CardContent>
             </Card>
-
-            {activeTab === 'create' && <TicketForm />}
-            {activeTab === 'view' && 
-                <Card className="shadow-lg">
-                    <CardHeader>
-                        <CardTitle>Listado de Tickets</CardTitle>
-                        <CardDescription>Revise el estado de todos los tickets generados.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <TicketList />
-                    </CardContent>
-                </Card>
-            }
         </div>
     );
 };
