@@ -29,7 +29,6 @@ export default function HomePage() {
     { id: 'panel', label: 'Panel' },
     { id: 'registro-mantenimientos', label: 'Registro de\nMantenimientos' },
     { id: 'tickets', label: 'Tickets' },
-    { id: 'calendarios', label: 'Calendarios' },
   ];
 
   const renderContent = () => {
@@ -52,13 +51,6 @@ export default function HomePage() {
             <Card className="mt-6 shadow-lg animate-fade-in">
                 <CardHeader><CardTitle>Tickets para Mantenimiento</CardTitle></CardHeader>
                 <CardContent><p className="text-muted-foreground">La gestión de tickets para mantenimientos estará disponible próximamente.</p></CardContent>
-            </Card>
-        );
-      case 'calendarios':
-        return (
-            <Card className="mt-6 shadow-lg animate-fade-in">
-                <CardHeader><CardTitle>Calendarios de Mantenimiento</CardTitle></CardHeader>
-                <CardContent><p className="text-muted-foreground">La visualización de calendarios de mantenimiento estará disponible próximamente.</p></CardContent>
             </Card>
         );
       default:
