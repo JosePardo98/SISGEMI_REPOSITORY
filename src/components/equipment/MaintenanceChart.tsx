@@ -1,14 +1,13 @@
 'use client';
+
+import React, { useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
-
-const chartData = [
-  { month: 'MAYO', correctivos: 4.3, preventivos: 2.4 },
-  { month: 'JUNIO', correctivos: 2.5, preventivos: 4.4 },
-  { month: 'JULIO', correctivos: 3.5, preventivos: 1.8 },
-  { month: 'AGOSTO', correctivos: 4.5, preventivos: 2.8 },
-];
+import { getMaintenanceCountsByMonth } from '@/lib/actions';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Terminal } from 'lucide-react';
 
 const chartConfig = {
   correctivos: {
@@ -21,7 +20,66 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+type ChartData = {
+  month: string;
+  preventivos: number;
+  correctivos: number;
+};
+
 export default function MaintenanceChart() {
+  const [data, setData] = useState<ChartData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const allMonthsData = await getMaintenanceCountsByMonth();
+        // Filter for May, June, and August as requested
+        const relevantData = allMonthsData.filter(d => ['MAY', 'JUN', 'AGO'].includes(d.month.toUpperCase()));
+        setData(relevantData);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to load chart data:", err);
+        setError("No se pudieron cargar los datos del gráfico.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-lg font-bold">Mantenimientos realizados</CardTitle>
+        </CardHeader>
+        <CardContent className="h-[298px] flex items-center justify-center p-6">
+            <Skeleton className="w-full h-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+     return (
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-lg font-bold">Mantenimientos realizados</CardTitle>
+        </CardHeader>
+        <CardContent className="h-[298px] flex items-center justify-center p-6">
+            <Alert variant="destructive">
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+            </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="shadow-lg">
       <CardHeader>
@@ -29,7 +87,7 @@ export default function MaintenanceChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
-          <BarChart accessibilityLayer data={chartData}>
+          <BarChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="month"
@@ -38,7 +96,7 @@ export default function MaintenanceChart() {
               axisLine={false}
               stroke="hsl(var(--foreground))"
             />
-            <YAxis stroke="hsl(var(--foreground))" />
+            <YAxis stroke="hsl(var(--foreground))" domain={[0, 30]} allowDecimals={false} />
             <ChartTooltip 
                 cursor={{fill: 'hsl(var(--muted))'}}
                 content={<ChartTooltipContent />} 
