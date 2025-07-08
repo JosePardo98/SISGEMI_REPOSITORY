@@ -3,7 +3,7 @@
 
 import { db } from './firebase';
 import { collection, doc, getDoc, getDocs, addDoc, updateDoc, setDoc, query, where, orderBy, serverTimestamp, Timestamp, deleteDoc, writeBatch } from 'firebase/firestore';
-import type { Equipment, MaintenanceRecord, CorrectiveMaintenanceRecord, Ticket } from './types';
+import type { Equipment, MaintenanceRecord, CorrectiveMaintenanceRecord, Ticket, Peripheral, PeripheralMaintenanceRecord } from './types';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -491,5 +491,226 @@ export async function deleteTicket(ticketId: string): Promise<void> {
   } catch (error) {
     console.error("Error deleting ticket from Firestore:", error);
     throw new Error("Failed to delete ticket.");
+  }
+}
+
+// --- Peripheral Actions ---
+
+export async function getPeripherals(): Promise<Peripheral[]> {
+  try {
+    const peripheralsCol = collection(db, 'peripherals');
+    const peripheralSnapshot = await getDocs(query(peripheralsCol, orderBy('id')));
+    const peripheralList = peripheralSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return convertTimestampToISO({ ...data, id: doc.id }) as Peripheral;
+    });
+    return peripheralList;
+  } catch (error) {
+    console.error("Error fetching peripherals:", error);
+    throw error;
+  }
+}
+
+export async function getPeripheralById(id: string): Promise<Peripheral | undefined> {
+  try {
+    const peripheralRef = doc(db, 'peripherals', id);
+    const peripheralSnap = await getDoc(peripheralRef);
+
+    if (peripheralSnap.exists()) {
+      const data = peripheralSnap.data();
+      return convertTimestampToISO({ ...data, id: peripheralSnap.id }) as Peripheral;
+    } else {
+      return undefined;
+    }
+  } catch (error) {
+    console.error("Error fetching peripheral by ID:", error);
+    throw error;
+  }
+}
+
+export async function addPeripheral(
+  peripheralData: Omit<Peripheral, 'lastMaintenanceDate' | 'nextMaintenanceDate' | 'lastTechnician'>
+): Promise<Peripheral> {
+  try {
+    const peripheralRef = doc(db, 'peripherals', peripheralData.id);
+    const peripheralSnap = await getDoc(peripheralRef);
+
+    if (peripheralSnap.exists()) {
+      throw new Error(`El periférico con ID ${peripheralData.id} ya existe.`);
+    }
+
+    const dataToSave = {
+        ...peripheralData,
+        lastMaintenanceDate: null,
+        nextMaintenanceDate: null,
+        lastTechnician: null,
+    };
+    
+    await setDoc(peripheralRef, dataToSave);
+    revalidatePath('/');
+    return { ...dataToSave } as Peripheral;
+
+  } catch (error: any) {
+    console.error("Error adding peripheral to Firestore:", error);
+    throw error;
+  }
+}
+
+export async function updatePeripheral(
+  peripheralId: string,
+  dataToUpdate: Partial<Omit<Peripheral, 'id'>>
+): Promise<Peripheral> {
+  try {
+    const peripheralRef = doc(db, 'peripherals', peripheralId);
+    await updateDoc(peripheralRef, dataToUpdate);
+    
+    const updatedPeripheralSnap = await getDoc(peripheralRef);
+    if (!updatedPeripheralSnap.exists()) throw new Error("Failed to retrieve updated peripheral");
+    
+    revalidatePath(`/peripherals/${peripheralId}`);
+    revalidatePath('/');
+    return convertTimestampToISO({ ...updatedPeripheralSnap.data(), id: updatedPeripheralSnap.id }) as Peripheral;
+  } catch (error) {
+    console.error("Error updating peripheral in Firestore:", error);
+    throw error;
+  }
+}
+
+// --- Peripheral Maintenance Records ---
+
+export async function getPeripheralMaintenanceRecords(peripheralId: string): Promise<PeripheralMaintenanceRecord[]> {
+    try {
+      const recordsCol = collection(db, 'peripheralMaintenanceRecords');
+      const q = query(recordsCol, where('peripheralId', '==', peripheralId));
+      const recordSnapshot = await getDocs(q);
+      const recordList = recordSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return convertTimestampToISO({ ...data, id: doc.id }) as PeripheralMaintenanceRecord;
+      });
+      return recordList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    } catch (error) {
+      console.error("Error fetching peripheral maintenance records:", error);
+      throw error;
+    }
+}
+
+export async function getPeripheralMaintenanceRecordById(recordId: string): Promise<PeripheralMaintenanceRecord | undefined> {
+  try {
+    const recordRef = doc(db, 'peripheralMaintenanceRecords', recordId);
+    const recordSnap = await getDoc(recordRef);
+
+    if (recordSnap.exists()) {
+      const data = recordSnap.data();
+      return convertTimestampToISO({ ...data, id: recordSnap.id }) as PeripheralMaintenanceRecord;
+    }
+    return undefined;
+  } catch (error) {
+    console.error("Error fetching peripheral maintenance record by ID:", error);
+    throw error;
+  }
+}
+
+export async function addPeripheralMaintenanceRecord(
+    recordData: Omit<PeripheralMaintenanceRecord, 'id'>
+  ): Promise<PeripheralMaintenanceRecord> {
+    try {
+      const newRecordRef = await addDoc(collection(db, 'peripheralMaintenanceRecords'), {
+        ...recordData,
+        createdAt: serverTimestamp() 
+      });
+  
+      const peripheralRef = doc(db, 'peripherals', recordData.peripheralId);
+      const nextDate = new Date(recordData.date);
+      nextDate.setMonth(nextDate.getMonth() + 6);
+      
+      await updateDoc(peripheralRef, {
+        lastMaintenanceDate: recordData.date, 
+        nextMaintenanceDate: nextDate.toISOString().split('T')[0],
+        lastTechnician: recordData.technician
+      });
+  
+      const newRecordSnap = await getDoc(newRecordRef);
+      if (!newRecordSnap.exists()) throw new Error("Failed to retrieve new peripheral maintenance record");
+      
+      revalidatePath(`/peripherals/${recordData.peripheralId}`);
+      revalidatePath('/');
+      return convertTimestampToISO({ ...newRecordSnap.data(), id: newRecordSnap.id }) as PeripheralMaintenanceRecord;
+  
+    } catch (error: any) {
+      console.error("Error adding peripheral maintenance record to Firestore:", error);
+      throw error;
+    }
+}
+
+export async function updatePeripheralMaintenanceRecord(
+  recordId: string,
+  peripheralId: string,
+  dataToUpdate: Partial<Omit<PeripheralMaintenanceRecord, 'id' | 'peripheralId'>>
+): Promise<PeripheralMaintenanceRecord> {
+  try {
+    const recordRef = doc(db, 'peripheralMaintenanceRecords', recordId);
+    await updateDoc(recordRef, dataToUpdate);
+
+    const records = await getPeripheralMaintenanceRecords(peripheralId);
+    const peripheralDocRef = doc(db, 'peripherals', peripheralId);
+
+    if (records.length > 0) {
+      const latestRecord = records[0]; 
+      const nextDate = new Date(latestRecord.date);
+      nextDate.setMonth(nextDate.getMonth() + 6);
+      await updateDoc(peripheralDocRef, {
+        lastMaintenanceDate: latestRecord.date,
+        nextMaintenanceDate: nextDate.toISOString().split('T')[0],
+        lastTechnician: latestRecord.technician
+      });
+    } else {
+       await updateDoc(peripheralDocRef, {
+        lastMaintenanceDate: null, 
+        nextMaintenanceDate: null,
+        lastTechnician: null
+      });
+    }
+    
+    const updatedRecordSnap = await getDoc(recordRef);
+    if (!updatedRecordSnap.exists()) throw new Error("Failed to retrieve updated peripheral maintenance record");
+    
+    revalidatePath(`/peripherals/${peripheralId}`);
+    revalidatePath('/');
+    return convertTimestampToISO({ ...updatedRecordSnap.data(), id: updatedRecordSnap.id }) as PeripheralMaintenanceRecord;
+  } catch (error: any) {
+    console.error("Error updating peripheral maintenance record:", error);
+    throw error;
+  }
+}
+
+export async function deletePeripheralMaintenanceRecord(recordId: string, peripheralId: string): Promise<void> {
+  try {
+    const recordRef = doc(db, 'peripheralMaintenanceRecords', recordId);
+    await deleteDoc(recordRef);
+
+    const records = await getPeripheralMaintenanceRecords(peripheralId);
+    const peripheralDocRef = doc(db, 'peripherals', peripheralId);
+
+    if (records.length > 0) {
+      const latestRecord = records[0];
+      const nextDate = new Date(latestRecord.date);
+      nextDate.setMonth(nextDate.getMonth() + 6);
+      await updateDoc(peripheralDocRef, {
+        lastMaintenanceDate: latestRecord.date,
+        nextMaintenanceDate: nextDate.toISOString().split('T')[0],
+        lastTechnician: latestRecord.technician
+      });
+    } else {
+      await updateDoc(peripheralDocRef, {
+        lastMaintenanceDate: null, 
+        nextMaintenanceDate: null, 
+        lastTechnician: null
+      });
+    }
+    revalidatePath(`/peripherals/${peripheralId}`);
+    revalidatePath('/');
+  } catch (error) {
+    console.error("Error deleting peripheral maintenance record from Firestore:", error);
+    throw error;
   }
 }

@@ -70,3 +70,27 @@ export type Ticket = {
   status: 'Abierto' | 'En Proceso' | 'Cerrado';
   createdAt?: string;
 };
+
+// --- Peripheral Types ---
+export type Peripheral = {
+  id: string; // User-defined ID, e.g., IMP001
+  name: string; // e.g., "Impresora Oficina Principal"
+  type: string; // e.g., "Impresora", "Scanner", "Proyector"
+  patrimonialId?: string;
+  brand?: string;
+  model?: string;
+  location?: string;
+  status?: string; // e.g., "Operativo", "En Reparación"
+  lastMaintenanceDate?: string | null;
+  nextMaintenanceDate?: string | null;
+  lastTechnician?: string | null;
+  commonFailurePoints?: string; // For AI
+};
+
+export type PeripheralMaintenanceRecord = {
+  id: string; // Firestore-generated ID
+  peripheralId: string;
+  date: string; // ISO date string
+  technician: string;
+  description: string;
+};
