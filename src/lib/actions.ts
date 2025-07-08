@@ -482,3 +482,14 @@ export async function updateTicket(
     throw error;
   }
 }
+
+export async function deleteTicket(ticketId: string): Promise<void> {
+  try {
+    const ticketRef = doc(db, 'tickets', ticketId);
+    await deleteDoc(ticketRef);
+    revalidatePath('/');
+  } catch (error) {
+    console.error("Error deleting ticket from Firestore:", error);
+    throw new Error("Failed to delete ticket.");
+  }
+}

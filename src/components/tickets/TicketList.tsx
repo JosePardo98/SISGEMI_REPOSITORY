@@ -1,39 +1,74 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import type { Ticket } from '@/lib/types';
-import { getTickets } from '@/lib/actions';
+import { getTickets, deleteTicket } from '@/lib/actions';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Edit } from 'lucide-react';
+import { Terminal, Edit, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from '@/hooks/use-toast';
 
 const TicketList: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const fetchTickets = useCallback(async () => {
+    try {
+      // Don't set loading to true here to avoid flicker on re-fetches
+      setError(null);
+      const data = await getTickets();
+      setTickets(data);
+    } catch (err) {
+      setError('Error al cargar los tickets. Por favor, intente de nuevo más tarde.');
+      console.error(err);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getTickets();
-        setTickets(data);
-      } catch (err) {
-        setError('Error al cargar los tickets. Por favor, intente de nuevo más tarde.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTickets();
-  }, []);
+    setLoading(true);
+    fetchTickets().finally(() => setLoading(false));
+  }, [fetchTickets]);
+
+  const handleDeleteTicket = async (ticketId: string) => {
+    setIsDeleting(ticketId);
+    try {
+      await deleteTicket(ticketId);
+      toast({
+        title: 'Ticket Eliminado',
+        description: 'El ticket ha sido eliminado exitosamente.',
+      });
+      await fetchTickets(); // Refresh the list
+    } catch (error) {
+      console.error('Error deleting ticket:', error);
+      toast({
+        title: 'Error al Eliminar',
+        description: error instanceof Error ? error.message : 'No se pudo eliminar el ticket.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsDeleting(null);
+    }
+  };
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
@@ -101,13 +136,50 @@ const TicketList: React.FC = () => {
                 <Badge variant={getStatusVariant(ticket.status)}>{ticket.status}</Badge>
               </TableCell>
               <TableCell>{ticket.maintenanceType}</TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right space-x-2">
                 <Button asChild size="sm" variant="outline" className="hover:border-accent hover:text-accent">
                     <Link href={`/tickets/${ticket.id}/edit`}>
                         <Edit size={16} className="mr-2" />
                         Modificar
                     </Link>
                 </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="hover:border-destructive hover:text-destructive"
+                      disabled={isDeleting === ticket.id}
+                    >
+                      {isDeleting === ticket.id ? (
+                        <Loader2 size={16} className="mr-2 animate-spin" />
+                      ) : (
+                        <Trash2 size={16} className="mr-2" />
+                      )}
+                      {isDeleting === ticket.id ? 'Eliminando...' : 'Eliminar'}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="flex items-center">
+                        <AlertTriangle size={20} className="mr-2 text-destructive" />
+                        ¿Confirmar Eliminación?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta acción no se puede deshacer. Esto eliminará permanentemente el ticket para la PC <strong>{ticket.pcName}</strong>.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDeleteTicket(ticket.id)}
+                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                      >
+                        Sí, Eliminar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </TableCell>
             </TableRow>
           )) : (
