@@ -137,7 +137,7 @@ const TicketList: React.FC = () => {
               </TableCell>
               <TableCell>{ticket.maintenanceType}</TableCell>
               <TableCell className="text-right space-x-2">
-                <Button asChild size="sm" variant="outline" className="hover:border-accent hover:text-accent">
+                <Button asChild size="sm" variant="default">
                     <Link href={`/tickets/${ticket.id}/edit`}>
                         <Edit size={16} className="mr-2" />
                         Modificar
@@ -146,9 +146,8 @@ const TicketList: React.FC = () => {
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
-                      className="hover:border-destructive hover:text-destructive"
                       disabled={isDeleting === ticket.id}
                     >
                       {isDeleting === ticket.id ? (
