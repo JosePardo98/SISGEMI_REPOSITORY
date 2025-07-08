@@ -102,9 +102,10 @@ const TicketList: React.FC = () => {
               </TableCell>
               <TableCell>{ticket.maintenanceType}</TableCell>
               <TableCell className="text-right">
-                <Button asChild size="icon" variant="outline" className="h-8 w-8 hover:border-accent hover:text-accent">
+                <Button asChild size="sm" variant="outline" className="hover:border-accent hover:text-accent">
                     <Link href={`/tickets/${ticket.id}/edit`}>
-                        <Edit size={16} />
+                        <Edit size={16} className="mr-2" />
+                        Modificar
                     </Link>
                 </Button>
               </TableCell>
