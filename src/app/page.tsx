@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from '@/components/ui/button';
 import TicketsClientPage from '@/components/tickets/TicketsClientPage';
+import PeripheralMaintenanceClientPage from '@/components/peripherals/PeripheralMaintenanceClientPage';
 
 const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
     const lines = label.split('\n');
@@ -29,6 +30,7 @@ export default function HomePage() {
   const menuItems = [
     { id: 'panel', label: 'Panel' },
     { id: 'registro-mantenimientos', label: 'Registro de\nMantenimientos' },
+    { id: 'mantenimiento-perifericos', label: 'Mantenimiento a\nPeriféricos' },
     { id: 'tickets', label: 'Tickets' },
   ];
 
@@ -47,6 +49,8 @@ export default function HomePage() {
         );
       case 'registro-mantenimientos':
         return <EquipmentClientPage />;
+      case 'mantenimiento-perifericos':
+        return <PeripheralMaintenanceClientPage />;
       case 'tickets':
         return <TicketsClientPage />;
       default:
