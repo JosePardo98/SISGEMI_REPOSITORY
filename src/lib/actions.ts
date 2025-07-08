@@ -388,6 +388,36 @@ export async function getMaintenanceCountsByMonth() {
   }
 }
 
+export async function getPeripheralMaintenanceCountsByMonth() {
+  try {
+    const recordsCol = collection(db, 'peripheralMaintenanceRecords');
+    const recordsSnapshot = await getDocs(recordsCol);
+
+    const monthNames = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+    
+    const counts = monthNames.map((name) => ({
+      month: name.slice(0, 3),
+      mantenimientos: 0,
+    }));
+    
+    recordsSnapshot.docs.forEach(doc => {
+      const data = doc.data();
+      if (data.date && typeof data.date === 'string' && data.date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        const monthIndex = parseInt(data.date.substring(5, 7), 10) - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+            counts[monthIndex].mantenimientos += 1;
+        }
+      }
+    });
+
+    return counts;
+
+  } catch (error) {
+    console.error("Error fetching peripheral maintenance counts:", error);
+    throw new Error("Failed to fetch peripheral maintenance counts for chart.");
+  }
+}
+
 
 // --- Ticket Actions ---
 const TicketSchema = z.object({

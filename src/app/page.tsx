@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -9,6 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from '@/components/ui/button';
 import TicketsClientPage from '@/components/tickets/TicketsClientPage';
 import PeripheralMaintenanceClientPage from '@/components/peripherals/PeripheralMaintenanceClientPage';
+import PeripheralMaintenanceChart from '@/components/peripherals/PeripheralMaintenanceChart';
 
 const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
     const lines = label.split('\n');
@@ -42,8 +44,9 @@ export default function HomePage() {
             <div className="lg:col-span-1">
               <AlertsCard />
             </div>
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 space-y-8">
               <MaintenanceChart />
+              <PeripheralMaintenanceChart />
             </div>
           </div>
         );
