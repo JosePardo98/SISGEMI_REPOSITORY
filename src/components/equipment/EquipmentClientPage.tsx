@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -62,7 +63,7 @@ const EquipmentClientPage: React.FC = () => {
     <div className="animate-fade-in">
         <Card className="shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
-                <CardTitle>Mantenimiento de Equipos de Cómputo</CardTitle>
+                <CardTitle>Mantenimientos a Equipos de Cómputo</CardTitle>
                 <Button asChild className="bg-primary hover:bg-primary/90">
                     <Link href="/equipment/new">
                     <PlusCircle size={20} className="mr-2" />
