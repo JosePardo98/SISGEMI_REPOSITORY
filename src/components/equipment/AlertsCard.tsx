@@ -64,7 +64,7 @@ export default function AlertsCard() {
         {alerts.map((ticket) => (
           <li key={ticket.id} className="text-sm">
             <Link href={`/tickets/${ticket.id}/edit`} className="hover:underline" title={ticket.problemDescription}>
-              {`Ticket para ${ticket.pcName}`}
+              {`Mantenimiento ${ticket.maintenanceType.toLowerCase()} pendiente para ${ticket.pcName}`}
             </Link>
           </li>
         ))}
