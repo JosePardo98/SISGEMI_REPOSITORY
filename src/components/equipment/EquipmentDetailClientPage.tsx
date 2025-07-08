@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { 
   ArrowLeft, Edit3, Info, Computer, Server, Laptop, Mouse, Monitor, Keyboard, Zap, HelpCircle, Archive, 
-  Wrench, Briefcase, FileText, History as HistoryIcon, Trash2, Edit, AlertTriangle, PlusCircle, User, Loader2 
+  Wrench, Briefcase, FileText, History as HistoryIcon, Trash2, Edit, AlertTriangle, PlusCircle, User, Loader2, MapPin 
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -233,6 +233,7 @@ const EquipmentDetailClientPage: React.FC<EquipmentDetailClientPageProps> = ({ e
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
                 <DetailItem label="Nombre de Usuario" value={equipment.userName} icon={User} />
+                <DetailItem label="Ubicación" value={equipment.location} icon={MapPin} />
                 <DetailItem label="Procesador" value={equipment.processor} icon={Server} />
                 <DetailItem label="Memoria RAM" value={equipment.ramAmount} icon={Info} />
                 <DetailItem label="Tipo de RAM" value={equipment.ramType} icon={Info} />

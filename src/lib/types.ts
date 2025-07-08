@@ -18,6 +18,7 @@ export type Equipment = {
   commonFailurePoints: string; // for AI, e.g., "PSU, HDD, RAM overheating" - Mantenido para IA
   specifications?: string; // General specs description - Puede ser obsoleto con campos granulares
   userName?: string;
+  location?: string;
 
   // Información de Inventario
   pcPatrimonialId?: string;

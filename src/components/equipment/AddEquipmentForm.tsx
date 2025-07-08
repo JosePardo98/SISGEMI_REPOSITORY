@@ -19,6 +19,7 @@ const equipmentSchema = z.object({
   id: z.string().min(1, "El ID del PC es requerido.").max(20, "El ID no debe exceder los 20 caracteres."),
   name: z.string().min(1, "El nombre del PC es requerido.").max(50, "El nombre no debe exceder los 50 caracteres."),
   userName: z.string().optional(),
+  location: z.string().optional(),
   processor: z.string().optional(),
   ramAmount: z.string().optional(),
   ramType: z.string().optional(),
@@ -68,6 +69,7 @@ export const AddEquipmentForm: React.FC<AddEquipmentFormProps> = ({ onSuccess })
       type: '', // Para IA
       commonFailurePoints: '', // Para IA
       userName: '',
+      location: '',
       processor: '',
       ramAmount: '',
       ramType: '',
@@ -141,6 +143,10 @@ export const AddEquipmentForm: React.FC<AddEquipmentFormProps> = ({ onSuccess })
               <div className="space-y-2">
                 <Label htmlFor="equipment-userName">Nombre de Usuario</Label>
                 <Input id="equipment-userName" placeholder="Ej: Juan Pérez" {...register('userName')} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="equipment-location">Ubicación</Label>
+                <Input id="equipment-location" placeholder="Ej: Oficina de RH, Almacén" {...register('location')} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="equipment-processor">Procesador</Label>
