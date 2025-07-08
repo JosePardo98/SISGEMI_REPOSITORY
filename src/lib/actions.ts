@@ -404,6 +404,11 @@ const TicketSchema = z.object({
   actionsTaken: z.string(),
 });
 
+const UpdateTicketSchema = TicketSchema.extend({
+  status: z.enum(['Abierto', 'En Proceso', 'Cerrado']),
+});
+
+
 export async function addTicket(ticketData: z.infer<typeof TicketSchema>) {
   try {
     const validatedData = TicketSchema.parse(ticketData);
@@ -439,5 +444,41 @@ export async function getTickets(): Promise<Ticket[]> {
   } catch (error) {
     console.error("Error fetching tickets:", error);
     throw new Error("Failed to fetch tickets.");
+  }
+}
+
+export async function getTicketById(id: string): Promise<Ticket | undefined> {
+  try {
+    const ticketRef = doc(db, 'tickets', id);
+    const ticketSnap = await getDoc(ticketRef);
+
+    if (ticketSnap.exists()) {
+      const data = ticketSnap.data();
+      return convertTimestampToISO({ ...data, id: ticketSnap.id }) as Ticket;
+    } else {
+      console.log(`No such document with id: ${id}`);
+      return undefined;
+    }
+  } catch (error) {
+    console.error("Error fetching ticket by ID:", error);
+    throw error;
+  }
+}
+
+export async function updateTicket(
+  ticketId: string,
+  dataToUpdate: z.infer<typeof UpdateTicketSchema>
+): Promise<void> {
+  try {
+    const validatedData = UpdateTicketSchema.parse(dataToUpdate);
+    const ticketRef = doc(db, 'tickets', ticketId);
+    await updateDoc(ticketRef, validatedData);
+    revalidatePath('/'); // Revalidate home page where tickets are listed
+  } catch (error) {
+    console.error("Error updating ticket in Firestore:", error);
+    if (error instanceof z.ZodError) {
+      throw new Error(`Validation failed: ${error.issues.map(i => i.message).join(', ')}`);
+    }
+    throw error;
   }
 }

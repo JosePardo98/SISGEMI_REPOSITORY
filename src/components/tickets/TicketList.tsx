@@ -6,10 +6,12 @@ import { getTickets } from '@/lib/actions';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal } from 'lucide-react';
+import { Terminal, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const TicketList: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -85,6 +87,7 @@ const TicketList: React.FC = () => {
             <TableHead>Fecha Reporte</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead>Tipo</TableHead>
+            <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -98,10 +101,17 @@ const TicketList: React.FC = () => {
                 <Badge variant={getStatusVariant(ticket.status)}>{ticket.status}</Badge>
               </TableCell>
               <TableCell>{ticket.maintenanceType}</TableCell>
+              <TableCell className="text-right">
+                <Button asChild size="icon" variant="outline" className="h-8 w-8 hover:border-accent hover:text-accent">
+                    <Link href={`/tickets/${ticket.id}/edit`}>
+                        <Edit size={16} />
+                    </Link>
+                </Button>
+              </TableCell>
             </TableRow>
           )) : (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
+              <TableCell colSpan={7} className="h-24 text-center">
                 No se han generado tickets.
               </TableCell>
             </TableRow>
