@@ -17,8 +17,8 @@ body {
     --popover: 210 15% 100%;
     --popover-foreground: 210 10% 20%;
 
-    --primary: 210 70% 50%; /* Vibrant blue */
-    --primary-foreground: 210 70% 95%; /* Very light blue for text on primary */
+    --primary: 220 70% 50%; /* Blue */
+    --primary-foreground: 220 70% 95%; /* Very light blue for text on primary */
 
     --secondary: 210 15% 90%; /* Slightly darker than background */
     --secondary-foreground: 210 10% 20%; /* Same as foreground */
@@ -26,15 +26,15 @@ body {
     --muted: 210 15% 85%; /* For less important elements */
     --muted-foreground: 210 10% 45%; /* Muted text color */
 
-    --accent: 180 60% 55%; /* Analogous cyan */
-    --accent-foreground: 180 60% 10%; /* Dark cyan for text on accent */
+    --accent: 90 100% 50%; /* Phosphorescent green */
+    --accent-foreground: 90 60% 10%; /* Dark green for text on accent */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 210 15% 80%;
     --input: 210 15% 88%;
-    --ring: 210 70% 50%; /* Primary color for focus rings */
+    --ring: 220 70% 50%; /* Primary color for focus rings */
 
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -46,12 +46,12 @@ body {
     /* Sidebar colors - adjust if sidebar is used, for now match main theme */
     --sidebar-background: 210 15% 92%; /* Slightly darker variant of main background */
     --sidebar-foreground: 210 10% 20%;
-    --sidebar-primary: 210 70% 50%;
-    --sidebar-primary-foreground: 210 70% 95%;
-    --sidebar-accent: 180 60% 55%;
-    --sidebar-accent-foreground: 180 60% 10%;
+    --sidebar-primary: 220 70% 50%;
+    --sidebar-primary-foreground: 220 70% 95%;
+    --sidebar-accent: 90 100% 50%;
+    --sidebar-accent-foreground: 90 60% 10%;
     --sidebar-border: 210 15% 75%;
-    --sidebar-ring: 210 70% 50%;
+    --sidebar-ring: 220 70% 50%;
   }
 
   .dark {
