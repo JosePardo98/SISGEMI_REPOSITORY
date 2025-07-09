@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -125,7 +124,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
                 <TableCell>{formatDate(equipment.lastMaintenanceDate)}</TableCell>
                 <TableCell>{equipment.lastTechnician || 'N/A'}</TableCell>
                 <TableCell>
-                  <Button asChild variant="default" size="sm">
+                  <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
                     <Link href={`/equipment/${equipment.id}`}>
                       <Eye size={16} className="mr-2" /> Información Detallada
                     </Link>

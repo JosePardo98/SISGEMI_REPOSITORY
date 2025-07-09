@@ -118,7 +118,7 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals })
                 <TableCell>{peripheral.location || 'N/A'}</TableCell>
                 <TableCell>{formatDate(peripheral.lastMaintenanceDate)}</TableCell>
                 <TableCell>
-                  <Button asChild variant="default" size="sm">
+                  <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
                     <Link href={`/peripherals/${peripheral.id}`}>
                       <Eye size={16} className="mr-2" /> Información Detallada
                     </Link>
