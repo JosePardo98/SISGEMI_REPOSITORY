@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -138,7 +139,7 @@ const TicketList: React.FC = () => {
               </TableCell>
               <TableCell>{ticket.maintenanceType}</TableCell>
               <TableCell>
-                <Button asChild size="sm" variant="outline">
+                <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
                   <Link href={`/tickets/${ticket.id}/edit`}>
                     <Eye size={16} className="mr-2" />
                     Ver Ticket
