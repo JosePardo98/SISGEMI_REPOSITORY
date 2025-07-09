@@ -63,7 +63,7 @@ export default function AlertsCard() {
       <ul className="space-y-2 list-disc pl-5">
         {alerts.map((ticket) => (
           <li key={ticket.id} className="text-sm">
-            <Link href={`/tickets/${ticket.id}/edit`} className="hover:underline" title={ticket.problemDescription}>
+            <Link href={`/tickets/${ticket.id}`} className="hover:underline" title={ticket.problemDescription}>
               {`Mantenimiento ${ticket.maintenanceType.toLowerCase()} pendiente para ${ticket.pcName}`}
             </Link>
           </li>
