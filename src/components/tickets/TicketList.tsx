@@ -140,7 +140,7 @@ const TicketList: React.FC = () => {
               <TableCell>{ticket.maintenanceType}</TableCell>
               <TableCell>
                 <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                  <Link href={`/tickets/${ticket.id}/edit`}>
+                  <Link href={`/tickets/${ticket.id}`}>
                     <Eye size={16} className="mr-2" />
                     Ver Ticket
                   </Link>
