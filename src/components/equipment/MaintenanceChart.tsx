@@ -16,7 +16,7 @@ const chartConfig = {
   },
   preventivos: {
     label: "Mantenimientos Preventivos",
-    color: "hsl(var(--chart-5))",
+    color: "hsl(var(--destructive))",
   },
 } satisfies ChartConfig;
 
