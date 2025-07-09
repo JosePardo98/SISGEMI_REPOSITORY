@@ -6,7 +6,7 @@ import { getTickets, deleteTicket } from '@/lib/actions';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Edit, Trash2, Loader2, AlertTriangle } from 'lucide-react';
+import { Terminal, Edit, Trash2, Loader2, AlertTriangle, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -122,6 +122,7 @@ const TicketList: React.FC = () => {
             <TableHead>Fecha Reporte</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead>Tipo</TableHead>
+            <TableHead>Ticket</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
         </TableHeader>
@@ -136,6 +137,14 @@ const TicketList: React.FC = () => {
                 <Badge variant={getStatusVariant(ticket.status)}>{ticket.status}</Badge>
               </TableCell>
               <TableCell>{ticket.maintenanceType}</TableCell>
+              <TableCell>
+                <Button asChild size="sm" variant="outline">
+                  <Link href={`/tickets/${ticket.id}/edit`}>
+                    <Eye size={16} className="mr-2" />
+                    Ver Ticket
+                  </Link>
+                </Button>
+              </TableCell>
               <TableCell className="text-right space-x-2">
                 <Button asChild size="sm" variant="default">
                     <Link href={`/tickets/${ticket.id}/edit`}>
@@ -183,7 +192,7 @@ const TicketList: React.FC = () => {
             </TableRow>
           )) : (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center">
+              <TableCell colSpan={8} className="h-24 text-center">
                 No se han generado tickets.
               </TableCell>
             </TableRow>
