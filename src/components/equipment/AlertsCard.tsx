@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -64,7 +65,7 @@ export default function AlertsCard() {
         {alerts.map((ticket) => (
           <li key={ticket.id} className="text-sm">
             <Link href={`/tickets/${ticket.id}`} className="hover:underline" title={ticket.problemDescription}>
-              {`Mantenimiento ${ticket.maintenanceType.toLowerCase()} pendiente para ${ticket.pcName}`}
+              {`Mantenimiento ${ticket.maintenanceType.toLowerCase()} para ${ticket.pcName} (${ticket.status})`}
             </Link>
           </li>
         ))}
