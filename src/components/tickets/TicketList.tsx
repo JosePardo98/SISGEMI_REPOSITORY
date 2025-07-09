@@ -146,12 +146,6 @@ const TicketList: React.FC = () => {
                 </Button>
               </TableCell>
               <TableCell className="text-right space-x-2">
-                <Button asChild size="sm" variant="default">
-                    <Link href={`/tickets/${ticket.id}/edit`}>
-                        <Edit size={16} className="mr-2" />
-                        Modificar
-                    </Link>
-                </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
