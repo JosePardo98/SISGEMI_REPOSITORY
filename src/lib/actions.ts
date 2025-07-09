@@ -339,6 +339,47 @@ export async function updateEquipment(
   }
 }
 
+export async function deleteEquipment(equipmentId: string): Promise<void> {
+  try {
+    const batch = writeBatch(db);
+
+    // Delete the equipment document
+    const equipmentRef = doc(db, 'equipments', equipmentId);
+    batch.delete(equipmentRef);
+
+    // Find and delete preventive maintenance records
+    const preventiveRecordsCol = collection(db, 'maintenanceRecords');
+    const preventiveQuery = query(preventiveRecordsCol, where('equipmentId', '==', equipmentId));
+    const preventiveSnapshot = await getDocs(preventiveQuery);
+    preventiveSnapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    // Find and delete corrective maintenance records
+    const correctiveRecordsCol = collection(db, 'correctiveMaintenanceRecords');
+    const correctiveQuery = query(correctiveRecordsCol, where('equipmentId', '==', equipmentId));
+    const correctiveSnapshot = await getDocs(correctiveQuery);
+    correctiveSnapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    
+    // Find and delete tickets associated with the equipment
+    const ticketsCol = collection(db, 'tickets');
+    const ticketsQuery = query(ticketsCol, where('pcId', '==', equipmentId));
+    const ticketsSnapshot = await getDocs(ticketsQuery);
+    ticketsSnapshot.forEach(doc => {
+        batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+
+    revalidatePath('/');
+  } catch (error) {
+    console.error(`Error deleting equipment ${equipmentId} and its related records:`, error);
+    throw new Error('Failed to delete equipment.');
+  }
+}
+
 // --- Chart Data Actions ---
 export async function getMaintenanceCountsByMonth() {
   try {
@@ -503,6 +544,7 @@ export async function updateTicket(
     const validatedData = UpdateTicketSchema.parse(dataToUpdate);
     const ticketRef = doc(db, 'tickets', ticketId);
     await updateDoc(ticketRef, validatedData);
+    revalidatePath(`/tickets/${ticketId}`);
     revalidatePath('/'); // Revalidate home page where tickets are listed
   } catch (error) {
     console.error("Error updating ticket in Firestore:", error);
@@ -603,6 +645,31 @@ export async function updatePeripheral(
   } catch (error) {
     console.error("Error updating peripheral in Firestore:", error);
     throw error;
+  }
+}
+
+export async function deletePeripheral(peripheralId: string): Promise<void> {
+  try {
+    const batch = writeBatch(db);
+
+    // Delete the peripheral document
+    const peripheralRef = doc(db, 'peripherals', peripheralId);
+    batch.delete(peripheralRef);
+
+    // Find and delete peripheral maintenance records
+    const recordsCol = collection(db, 'peripheralMaintenanceRecords');
+    const recordsQuery = query(recordsCol, where('peripheralId', '==', peripheralId));
+    const recordsSnapshot = await getDocs(recordsQuery);
+    recordsSnapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+
+    revalidatePath('/');
+  } catch (error) {
+    console.error(`Error deleting peripheral ${peripheralId} and its related records:`, error);
+    throw new Error('Failed to delete peripheral.');
   }
 }
 

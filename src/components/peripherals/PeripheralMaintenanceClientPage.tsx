@@ -1,6 +1,7 @@
+
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import type { Peripheral } from '@/lib/types';
 import { getPeripherals } from '@/lib/actions';
 import { PeripheralTable } from './PeripheralTable';
@@ -16,22 +17,21 @@ const PeripheralMaintenanceClientPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchPeripherals = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getPeripherals();
-        setPeripherals(data);
-      } catch (err) {
-        setError('Error al cargar los periféricos. Por favor, intente de nuevo más tarde.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPeripherals();
+  const fetchPeripherals = useCallback(async () => {
+    try {
+      setError(null);
+      const data = await getPeripherals();
+      setPeripherals(data);
+    } catch (err) {
+      setError('Error al cargar los periféricos. Por favor, intente de nuevo más tarde.');
+      console.error(err);
+    }
   }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchPeripherals().finally(() => setLoading(false));
+  }, [fetchPeripherals]);
 
   if (loading) {
     return (
@@ -78,7 +78,7 @@ const PeripheralMaintenanceClientPage: React.FC = () => {
                 </Button>
             </CardHeader>
             <CardContent>
-                <PeripheralTable peripherals={peripherals} />
+                <PeripheralTable peripherals={peripherals} onPeripheralDeleted={fetchPeripherals} />
             </CardContent>
         </Card>
     </div>

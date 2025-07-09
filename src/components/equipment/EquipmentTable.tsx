@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -6,20 +7,37 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from 'next/link';
-import { ArrowUpDown, Eye, Search, Users } from 'lucide-react';
+import { ArrowUpDown, Eye, Search, Users, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from '@/hooks/use-toast';
+import { deleteEquipment } from '@/lib/actions';
+
 
 interface EquipmentTableProps {
   equipments: Equipment[];
+  onEquipmentDeleted: () => void;
 }
 
 type SortKey = keyof Equipment | null;
 
-export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) => {
+export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments, onEquipmentDeleted }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
@@ -27,6 +45,26 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
       return format(parseISO(dateString), 'dd MMM yyyy', { locale: es });
     } catch (error) {
       return 'Fecha inválida';
+    }
+  };
+  
+  const handleDelete = async (equipmentId: string, equipmentName: string) => {
+    setIsDeleting(equipmentId);
+    try {
+        await deleteEquipment(equipmentId);
+        toast({
+            title: "Equipo Eliminado",
+            description: `El equipo ${equipmentName} y todos sus registros han sido eliminados.`,
+        });
+        onEquipmentDeleted();
+    } catch (error) {
+        toast({
+            title: "Error al Eliminar",
+            description: "No se pudo eliminar el equipo. Inténtelo de nuevo.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsDeleting(null);
     }
   };
 
@@ -113,6 +151,7 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
                 <div className="flex items-center">Ingeniero(s): {renderSortIcon('lastTechnician')}</div>
               </TableHead>
               <TableHead>Información</TableHead>
+              <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -130,11 +169,40 @@ export const EquipmentTable: React.FC<EquipmentTableProps> = ({ equipments }) =>
                     </Link>
                   </Button>
                 </TableCell>
+                <TableCell className="text-right">
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="icon" className="h-9 w-9" disabled={isDeleting === equipment.id}>
+                                {isDeleting === equipment.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="flex items-center">
+                                    <AlertTriangle size={20} className="mr-2 text-destructive" />
+                                    ¿Confirmar Eliminación?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Esta acción no se puede deshacer. Esto eliminará permanentemente el equipo <strong>{equipment.name}</strong> y todos sus registros asociados.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction 
+                                    onClick={() => handleDelete(equipment.id, equipment.name)}
+                                    className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                                >
+                                    Sí, Eliminar
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </TableCell>
               </TableRow>
             ))}
              {filteredAndSortedEquipments.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center h-24">
+                <TableCell colSpan={7} className="text-center h-24">
                   No se encontraron equipos.
                 </TableCell>
               </TableRow>

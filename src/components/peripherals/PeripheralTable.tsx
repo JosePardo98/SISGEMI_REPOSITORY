@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -6,20 +7,36 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from 'next/link';
-import { ArrowUpDown, Eye, Search } from 'lucide-react';
+import { ArrowUpDown, Eye, Search, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from '@/hooks/use-toast';
+import { deletePeripheral } from '@/lib/actions';
 
 interface PeripheralTableProps {
   peripherals: Peripheral[];
+  onPeripheralDeleted: () => void;
 }
 
 type SortKey = keyof Peripheral | null;
 
-export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals }) => {
+export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals, onPeripheralDeleted }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('id');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
@@ -27,6 +44,26 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals })
       return format(parseISO(dateString), 'dd MMM yyyy', { locale: es });
     } catch (error) {
       return 'Fecha inválida';
+    }
+  };
+
+  const handleDelete = async (peripheralId: string, peripheralName: string) => {
+    setIsDeleting(peripheralId);
+    try {
+        await deletePeripheral(peripheralId);
+        toast({
+            title: "Periférico Eliminado",
+            description: `El periférico ${peripheralName} y todos sus registros han sido eliminados.`,
+        });
+        onPeripheralDeleted();
+    } catch (error) {
+        toast({
+            title: "Error al Eliminar",
+            description: "No se pudo eliminar el periférico. Inténtelo de nuevo.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsDeleting(null);
     }
   };
 
@@ -107,6 +144,7 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals })
                 <div className="flex items-center">Último Mantenimiento {renderSortIcon('lastMaintenanceDate')}</div>
               </TableHead>
               <TableHead>Información</TableHead>
+              <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -124,10 +162,39 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals })
                     </Link>
                   </Button>
                 </TableCell>
+                <TableCell className="text-right">
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="icon" className="h-9 w-9" disabled={isDeleting === peripheral.id}>
+                                {isDeleting === peripheral.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="flex items-center">
+                                    <AlertTriangle size={20} className="mr-2 text-destructive" />
+                                    ¿Confirmar Eliminación?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Esta acción no se puede deshacer. Esto eliminará permanentemente el periférico <strong>{peripheral.name}</strong> y todos sus registros asociados.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction 
+                                    onClick={() => handleDelete(peripheral.id, peripheral.name)}
+                                    className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                                >
+                                    Sí, Eliminar
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </TableCell>
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center h-24">
+                <TableCell colSpan={7} className="text-center h-24">
                   No se encontraron periféricos.
                 </TableCell>
               </TableRow>

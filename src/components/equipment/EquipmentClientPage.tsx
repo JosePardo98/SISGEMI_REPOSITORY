@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import type { Equipment } from '@/lib/types';
 import { getEquipments } from '@/lib/actions';
 import { EquipmentTable } from './EquipmentTable';
@@ -17,22 +17,21 @@ const EquipmentClientPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchEquipments = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getEquipments();
-        setEquipments(data);
-      } catch (err) {
-        setError('Error al cargar los equipos. Por favor, intente de nuevo más tarde.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchEquipments();
+  const fetchEquipments = useCallback(async () => {
+    try {
+      setError(null);
+      const data = await getEquipments();
+      setEquipments(data);
+    } catch (err) {
+      setError('Error al cargar los equipos. Por favor, intente de nuevo más tarde.');
+      console.error(err);
+    }
   }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchEquipments().finally(() => setLoading(false));
+  }, [fetchEquipments]);
 
   if (loading) {
     return (
@@ -72,7 +71,7 @@ const EquipmentClientPage: React.FC = () => {
                 </Button>
             </CardHeader>
             <CardContent>
-                <EquipmentTable equipments={equipments} />
+                <EquipmentTable equipments={equipments} onEquipmentDeleted={fetchEquipments} />
             </CardContent>
         </Card>
     </div>
