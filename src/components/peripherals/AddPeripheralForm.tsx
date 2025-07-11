@@ -16,7 +16,6 @@ import type { Peripheral } from '@/lib/types';
 
 const peripheralSchema = z.object({
   id: z.string().min(1, "El ID del periférico es requerido.").max(20, "El ID no debe exceder los 20 caracteres."),
-  name: z.string().min(1, "El nombre del periférico es requerido.").max(50, "El nombre no debe exceder los 50 caracteres."),
   type: z.string().min(1, "El tipo de periférico es requerido.").max(50, "El tipo no debe exceder los 50 caracteres."),
   patrimonialId: z.string().optional(),
   brand: z.string().optional(),
@@ -40,7 +39,6 @@ export const AddPeripheralForm: React.FC<AddPeripheralFormProps> = ({ onSuccess 
     resolver: zodResolver(peripheralSchema),
     defaultValues: {
       id: '',
-      name: '',
       type: '',
       commonFailurePoints: '',
       patrimonialId: '',
@@ -58,7 +56,7 @@ export const AddPeripheralForm: React.FC<AddPeripheralFormProps> = ({ onSuccess 
       await addPeripheral(newPeripheralData);
       toast({
         title: "Periférico Agregado",
-        description: `El periférico ${data.name} ha sido agregado exitosamente.`,
+        description: `El periférico con ID ${data.id} ha sido agregado exitosamente.`,
         variant: "default",
       });
       reset();
@@ -88,11 +86,6 @@ export const AddPeripheralForm: React.FC<AddPeripheralFormProps> = ({ onSuccess 
               <Label htmlFor="peripheral-id">ID Periférico <span className="text-destructive">*</span></Label>
               <Input id="peripheral-id" placeholder="Ej: IMP001, SCAN02" {...register('id')} />
               {errors.id && <p className="text-sm text-destructive">{errors.id.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="peripheral-name">Nombre Periférico <span className="text-destructive">*</span></Label>
-              <Input id="peripheral-name" placeholder="Ej: Impresora Almacén" {...register('name')} />
-              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="peripheral-type">Tipo (para IA) <span className="text-destructive">*</span></Label>

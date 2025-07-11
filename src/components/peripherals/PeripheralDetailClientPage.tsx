@@ -158,8 +158,8 @@ const PeripheralDetailClientPage: React.FC<PeripheralDetailClientPageProps> = ({
             <div className="flex items-center gap-4">
                 <PeripheralIcon size={40} className="text-primary flex-shrink-0" />
                 <div>
-                    <CardTitle className="text-2xl md:text-3xl">{peripheral.name}</CardTitle>
-                    <CardDescription>ID: {peripheral.id} | Tipo: {peripheral.type}</CardDescription>
+                    <CardTitle className="text-2xl md:text-3xl">{peripheral.type}</CardTitle>
+                    <CardDescription>ID: {peripheral.id}</CardDescription>
                 </div>
             </div>
             <Button asChild className="bg-primary hover:bg-primary/90">

@@ -87,13 +87,13 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals, o
     }
   };
 
-  const handleDelete = async (peripheralId: string, peripheralName: string) => {
+  const handleDelete = async (peripheralId: string) => {
     setIsDeleting(peripheralId);
     try {
         await deletePeripheral(peripheralId);
         toast({
             title: "Periférico Eliminado",
-            description: `El periférico ${peripheralName} y todos sus registros han sido eliminados.`,
+            description: `El periférico con ID ${peripheralId} y todos sus registros han sido eliminados.`,
         });
         onPeripheralDeleted();
     } catch (error) {
@@ -178,9 +178,6 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals, o
               <TableHead onClick={() => handleSort('id')} className="cursor-pointer hover:bg-accent/50">
                 <div className="flex items-center">ID {renderSortIcon('id')}</div>
               </TableHead>
-              <TableHead onClick={() => handleSort('name')} className="cursor-pointer hover:bg-accent/50">
-                <div className="flex items-center">Nombre {renderSortIcon('name')}</div>
-              </TableHead>
               <TableHead onClick={() => handleSort('type')} className="cursor-pointer hover:bg-accent/50">
                 <div className="flex items-center">Tipo {renderSortIcon('type')}</div>
               </TableHead>
@@ -198,7 +195,6 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals, o
             {filteredAndSortedPeripherals.length > 0 ? filteredAndSortedPeripherals.map((peripheral) => (
               <TableRow key={peripheral.id}>
                 <TableCell className="font-medium">{peripheral.id}</TableCell>
-                <TableCell>{peripheral.name}</TableCell>
                 <TableCell>{peripheral.type}</TableCell>
                 <TableCell>{peripheral.location || 'N/A'}</TableCell>
                 <TableCell>{formatDate(peripheral.lastMaintenanceDate)}</TableCell>
@@ -223,13 +219,13 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals, o
                                     ¿Confirmar Eliminación?
                                 </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    Esta acción no se puede deshacer. Esto eliminará permanentemente el periférico <strong>{peripheral.name}</strong> y todos sus registros asociados.
+                                    Esta acción no se puede deshacer. Esto eliminará permanentemente el periférico con ID <strong>{peripheral.id}</strong> y todos sus registros asociados.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
                                 <AlertDialogAction 
-                                    onClick={() => handleDelete(peripheral.id, peripheral.name)}
+                                    onClick={() => handleDelete(peripheral.id)}
                                     className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                                 >
                                     Sí, Eliminar

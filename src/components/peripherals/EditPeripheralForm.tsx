@@ -15,7 +15,6 @@ import { Loader2, Save } from 'lucide-react';
 import type { Peripheral } from '@/lib/types';
 
 const peripheralSchema = z.object({
-  name: z.string().min(1, "El nombre es requerido."),
   type: z.string().min(1, "El tipo es requerido."),
   patrimonialId: z.string().optional(),
   brand: z.string().optional(),
@@ -36,7 +35,6 @@ export const EditPeripheralForm: React.FC<EditPeripheralFormProps> = ({ peripher
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [initialName, setInitialName] = useState('');
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<PeripheralFormData>({
     resolver: zodResolver(peripheralSchema),
@@ -48,9 +46,7 @@ export const EditPeripheralForm: React.FC<EditPeripheralFormProps> = ({ peripher
       try {
         const peripheral = await getPeripheralById(peripheralId);
         if (peripheral) {
-          setInitialName(peripheral.name);
           reset({
-            name: peripheral.name,
             type: peripheral.type,
             commonFailurePoints: peripheral.commonFailurePoints,
             patrimonialId: peripheral.patrimonialId || '',
@@ -77,7 +73,7 @@ export const EditPeripheralForm: React.FC<EditPeripheralFormProps> = ({ peripher
       await updatePeripheral(peripheralId, data);
       toast({
         title: "Periférico Actualizado",
-        description: `El periférico ${data.name} ha sido actualizado.`,
+        description: `El periférico con ID ${peripheralId} ha sido actualizado.`,
         variant: "default",
       });
       if (onSuccess) onSuccess();
@@ -106,17 +102,12 @@ export const EditPeripheralForm: React.FC<EditPeripheralFormProps> = ({ peripher
   return (
     <Card className="w-full shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-headline text-primary">Modificar Periférico: {initialName}</CardTitle>
+        <CardTitle className="text-2xl font-headline text-primary">Modificar Periférico</CardTitle>
         <CardDescription>ID Periférico: {peripheralId} (No editable)</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-6 pt-6">
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="peripheral-name">Nombre Periférico <span className="text-destructive">*</span></Label>
-              <Input id="peripheral-name" {...register('name')} />
-              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-            </div>
             <div className="space-y-2">
               <Label htmlFor="peripheral-type">Tipo (para IA) <span className="text-destructive">*</span></Label>
               <Input id="peripheral-type" {...register('type')} />

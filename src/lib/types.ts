@@ -75,7 +75,6 @@ export type Ticket = {
 // --- Peripheral Types ---
 export type Peripheral = {
   id: string; // User-defined ID, e.g., IMP001
-  name: string; // e.g., "Impresora Oficina Principal"
   type: string; // e.g., "Impresora", "Scanner", "Proyector"
   patrimonialId?: string;
   brand?: string;
@@ -95,3 +94,4 @@ export type PeripheralMaintenanceRecord = {
   technician: string;
   description: string;
 };
+
