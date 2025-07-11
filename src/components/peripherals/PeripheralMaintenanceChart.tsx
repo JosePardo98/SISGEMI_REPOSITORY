@@ -50,7 +50,7 @@ export default function PeripheralMaintenanceChart() {
     return (
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-lg font-bold">Mantenimientos de Periféricos</CardTitle>
+          <CardTitle className="text-lg font-bold">Mantenimientos realizados a Equipos Periféricos</CardTitle>
         </CardHeader>
         <CardContent className="h-[298px] flex items-center justify-center p-6">
             <Skeleton className="w-full h-full" />
@@ -63,7 +63,7 @@ export default function PeripheralMaintenanceChart() {
      return (
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-lg font-bold">Mantenimientos de Periféricos</CardTitle>
+          <CardTitle className="text-lg font-bold">Mantenimientos realizados a Equipos Periféricos</CardTitle>
         </CardHeader>
         <CardContent className="h-[298px] flex items-center justify-center p-6">
             <Alert variant="destructive">
@@ -79,7 +79,7 @@ export default function PeripheralMaintenanceChart() {
   return (
     <Card className="shadow-lg">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">Mantenimientos de Periféricos</CardTitle>
+        <CardTitle className="text-lg font-bold">Mantenimientos realizados a Equipos Periféricos</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
