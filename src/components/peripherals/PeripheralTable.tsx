@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Peripheral } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,46 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals, o
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const { toast } = useToast();
+
+  const topScrollRef = useRef<HTMLDivElement>(null);
+  const bottomScrollRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
+
+  useEffect(() => {
+    const topDiv = topScrollRef.current;
+    const bottomDiv = bottomScrollRef.current;
+
+    if (!topDiv || !bottomDiv) return;
+
+    const syncScrolls = (source: HTMLDivElement, target: HTMLDivElement) => {
+      if (source.scrollLeft !== target.scrollLeft) {
+        target.scrollLeft = source.scrollLeft;
+      }
+    };
+    
+    let topTimeout: NodeJS.Timeout;
+    let bottomTimeout: NodeJS.Timeout;
+
+    const handleTopScroll = () => {
+      clearTimeout(bottomTimeout);
+      requestAnimationFrame(() => syncScrolls(topDiv, bottomDiv));
+    };
+
+    const handleBottomScroll = () => {
+       clearTimeout(topTimeout);
+      requestAnimationFrame(() => syncScrolls(bottomDiv, topDiv));
+    };
+    
+    topDiv.addEventListener('scroll', handleTopScroll);
+    bottomDiv.addEventListener('scroll', handleBottomScroll);
+
+    return () => {
+      topDiv.removeEventListener('scroll', handleTopScroll);
+      bottomDiv.removeEventListener('scroll', handleBottomScroll);
+      clearTimeout(topTimeout);
+      clearTimeout(bottomTimeout);
+    };
+  }, []);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
@@ -124,8 +164,15 @@ export const PeripheralTable: React.FC<PeripheralTableProps> = ({ peripherals, o
           className="pl-8 w-full md:w-1/2"
         />
       </div>
-      <div className="rounded-md border shadow-sm">
-        <Table>
+       <div 
+          ref={topScrollRef} 
+          className="overflow-x-auto"
+          style={{ scrollbarWidth: 'none' }} // Firefox
+      >
+        <div style={{ height: '1px' }}></div>
+      </div>
+      <div ref={bottomScrollRef} className="rounded-md border shadow-sm overflow-auto">
+        <Table ref={tableRef}>
           <TableHeader>
             <TableRow>
               <TableHead onClick={() => handleSort('id')} className="cursor-pointer hover:bg-accent/50">
