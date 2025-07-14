@@ -438,15 +438,20 @@ export async function getPeripheralMaintenanceCountsByMonth() {
     
     const counts = monthNames.map((name) => ({
       month: name.slice(0, 3),
-      mantenimientos: 0,
+      preventivos: 0,
+      correctivos: 0,
     }));
     
     recordsSnapshot.docs.forEach(doc => {
-      const data = doc.data();
+      const data = doc.data() as Partial<PeripheralMaintenanceRecord>;
       if (data.date && typeof data.date === 'string' && data.date.match(/^\d{4}-\d{2}-\d{2}$/)) {
         const monthIndex = parseInt(data.date.substring(5, 7), 10) - 1;
         if (monthIndex >= 0 && monthIndex < 12) {
-            counts[monthIndex].mantenimientos += 1;
+          if (data.type === 'Correctivo') {
+            counts[monthIndex].correctivos += 1;
+          } else { // Default to 'Preventivo' if type is not specified or is 'Preventivo'
+            counts[monthIndex].preventivos += 1;
+          }
         }
       }
     });

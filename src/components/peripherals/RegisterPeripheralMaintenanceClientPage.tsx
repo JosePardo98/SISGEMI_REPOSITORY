@@ -93,7 +93,7 @@ const RegisterPeripheralMaintenanceClientPage: React.FC<RegisterPeripheralMainte
       
       <RegisterPeripheralMaintenanceForm 
         peripheralId={peripheral.id} 
-        peripheralName={peripheral.name}
+        peripheralType={peripheral.type}
         onSuccess={handleMaintenanceSuccess}
       />
       

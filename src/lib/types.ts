@@ -93,5 +93,5 @@ export type PeripheralMaintenanceRecord = {
   date: string; // ISO date string
   technician: string;
   description: string;
+  type: 'Preventivo' | 'Correctivo';
 };
-

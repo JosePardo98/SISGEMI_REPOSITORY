@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -11,15 +10,20 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
 
 const chartConfig = {
-  mantenimientos: {
-    label: "Mantenimientos",
-    color: "hsl(var(--accent))",
+  correctivos: {
+    label: "Mantenimientos Correctivos",
+    color: "hsl(var(--primary))",
+  },
+  preventivos: {
+    label: "Mantenimientos Preventivos",
+    color: "hsl(var(--destructive))",
   },
 } satisfies ChartConfig;
 
 type ChartData = {
   month: string;
-  mantenimientos: number;
+  preventivos: number;
+  correctivos: number;
 };
 
 export default function PeripheralMaintenanceChart() {
@@ -98,7 +102,8 @@ export default function PeripheralMaintenanceChart() {
                 content={<ChartTooltipContent />} 
             />
             <Legend />
-            <Bar dataKey="mantenimientos" fill="var(--color-mantenimientos)" radius={4} />
+            <Bar dataKey="correctivos" fill="var(--color-correctivos)" radius={4} />
+            <Bar dataKey="preventivos" fill="var(--color-preventivos)" radius={4} />
           </BarChart>
         </ChartContainer>
       </CardContent>

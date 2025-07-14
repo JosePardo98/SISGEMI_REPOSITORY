@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm, type SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { addPeripheralMaintenanceRecord } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -18,27 +19,29 @@ const maintenanceSchema = z.object({
   date: z.string().min(1, "La fecha es requerida."),
   technician: z.string().min(1, "El nombre del técnico es requerido."),
   description: z.string().min(10, "La descripción debe tener al menos 10 caracteres."),
+  type: z.enum(['Preventivo', 'Correctivo'], { required_error: "Debe seleccionar un tipo de mantenimiento." }),
 });
 
 type MaintenanceFormData = z.infer<typeof maintenanceSchema>;
 
 interface RegisterPeripheralMaintenanceFormProps {
   peripheralId: string;
-  peripheralName: string;
+  peripheralType: string;
   onSuccess?: () => void;
 }
 
-export const RegisterPeripheralMaintenanceForm: React.FC<RegisterPeripheralMaintenanceFormProps> = ({ peripheralId, peripheralName, onSuccess }) => {
+export const RegisterPeripheralMaintenanceForm: React.FC<RegisterPeripheralMaintenanceFormProps> = ({ peripheralId, peripheralType, onSuccess }) => {
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<MaintenanceFormData>({
+  const { register, handleSubmit, formState: { errors }, reset, control } = useForm<MaintenanceFormData>({
     resolver: zodResolver(maintenanceSchema),
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
       technician: '',
       description: '',
+      type: 'Preventivo',
     }
   });
 
@@ -48,7 +51,7 @@ export const RegisterPeripheralMaintenanceForm: React.FC<RegisterPeripheralMaint
       await addPeripheralMaintenanceRecord({ ...data, peripheralId });
       toast({
         title: "Mantenimiento Registrado",
-        description: `El mantenimiento para ${peripheralName} ha sido guardado.`,
+        description: `El mantenimiento para ${peripheralType} ha sido guardado.`,
         variant: "default",
       });
       reset();
@@ -70,14 +73,35 @@ export const RegisterPeripheralMaintenanceForm: React.FC<RegisterPeripheralMaint
     <Card className="w-full shadow-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-headline text-primary">Registrar Mantenimiento de Periférico</CardTitle>
-        <CardDescription>Para: <span className="font-semibold">{peripheralName} (ID: {peripheralId})</span></CardDescription>
+        <CardDescription>Para: <span className="font-semibold">{peripheralType} (ID: {peripheralId})</span></CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-6 pt-6">
-          <div className="space-y-2">
-            <Label htmlFor="maintenance-date">Fecha</Label>
-            <Input id="maintenance-date" type="date" {...register('date')} />
-            {errors.date && <p className="text-sm text-destructive">{errors.date.message}</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="maintenance-date">Fecha</Label>
+              <Input id="maintenance-date" type="date" {...register('date')} />
+              {errors.date && <p className="text-sm text-destructive">{errors.date.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="maintenance-type">Tipo de Mantenimiento</Label>
+              <Controller
+                  name="type"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger id="maintenance-type">
+                        <SelectValue placeholder="Seleccione un tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Preventivo">Preventivo</SelectItem>
+                        <SelectItem value="Correctivo">Correctivo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              {errors.type && <p className="text-sm text-destructive">{errors.type.message}</p>}
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="maintenance-tecnico">Técnico</Label>
