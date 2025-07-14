@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { getMaintenanceCountsByMonth } from '@/lib/actions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -101,7 +101,7 @@ export default function MaintenanceChart() {
                 cursor={{fill: 'hsl(var(--muted))'}}
                 content={<ChartTooltipContent />} 
             />
-            <Legend />
+            <ChartLegend content={<ChartLegendContent />} />
             <Bar dataKey="correctivos" fill="var(--color-correctivos)" radius={4} />
             <Bar dataKey="preventivos" fill="var(--color-preventivos)" radius={4} />
           </BarChart>
