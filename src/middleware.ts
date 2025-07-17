@@ -5,19 +5,19 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get('firebase-session');
 
-  const isAuthPage = pathname === '/login';
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
 
-  // If the user is on the login page
+  // If the user is on an auth page (login or signup)
   if (isAuthPage) {
     // If they have a session cookie, redirect them to the home page
     if (sessionCookie) {
       return NextResponse.redirect(new URL('/', request.url));
     }
-    // Otherwise, let them stay on the login page
+    // Otherwise, let them stay on the auth page
     return NextResponse.next();
   }
 
-  // If the user is on any other page and doesn't have a session cookie
+  // If the user is on any other protected page and doesn't have a session cookie
   if (!sessionCookie) {
     // Redirect them to the login page
     return NextResponse.redirect(new URL('/login', request.url));

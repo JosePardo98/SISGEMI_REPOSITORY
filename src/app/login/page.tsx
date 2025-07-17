@@ -10,8 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { LogIn, Loader2 } from 'lucide-react';
-import { Computer } from 'lucide-react';
+import { LogIn, Loader2, Computer } from 'lucide-react';
+import Link from 'next/link';
 
 
 export default function LoginPage() {
@@ -79,7 +79,7 @@ export default function LoginPage() {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -88,6 +88,12 @@ export default function LoginPage() {
               )}
               {loading ? 'Verificando...' : 'Ingresar'}
             </Button>
+             <p className="text-sm text-muted-foreground">
+              ¿No tienes una cuenta?{' '}
+              <Link href="/signup" className="font-semibold text-primary hover:underline">
+                Regístrate aquí
+              </Link>
+            </p>
           </CardFooter>
         </form>
       </Card>
