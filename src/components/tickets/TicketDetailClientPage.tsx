@@ -136,7 +136,7 @@ const TicketDetailClientPage: React.FC<TicketDetailClientPageProps> = ({ ticketI
                         <DetailItem label="ID PC" value={ticket.pcId} icon={HardDrive} />
                         <DetailItem label="Nombre de PC" value={ticket.pcName} icon={Computer} />
                         <DetailItem label="Usuario" value={ticket.userName} icon={User} />
-                        <DetailItem label="No. de Patrimonio" value={ticket.patrimonialId} icon={Tag} />
+                        <DetailItem label="No. de Patrimonio de PC" value={ticket.patrimonialId} icon={Tag} />
                         <DetailItem label="Marca" value={ticket.brand} />
                         <DetailItem label="Modelo" value={ticket.model} />
                     </div>

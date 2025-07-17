@@ -150,7 +150,7 @@ export const EditTicketForm: React.FC<EditTicketFormProps> = ({ ticketId, onSucc
                 {errors.userName && <p className="text-sm text-destructive">{errors.userName.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="patrimonialId">Numero de Patrimonio</Label>
+                <Label htmlFor="patrimonialId">Numero de Patrimonio de PC</Label>
                 <Input id="patrimonialId" {...register('patrimonialId')} />
               </div>
               <div className="space-y-2">
