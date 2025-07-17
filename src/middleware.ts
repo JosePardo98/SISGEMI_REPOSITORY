@@ -1,29 +1,30 @@
 
 import { NextResponse, type NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get('firebase-session');
 
   const isAuthPage = pathname === '/login' || pathname === '/signup';
 
-  // If the user is on an auth page (login or signup)
   if (isAuthPage) {
-    // If they have a session cookie, redirect them to the home page
     if (sessionCookie) {
+      // If the user has a session cookie, they are already logged in. Redirect to home.
       return NextResponse.redirect(new URL('/', request.url));
     }
-    // Otherwise, let them stay on the auth page
+    // Allow unauthenticated users to access login and signup pages.
     return NextResponse.next();
   }
-
-  // If the user is on any other protected page and doesn't have a session cookie
+  
   if (!sessionCookie) {
-    // Redirect them to the login page
-    return NextResponse.redirect(new URL('/login', request.url));
+      // If the user is not on an auth page and has no session cookie, redirect to login.
+      // We need to preserve the original destination to redirect after login.
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      return NextResponse.redirect(url);
   }
 
-  // If the user has a session cookie, let them proceed
+  // User has a session cookie, let them proceed.
   return NextResponse.next();
 }
 

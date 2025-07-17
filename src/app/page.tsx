@@ -11,8 +11,6 @@ import { Button } from '@/components/ui/button';
 import TicketsClientPage from '@/components/tickets/TicketsClientPage';
 import PeripheralMaintenanceClientPage from '@/components/peripherals/PeripheralMaintenanceClientPage';
 import PeripheralMaintenanceChart from '@/components/peripherals/PeripheralMaintenanceChart';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -38,8 +36,12 @@ export default function HomePage() {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      router.push('/login');
+      const response = await fetch('/api/auth/session', { method: 'DELETE' });
+      if (response.ok) {
+        router.push('/login');
+      } else {
+        throw new Error('Failed to log out');
+      }
     } catch (error) {
       toast({
         title: 'Error',

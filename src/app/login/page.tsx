@@ -25,7 +25,16 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const idToken = await userCredential.user.getIdToken();
+      
+      await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: {
+              Authorization: `Bearer ${idToken}`,
+          },
+      });
+
       router.push('/');
     } catch (error) {
       console.error('Error signing in:', error);

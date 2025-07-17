@@ -33,7 +33,16 @@ export default function SignUpPage() {
     }
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const idToken = await userCredential.user.getIdToken();
+      
+      await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
+
       toast({
         title: '¡Registro Exitoso!',
         description: 'Tu cuenta ha sido creada. Ahora puedes iniciar sesión.',
