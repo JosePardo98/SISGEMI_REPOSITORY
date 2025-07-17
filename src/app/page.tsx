@@ -11,6 +11,11 @@ import { Button } from '@/components/ui/button';
 import TicketsClientPage from '@/components/tickets/TicketsClientPage';
 import PeripheralMaintenanceClientPage from '@/components/peripherals/PeripheralMaintenanceClientPage';
 import PeripheralMaintenanceChart from '@/components/peripherals/PeripheralMaintenanceChart';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
+import { LogOut } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
     const lines = label.split('\n');
@@ -28,6 +33,21 @@ const NavButton = ({ label, isActive, onClick }: { label: string, isActive: bool
 
 export default function HomePage() {
   const [activeView, setActiveView] = useState('panel');
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push('/login');
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo cerrar la sesión. Intente de nuevo.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const menuItems = [
     { id: 'panel', label: 'Panel' },
@@ -66,9 +86,14 @@ export default function HomePage() {
       <header className="bg-primary text-primary-foreground shadow-lg sticky top-0 z-50">
         <div className="container mx-auto px-4 py-2">
             <div className="flex flex-col gap-4">
-                <h1 className="text-xl md:text-2xl font-headline font-semibold text-center">
-                    SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
-                </h1>
+                <div className="flex justify-between items-center">
+                    <h1 className="text-xl md:text-2xl font-headline font-semibold text-center flex-grow">
+                        SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
+                    </h1>
+                    <Button onClick={handleLogout} variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary/80">
+                        <LogOut size={20} />
+                    </Button>
+                </div>
                 <nav className="flex items-center justify-center -mx-4 px-2 py-2 bg-primary/90">
                     <div className="flex items-center space-x-2 overflow-x-auto pb-2">
                         {menuItems.map(item => (
