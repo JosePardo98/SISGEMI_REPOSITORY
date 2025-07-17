@@ -34,23 +34,6 @@ export default function HomePage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('/api/auth/session', { method: 'DELETE' });
-      if (response.ok) {
-        router.push('/login');
-      } else {
-        throw new Error('Failed to log out');
-      }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'No se pudo cerrar la sesión. Intente de nuevo.',
-        variant: 'destructive',
-      });
-    }
-  };
-
   const menuItems = [
     { id: 'panel', label: 'Panel' },
     { id: 'registro-mantenimientos', label: 'Registro de\nMantenimientos' },
@@ -92,9 +75,6 @@ export default function HomePage() {
                     <h1 className="text-xl md:text-2xl font-headline font-semibold text-center flex-grow">
                         SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
                     </h1>
-                    <Button onClick={handleLogout} variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary/80">
-                        <LogOut size={20} />
-                    </Button>
                 </div>
                 <nav className="flex items-center justify-center -mx-4 px-2 py-2 bg-primary/90">
                     <div className="flex items-center space-x-2 overflow-x-auto pb-2">

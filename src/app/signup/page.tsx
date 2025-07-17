@@ -1,144 +1,99 @@
-
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import React, { useState } from 'react';
+import AlertsCard from '@/components/equipment/AlertsCard';
+import MaintenanceChart from '@/components/equipment/MaintenanceChart';
+import EquipmentClientPage from '@/components/equipment/EquipmentClientPage';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from '@/components/ui/button';
+import TicketsClientPage from '@/components/tickets/TicketsClientPage';
+import PeripheralMaintenanceClientPage from '@/components/peripherals/PeripheralMaintenanceClientPage';
+import PeripheralMaintenanceChart from '@/components/peripherals/PeripheralMaintenanceChart';
+import { useRouter } from 'next/navigation';
+import { LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { UserPlus, Loader2, Computer } from 'lucide-react';
-import Link from 'next/link';
 
-export default function SignUpPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
+    const lines = label.split('\n');
+    return (
+        <Button
+            onClick={onClick}
+            variant="ghost"
+            className={`h-auto flex-shrink-0 flex-col items-center justify-center p-2 rounded-md shadow-sm transition-transform transform hover:scale-105 ${isActive ? 'bg-card text-primary font-bold' : 'bg-secondary hover:bg-muted text-secondary-foreground'}`}
+            style={{ minWidth: '130px', height: '60px' }}
+        >
+            {lines.map((line, index) => <span key={index} className="leading-tight text-sm text-center whitespace-normal">{line}</span>)}
+        </Button>
+    );
+};
+
+export default function HomePage() {
+  const [activeView, setActiveView] = useState('panel');
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      toast({
-        title: 'Error de Registro',
-        description: 'Las contraseñas no coinciden.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    setLoading(true);
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const idToken = await userCredential.user.getIdToken();
-      
-      await fetch('/api/auth/session', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-        },
-      });
+  const menuItems = [
+    { id: 'panel', label: 'Panel' },
+    { id: 'registro-mantenimientos', label: 'Registro de\nMantenimientos' },
+    { id: 'mantenimiento-perifericos', label: 'Mantenimiento a\nPeriféricos' },
+    { id: 'tickets', label: 'Tickets' },
+  ];
 
-      toast({
-        title: '¡Registro Exitoso!',
-        description: 'Tu cuenta ha sido creada. Ahora puedes iniciar sesión.',
-      });
-      router.push('/');
-    } catch (error: any) {
-      console.error('Error signing up:', error);
-      let description = 'Ocurrió un error al registrar tu cuenta. Por favor, intenta de nuevo.';
-      if (error.code === 'auth/email-already-in-use') {
-        description = 'Este correo electrónico ya está en uso. Por favor, utiliza otro.';
-      } else if (error.code === 'auth/weak-password') {
-        description = 'La contraseña es demasiado débil. Debe tener al menos 6 caracteres.';
-      }
-      toast({
-        title: 'Error de Registro',
-        description,
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
+  const renderContent = () => {
+    switch (activeView) {
+      case 'panel':
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+            <div className="lg:col-span-1">
+              <AlertsCard />
+            </div>
+            <div className="lg:col-span-2 space-y-8">
+              <MaintenanceChart />
+              <PeripheralMaintenanceChart />
+            </div>
+          </div>
+        );
+      case 'registro-mantenimientos':
+        return <EquipmentClientPage />;
+      case 'mantenimiento-perifericos':
+        return <PeripheralMaintenanceClientPage />;
+      case 'tickets':
+        return <TicketsClientPage />;
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-      <div className="absolute top-8 left-8 flex items-center text-foreground">
-        <Computer size={32} className="mr-3 text-primary" />
-        <h1 className="text-xl md:text-2xl font-headline font-semibold">
-          SISGEMI
-        </h1>
-      </div>
-      <Card className="w-full max-w-sm shadow-2xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-headline">Crear Cuenta</CardTitle>
-          <CardDescription>Regístrate para acceder al sistema</CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSignUp}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Correo Electrónico</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="tu-correo@dominio.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={loading}
-              />
+    <div className="min-h-screen bg-background">
+      <header className="bg-primary text-primary-foreground shadow-lg sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-2">
+            <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                    <h1 className="text-xl md:text-2xl font-headline font-semibold text-center flex-grow">
+                        SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
+                    </h1>
+                </div>
+                <nav className="flex items-center justify-center -mx-4 px-2 py-2 bg-primary/90">
+                    <div className="flex items-center space-x-2 overflow-x-auto pb-2">
+                        {menuItems.map(item => (
+                            <NavButton 
+                                key={item.id}
+                                label={item.label}
+                                isActive={activeView === item.id}
+                                onClick={() => setActiveView(item.id)}
+                            />
+                        ))}
+                    </div>
+                </nav>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Mínimo 6 caracteres"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirmar Contraseña</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                placeholder="Repite la contraseña"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <UserPlus className="mr-2 h-4 w-4" />
-              )}
-              {loading ? 'Registrando...' : 'Registrar'}
-            </Button>
-            <p className="text-sm text-muted-foreground">
-              ¿Ya tienes una cuenta?{' '}
-              <Link href="/login" className="font-semibold text-primary hover:underline">
-                Inicia sesión aquí
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
-      <footer className="absolute bottom-4 text-center text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} SISGEMI JAD Matamoros Planta II. Todos los derechos reservados.</p>
-      </footer>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        {renderContent()}
+      </main>
     </div>
   );
 }
