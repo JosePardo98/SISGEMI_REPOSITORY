@@ -2,9 +2,25 @@
 
 Este documento describe la estructura y el funcionamiento de la base de datos utilizada en la aplicación SISGEMI, que está implementada en **Firestore**, una base de datos NoSQL basada en documentos.
 
-## Modelo de Datos General
+## ¿Cómo funciona Firestore?
 
-La base de datos está organizada en colecciones. Cada colección contiene un conjunto de documentos, y cada documento representa un objeto de datos con sus respectivos campos. Las colecciones principales y sus relaciones son las siguientes:
+Firestore es una base de datos **NoSQL** y **orientada a documentos**. A diferencia de las bases de datos tradicionales (SQL) que utilizan tablas con filas y columnas fijas, Firestore organiza los datos en una estructura más flexible compuesta por:
+
+1.  **Colecciones (Collections):** Son contenedores de documentos. Puedes pensar en una colección como una carpeta. En SISGEMI, tenemos colecciones principales como `equipments`, `tickets`, y `peripherals`.
+2.  **Documentos (Documents):** Son las unidades de almacenamiento individuales dentro de una colección. Cada documento tiene un **ID único** que lo identifica. Por ejemplo, en la colección `equipments`, un documento podría tener el ID `CPU001`.
+3.  **Campos (Fields):** Cada documento contiene los datos reales en forma de pares "clave-valor". Por ejemplo, el documento `CPU001` contendría campos como `name: "PC-PRODUCCION-05"`, `os: "Windows 11 Pro"`, y `userName: "Juan Pérez"`.
+
+Esta estructura es muy flexible, ya que no todos los documentos de una misma colección necesitan tener exactamente los mismos campos.
+
+### Relaciones entre Datos
+
+En Firestore, las relaciones entre diferentes tipos de datos se gestionan guardando el ID de un documento dentro de otro. Por ejemplo, un registro de mantenimiento (en la colección `maintenanceRecords`) contiene un campo `equipmentId` que almacena el ID del equipo al que pertenece (de la colección `equipments`). Así es como sabemos qué mantenimiento corresponde a qué equipo.
+
+---
+
+## Modelo de Datos de SISGEMI
+
+La base de datos está organizada en las siguientes colecciones principales:
 
 ---
 
