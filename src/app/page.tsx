@@ -15,7 +15,12 @@ import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
+export default function HomePage() {
+  const [activeView, setActiveView] = useState('panel');
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const NavButton = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => {
     const lines = label.split('\n');
     return (
         <Button
@@ -27,12 +32,7 @@ const NavButton = ({ label, isActive, onClick }: { label: string, isActive: bool
             {lines.map((line, index) => <span key={index} className="leading-tight text-sm text-center whitespace-normal">{line}</span>)}
         </Button>
     );
-};
-
-export default function HomePage() {
-  const [activeView, setActiveView] = useState('panel');
-  const router = useRouter();
-  const { toast } = useToast();
+  };
 
   const menuItems = [
     { id: 'panel', label: 'Panel' },
