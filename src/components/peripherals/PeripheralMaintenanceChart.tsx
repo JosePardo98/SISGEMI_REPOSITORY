@@ -56,7 +56,7 @@ export default function PeripheralMaintenanceChart() {
         <CardHeader>
           <CardTitle className="text-lg font-bold">Mantenimientos realizados a Equipos Periféricos</CardTitle>
         </CardHeader>
-        <CardContent className="h-[298px] flex items-center justify-center p-6">
+        <CardContent className="h-[250px] flex items-center justify-center p-6">
             <Skeleton className="w-full h-full" />
         </CardContent>
       </Card>
@@ -69,7 +69,7 @@ export default function PeripheralMaintenanceChart() {
         <CardHeader>
           <CardTitle className="text-lg font-bold">Mantenimientos realizados a Equipos Periféricos</CardTitle>
         </CardHeader>
-        <CardContent className="h-[298px] flex items-center justify-center p-6">
+        <CardContent className="h-[250px] flex items-center justify-center p-6">
             <Alert variant="destructive">
                 <Terminal className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
@@ -86,7 +86,7 @@ export default function PeripheralMaintenanceChart() {
         <CardTitle className="text-lg font-bold">Mantenimientos realizados a Equipos Periféricos</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
+        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
           <BarChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
             <XAxis
