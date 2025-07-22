@@ -45,12 +45,11 @@ export default function HomePage() {
     switch (activeView) {
       case 'panel':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
             <div className="lg:col-span-1">
-              <AlertsCard />
-            </div>
-            <div className="lg:col-span-2 space-y-8">
               <MaintenanceChart />
+            </div>
+            <div className="lg:col-span-1">
               <PeripheralMaintenanceChart />
             </div>
           </div>
@@ -71,10 +70,13 @@ export default function HomePage() {
       <header className="bg-primary text-primary-foreground shadow-lg sticky top-0 z-50">
         <div className="container mx-auto px-4 py-2">
             <div className="flex flex-col gap-4">
-                <div className="flex justify-between items-center">
-                    <h1 className="text-xl md:text-2xl font-headline font-semibold text-center flex-grow">
+                <div className="flex justify-between items-center gap-4">
+                    <h1 className="text-xl md:text-2xl font-headline font-semibold">
                         SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
                     </h1>
+                    <div className="hidden lg:block">
+                        <AlertsCard />
+                    </div>
                 </div>
                 <nav className="flex items-center justify-center -mx-4 px-2 py-2 bg-primary/90">
                     <div className="flex items-center space-x-2 overflow-x-auto pb-2">
@@ -93,6 +95,9 @@ export default function HomePage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        <div className="lg:hidden mb-8">
+            <AlertsCard />
+        </div>
         {renderContent()}
       </main>
     </div>
