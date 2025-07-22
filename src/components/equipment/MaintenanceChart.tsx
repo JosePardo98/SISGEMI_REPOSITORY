@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -56,7 +57,7 @@ export default function MaintenanceChart() {
         <CardHeader>
           <CardTitle className="text-lg font-bold">Mantenimientos realizados a Equipos de Cómputo</CardTitle>
         </CardHeader>
-        <CardContent className="h-[250px] flex items-center justify-center p-6">
+        <CardContent className="flex items-center justify-center p-6 aspect-[2/1]">
             <Skeleton className="w-full h-full" />
         </CardContent>
       </Card>
@@ -69,7 +70,7 @@ export default function MaintenanceChart() {
         <CardHeader>
           <CardTitle className="text-lg font-bold">Mantenimientos realizados a Equipos de Cómputo</CardTitle>
         </CardHeader>
-        <CardContent className="h-[250px] flex items-center justify-center p-6">
+        <CardContent className="flex items-center justify-center p-6 aspect-[2/1]">
             <Alert variant="destructive">
                 <Terminal className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
@@ -86,7 +87,7 @@ export default function MaintenanceChart() {
         <CardTitle className="text-lg font-bold">Mantenimientos realizados a Equipos de Cómputo</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+        <ChartContainer config={chartConfig} className="w-full aspect-[2/1]">
           <BarChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
             <XAxis
@@ -110,3 +111,4 @@ export default function MaintenanceChart() {
     </Card>
   );
 }
+
