@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -13,7 +12,6 @@ import PeripheralMaintenanceClientPage from '@/components/peripherals/Peripheral
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import PeripheralMaintenanceChart from '@/components/peripherals/PeripheralMaintenanceChart';
 
 export default function HomePage() {
   const [activeView, setActiveView] = useState('panel');
