@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -44,12 +45,9 @@ export default function HomePage() {
     switch (activeView) {
       case 'panel':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
+          <div className="grid grid-cols-1 gap-8 animate-fade-in">
             <div className="lg:col-span-1">
               <MaintenanceChart />
-            </div>
-             <div className="lg:col-span-1">
-              <PeripheralMaintenanceChart />
             </div>
           </div>
         );
