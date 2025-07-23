@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -10,7 +9,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from '@/components/ui/button';
 import TicketsClientPage from '@/components/tickets/TicketsClientPage';
 import PeripheralMaintenanceClientPage from '@/components/peripherals/PeripheralMaintenanceClientPage';
-import PeripheralMaintenanceChart from '@/components/peripherals/PeripheralMaintenanceChart';
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -45,12 +43,9 @@ export default function HomePage() {
     switch (activeView) {
       case 'panel':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
+          <div className="grid grid-cols-1 gap-8 animate-fade-in">
             <div className="lg:col-span-1">
               <MaintenanceChart />
-            </div>
-            <div className="lg:col-span-1">
-              <PeripheralMaintenanceChart />
             </div>
           </div>
         );
