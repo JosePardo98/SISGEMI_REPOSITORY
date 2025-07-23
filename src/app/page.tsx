@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -43,8 +44,11 @@ export default function HomePage() {
     switch (activeView) {
       case 'panel':
         return (
-          <div className="grid grid-cols-1 gap-8 animate-fade-in">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
             <div className="lg:col-span-1">
+              <AlertsCard />
+            </div>
+            <div className="lg:col-span-2">
               <MaintenanceChart />
             </div>
           </div>
@@ -69,9 +73,6 @@ export default function HomePage() {
                     <h1 className="text-xl md:text-2xl font-headline font-semibold">
                         SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
                     </h1>
-                    <div className="hidden lg:block">
-                        <AlertsCard />
-                    </div>
                 </div>
                 <nav className="flex items-center justify-center -mx-4 px-2 py-2 bg-primary/90">
                     <div className="flex items-center space-x-2 overflow-x-auto pb-2">
@@ -90,9 +91,6 @@ export default function HomePage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="lg:hidden mb-8">
-            <AlertsCard />
-        </div>
         {renderContent()}
       </main>
     </div>
