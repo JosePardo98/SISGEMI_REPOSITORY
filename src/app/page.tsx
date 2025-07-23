@@ -12,6 +12,7 @@ import PeripheralMaintenanceClientPage from '@/components/peripherals/Peripheral
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import PeripheralMaintenanceChart from '@/components/peripherals/PeripheralMaintenanceChart';
 
 export default function HomePage() {
   const [activeView, setActiveView] = useState('panel');
@@ -43,9 +44,12 @@ export default function HomePage() {
     switch (activeView) {
       case 'panel':
         return (
-          <div className="grid grid-cols-1 gap-8 animate-fade-in">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
             <div className="lg:col-span-1">
               <MaintenanceChart />
+            </div>
+             <div className="lg:col-span-1">
+              <PeripheralMaintenanceChart />
             </div>
           </div>
         );
