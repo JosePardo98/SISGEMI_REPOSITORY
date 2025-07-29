@@ -1,5 +1,6 @@
 import {initializeApp, getApp, getApps, App} from 'firebase-admin/app';
 import {credential} from 'firebase-admin';
+import {getFirestore} from 'firebase-admin/firestore';
 
 const serviceKey = JSON.parse(
   process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string
@@ -28,4 +29,3 @@ export const customInitApp = (): App => {
 };
 
 export const adminDb = getFirestore(app);
-import {getFirestore} from 'firebase-admin/firestore';
