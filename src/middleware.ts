@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -6,15 +7,16 @@ export async function middleware(request: NextRequest) {
   const session = request.cookies.get('firebase-session')?.value;
 
   const publicPaths = ['/login', '/signup'];
+  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
-  // If user is logged in, redirect away from login/signup pages
-  if (session && publicPaths.some(path => pathname.startsWith(path))) {
-    return NextResponse.redirect(`${origin}/`);
+  // If the user is logged in and tries to access a public path, redirect to home.
+  if (session && isPublicPath) {
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
-  // If user is not logged in and accessing a protected page, redirect to login
-  if (!session && !publicPaths.some(path => pathname.startsWith(path))) {
-    return NextResponse.redirect(`${origin}/login`);
+  // If the user is not logged in and tries to access a protected path, redirect to login.
+  if (!session && !isPublicPath) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return NextResponse.next();
