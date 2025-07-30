@@ -62,7 +62,7 @@ export default function HomePageClient() {
       <header className="bg-primary text-primary-foreground shadow-lg sticky top-0 z-50">
         <div className="container mx-auto px-4 py-2">
             <div className="flex flex-col gap-4">
-                <div className="flex justify-between items-center gap-4">
+                <div className="flex justify-center items-center gap-4">
                     <h1 className="text-xl md:text-2xl font-headline font-semibold">
                         Bitácora Master (JAD Matamoros Planta II)
                     </h1>
