@@ -4,7 +4,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'SISGEMI',
+  title: 'Bitácora Master',
   description: 'Sistema de Gestión de Mantenimiento Preventivo',
 };
 

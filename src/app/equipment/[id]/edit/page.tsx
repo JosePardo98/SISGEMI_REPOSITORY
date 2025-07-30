@@ -22,6 +22,6 @@ export default function EditEquipmentPage({ params }: EditEquipmentPageProps) {
 
 export async function generateMetadata({ params }: EditEquipmentPageProps) {
   return {
-    title: `Modificar Equipo ${params.id} - SISGEMI`,
+    title: `Modificar Equipo ${params.id} - Bitácora Master`,
   };
 }

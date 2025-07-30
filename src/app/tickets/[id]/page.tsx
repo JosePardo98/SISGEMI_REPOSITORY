@@ -22,6 +22,6 @@ export default function TicketDetailPage({ params }: TicketDetailPageProps) {
 
 export async function generateMetadata({ params }: TicketDetailPageProps) {
   return {
-    title: `Detalles del Ticket ${params.id} - SISGEMI`,
+    title: `Detalles del Ticket ${params.id} - Bitácora Master`,
   };
 }

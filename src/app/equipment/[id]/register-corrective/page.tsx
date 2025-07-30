@@ -23,6 +23,6 @@ export default function RegisterCorrectiveMaintenancePage({ params }: RegisterCo
 export async function generateMetadata({ params }: RegisterCorrectiveMaintenancePageProps) {
   // In a real app, you might fetch equipment name here for a dynamic title
   return {
-    title: `Registrar Mantenimiento Correctivo para Equipo ${params.id} - SISGEMI`,
+    title: `Registrar Mantenimiento Correctivo para Equipo ${params.id} - Bitácora Master`,
   };
 }

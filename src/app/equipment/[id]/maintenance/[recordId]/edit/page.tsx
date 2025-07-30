@@ -23,6 +23,6 @@ export default function EditMaintenanceRecordPage({ params }: EditMaintenanceRec
 
 export async function generateMetadata({ params }: EditMaintenanceRecordPageProps) {
   return {
-    title: `Modificar Registro de Mantenimiento ${params.recordId} - SISGEMI`,
+    title: `Modificar Registro de Mantenimiento ${params.recordId} - Bitácora Master`,
   };
 }

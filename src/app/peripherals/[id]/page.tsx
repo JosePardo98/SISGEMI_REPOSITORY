@@ -21,6 +21,6 @@ export default function PeripheralDetailPage({ params }: PeripheralDetailPagePro
 
 export async function generateMetadata({ params }: PeripheralDetailPageProps) {
   return {
-    title: `Detalles del Periférico ${params.id} - SISGEMI`,
+    title: `Detalles del Periférico ${params.id} - Bitácora Master`,
   };
 }

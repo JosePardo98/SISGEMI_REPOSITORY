@@ -16,6 +16,6 @@ export default function AddPeripheralPage() {
 
 export async function generateMetadata() {
   return {
-    title: 'Agregar Nuevo Periférico - SISGEMI',
+    title: 'Agregar Nuevo Periférico - Bitácora Master',
   };
 }

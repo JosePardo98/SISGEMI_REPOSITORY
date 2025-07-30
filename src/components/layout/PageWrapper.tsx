@@ -14,7 +14,7 @@ const PageWrapper: React.FC<PageWrapperProps> = ({ children }) => {
         {children}
       </main>
       <footer className="bg-secondary text-secondary-foreground py-4 text-center text-sm">
-        <p>&copy; {new Date().getFullYear()} SISGEMI JAD Matamoros Planta II. Todos los derechos reservados.</p>
+        <p>&copy; {new Date().getFullYear()} Bitácora Master JAD Matamoros Planta II. Todos los derechos reservados.</p>
       </footer>
     </div>
   );

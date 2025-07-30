@@ -21,6 +21,6 @@ export default function RegisterPeripheralMaintenancePage({ params }: RegisterMa
 
 export async function generateMetadata({ params }: RegisterMaintenancePageProps) {
   return {
-    title: `Registrar Mantenimiento para Periférico ${params.id} - SISGEMI`,
+    title: `Registrar Mantenimiento para Periférico ${params.id} - Bitácora Master`,
   };
 }

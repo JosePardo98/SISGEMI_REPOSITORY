@@ -21,6 +21,6 @@ export default function RegisterMaintenancePage({ params }: RegisterMaintenanceP
 
 export async function generateMetadata({ params }: RegisterMaintenancePageProps) {
   return {
-    title: `Registrar Mantenimiento para Equipo ${params.id} - SISGEMI`,
+    title: `Registrar Mantenimiento para Equipo ${params.id} - Bitácora Master`,
   };
 }

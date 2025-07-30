@@ -22,6 +22,6 @@ export default function EditPeripheralMaintenanceRecordPage({ params }: EditMain
 
 export async function generateMetadata({ params }: EditMaintenanceRecordPageProps) {
   return {
-    title: `Modificar Registro de Mantenimiento de Periférico ${params.recordId} - SISGEMI`,
+    title: `Modificar Registro de Mantenimiento de Periférico ${params.recordId} - Bitácora Master`,
   };
 }

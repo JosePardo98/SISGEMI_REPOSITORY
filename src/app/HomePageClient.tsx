@@ -64,7 +64,7 @@ export default function HomePageClient() {
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center gap-4">
                     <h1 className="text-xl md:text-2xl font-headline font-semibold">
-                        SISGEMI: Gestión de Mantenimiento (JAD Matamoros Planta II)
+                        Bitácora Master (JAD Matamoros Planta II)
                     </h1>
                 </div>
                 <nav className="flex items-center justify-center -mx-4 px-2 py-2 bg-primary/90">

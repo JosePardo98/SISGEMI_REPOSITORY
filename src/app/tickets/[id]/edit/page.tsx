@@ -22,6 +22,6 @@ export default function EditTicketPage({ params }: EditTicketPageProps) {
 
 export async function generateMetadata({ params }: EditTicketPageProps) {
   return {
-    title: `Modificar Ticket ${params.id} - SISGEMI`,
+    title: `Modificar Ticket ${params.id} - Bitácora Master`,
   };
 }

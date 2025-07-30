@@ -16,6 +16,6 @@ export default function AddEquipmentPage() {
 
 export async function generateMetadata() {
   return {
-    title: 'Agregar Nuevo Equipo - SISGEMI',
+    title: 'Agregar Nuevo Equipo - Bitácora Master',
   };
 }

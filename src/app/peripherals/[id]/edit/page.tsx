@@ -22,6 +22,6 @@ export default function EditPeripheralPage({ params }: EditPeripheralPageProps) 
 
 export async function generateMetadata({ params }: EditPeripheralPageProps) {
   return {
-    title: `Modificar Periférico ${params.id} - SISGEMI`,
+    title: `Modificar Periférico ${params.id} - Bitácora Master`,
   };
 }
